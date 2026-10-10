@@ -2,6 +2,8 @@
 
 A static personal portfolio built with semantic HTML, CSS, and small progressive-enhancement JavaScript.
 
+The included web resume is a privacy-safe version created for public distribution. It intentionally omits Joe's phone number.
+
 ## Run locally
 
 ```bash
