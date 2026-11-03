@@ -41,6 +41,33 @@
   --frame: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6' viewBox='0 0 6 6' shape-rendering='crispEdges'%3E%3Cpath fill='%234d5f8a' fill-rule='evenodd' d='M1 0h4v1h1v4H5v1H1V5H0V1h1zM2 2v2h2V2z'/%3E%3C/svg%3E");
 }
 
+/* The map follows the sky over Chicago (see lib/sky.js). Day is the
+   palette above; dusk turns purple with sunset on the water; at night the
+   land darkens and the mile streets light up like streetlights. */
+:root[data-sky="dusk"] {
+  --ground: #1b1a35;
+  --panel: rgb(27 26 53 / 0.92);
+  --grid: #2c2a50;
+  --lake-a: #1e2f66;
+  --lake-b: #243770;
+  --lake-glint: #f0946c;
+  --shore: #9a94e6;
+  --river: #3a4c9a;
+  --pier: #3f3f70;
+}
+:root[data-sky="night"] {
+  --ground: #0a0f1f;
+  --panel: rgb(10 15 31 / 0.92);
+  --grid: #5e4c2b;
+  --lake-a: #0a1a3a;
+  --lake-b: #0c1f44;
+  --lake-glint: #2c5296;
+  --shore: #3e6bb0;
+  --station: #8a95b2;
+  --river: #1d3f7a;
+  --pier: #2a3552;
+}
+
 * { box-sizing: border-box; }
 
 html, body {
@@ -196,6 +223,46 @@ select {
   cursor: pointer;
 }
 select:hover { border-color: var(--ink-2); }
+
+.board-favs {
+  margin-top: 8px;
+  color: var(--ink-2);
+}
+.fav-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+.fav-list button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 0 8px;
+  border: var(--px) solid var(--edge);
+  color: var(--ink);
+}
+.fav-list button:hover { border-color: var(--ink-2); }
+.fav-list button[aria-current="true"] { border-color: var(--c); }
+.fav-list i {
+  width: calc(var(--px) * 3);
+  height: calc(var(--px) * 3);
+  background: var(--c);
+}
+
+.fav-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+  margin-top: 6px;
+  color: var(--ink-2);
+}
+.fav-toggle svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1; }
+.fav-toggle:hover { color: var(--ink); }
+.fav-toggle[aria-pressed="true"] { color: var(--line-y); }
+.fav-toggle[aria-pressed="true"] svg { fill: currentColor; stroke: none; }
 
 .arrivals {
   display: grid;

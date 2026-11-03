@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Building the Chicago ’L’ Tracker | Joe Ferber</title>
+  <meta name="description" content="How Joe Ferber built an 8-bit map of every CTA ’L’ train: the product decisions, the rendering, and what shipping it taught.">
+  <meta name="theme-color" content="#fffdf5">
+  <link rel="canonical" href="https://joeferber.com/trains/about/">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Building the Chicago ’L’ Tracker">
+  <meta property="og:description" content="An 8-bit map of every CTA ’L’ train, and the decisions behind it.">
+  <meta property="og:url" content="https://joeferber.com/trains/about/">
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css?v=2">
+  <link rel="stylesheet" href="case-study.css?v=1">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Joe Ferber home">
+      <span class="brand-mark" aria-hidden="true">JF</span>
+      <span>Joe Ferber</span>
+    </a>
+    <nav class="case-nav" aria-label="Case study">
+      <a href="/#work">All work</a>
+      <a class="nav-contact" href="/trains/">Open the tracker</a>
+    </nav>
+  </header>
+
+  <main id="main" class="case section-shell">
+    <header class="case-intro">
+      <p class="project-status">Case study</p>
+      <h1>Building the Chicago ’L’ Tracker</h1>
+      <p class="case-lede">An 8-bit map of every CTA train, built to be the thing you leave open while you put your shoes on. Here is what it does, the calls I made, and what shipping it taught me.</p>
+    </header>
+
+    <figure class="case-live">
+      <iframe src="/trains/" title="The Chicago ’L’ Tracker, running live" loading="lazy"></iframe>
+      <figcaption>The tracker itself, running in this page. Drag, zoom, or click a station.</figcaption>
+    </figure>
+
+    <div class="case-body">
+      <section aria-labelledby="why">
+        <h2 id="why">Why a map</h2>
+        <p>The CTA’s own tools answer “when is my train?” as a list. That’s the right answer on a platform, but it hides the system: where the gaps are, whether the Red Line is bunched up, how the Loop is doing. A map shows all of that at a glance. I wanted one that felt like Chicago and was fun enough to keep open, so it looks like an old video game.</p>
+      </section>
+
+      <section aria-labelledby="what">
+        <h2 id="what">What it does</h2>
+        <ul>
+          <li>Every train on all eight lines is a small two-car sprite in its line’s color, pointed the way it’s moving, with a headlight and a fading trail. Click one for its run number, destination and next stop.</li>
+          <li><b>Next trains:</b> pick a line and station, or click a station, for a live countdown in each direction. Click an arrival to jump to that train.</li>
+          <li><b>Your stops:</b> save stations and the page opens straight to the first one. Favorites stay in your browser.</li>
+          <li><b>Day, dusk and night</b> follow the real sun over Chicago. At night the mile streets light up like streetlights.</li>
+          <li><b>Landmarks:</b> about 35 places most Chicagoans would know, from the Bahá’í Temple and Northwestern to Superdawg, the Little Village Arch and the Museum of Science and Industry.</li>
+          <li><b>Things to find:</b> a lake monster, the Navy Pier wheel, a green river in March and holiday trains in December.</li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="decisions">
+        <h2 id="decisions">Decisions worth explaining</h2>
+
+        <h3>Real geography, drawn one pixel at a time</h3>
+        <p>Track shapes, stations and the lakefront come from the City of Chicago’s open data. A small script turns them into a 40 KB file the page loads once. The map is drawn on a low-resolution canvas with a line algorithm that places whole pixels, so nothing is ever blurred. Where lines share track, as in the Loop, they run side by side in separate lanes, the way a transit diagram draws them.</p>
+
+        <h3>A believable sample run before the data arrives</h3>
+        <p>The CTA’s live feed needs an API key, and I didn’t want to wait for one to start. So the map runs a simulation: trains follow real routes, pause at real stops and turn at the terminals. Positions come from the clock, so everyone sees the same trains at the same moment. The arrivals board reads the same timetables, which keeps the countdown and the dots in agreement. The page labels all of it as a sample run.</p>
+
+        <h3>Live data without exposing a key</h3>
+        <p>The feed can’t be called from a browser without leaking the key, so a small Cloudflare Worker sits in between. It holds the key, caches each response for 20 seconds so every visitor shares one upstream call, and serves both train positions and station arrivals. The page switches to live data with a one-line change and falls back to the sample run if the feed drops.</p>
+
+        <h3>Making pixel type actually crisp</h3>
+        <p>The first font looked soft. Measuring its outlines showed why: it isn’t drawn on a strict grid, so its edges land between screen pixels. Jersey 10 sits on an exact 75-unit grid, and at 18⅔ pixels one font pixel is exactly one screen pixel. The fix was arithmetic, not taste.</p>
+
+        <h3>Detail without clutter</h3>
+        <p>My first pass put a note beside nearly every station. It was too much, and most of it wasn’t anything a local would point to. The second pass kept only places people in each part of the city would recognize, and spread them out on purpose so downtown doesn’t swallow the map. Downtown landmarks wait until you zoom in, and when two icons would overlap, the less important one waits for a closer zoom.</p>
+      </section>
+
+      <section aria-labelledby="shipping">
+        <h2 id="shipping">How it shipped</h2>
+        <p>I built it with Claude Code, directing the product and design calls and reviewing each change. Every release went out as a small pull request with automated tests and a check in a real browser at desktop and phone sizes, and the larger ones got an independent code review first. That review earned its keep: it caught an arrivals list that rebuilt itself every second and swallowed clicks, and trains listed two or three times because stations a block from the track were matched as stops.</p>
+        <p>The most useful lesson came after launch. A release went live and nothing changed for visitors. Cloudflare told browsers to keep scripts for four hours but the page for only ten minutes, so people got the new page running the old code. Every file the tracker loads now carries a version number, and a release changes one number in one file.</p>
+      </section>
+
+      <section aria-labelledby="next">
+        <h2 id="next">What’s next</h2>
+        <ul>
+          <li>Switch on the live CTA feed for positions and arrivals.</li>
+          <li>Service alerts and elevator outages on the map.</li>
+          <li>Links that open to a station or train, for sending to a friend.</li>
+          <li>An installable phone version that opens to your stops.</li>
+        </ul>
+        <div class="case-links">
+          <a class="button button-primary" href="/trains/">Open the tracker</a>
+          <a class="button button-secondary" href="https://github.com/kelloggjoe/joe-ferber-portfolio/tree/main/trains" target="_blank" rel="noreferrer">Read the code</a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Joe Ferber · Chicago</p>
+    <p><a href="/#work">Back to all work</a></p>
+  </footer>
+</body>
+</html>
