@@ -40,7 +40,7 @@ export const LANDMARKS = [
   { sprite: "willis", lat: 41.8789, lon: -87.6359, maxMpp: 16, every: 1000, label: "Willis Tower", note: "locals still call it Sears" },
   { sprite: "bean", lat: 41.8827, lon: -87.6233, maxMpp: 20, every: 1400, label: "Cloud Gate", note: "everyone calls it the Bean" },
   { sprite: "fountain", lat: 41.8758, lon: -87.6189, maxMpp: 40, every: 450, label: "Buckingham Fountain" },
-  { sprite: "wrigley", lat: 41.9484, lon: -87.6560, maxMpp: 70, every: 0, label: "Wrigley Field", note: "fly the W" },
+  { sprite: "wrigley", lat: 41.9484, lon: -87.6560, maxMpp: 400, every: 0, label: "Wrigley Field", note: "fly the W" },
 ];
 
 export const NAVY_PIER = [[41.8918, -87.6128], [41.8918, -87.6008]];
