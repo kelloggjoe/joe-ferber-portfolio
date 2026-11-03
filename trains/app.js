@@ -78,7 +78,7 @@ init().catch((err) => {
 });
 
 async function init() {
-  const res = await fetch("data/network.json");
+  const res = await fetch(`data/network.json?v=${document.documentElement.dataset.version}`);
   if (!res.ok) throw new Error(`network.json ${res.status}`);
   const net = await res.json();
   state.net = net;
