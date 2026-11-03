@@ -42,11 +42,14 @@ ROUTES = {
     "y": [["Dempster-Skokie", "Howard", "Dempster-Skokie"]],
 }
 
-# Lakefront north of the city limits (Evanston to Wilmette), lat/lon.
+# Lakefront north of the city limits (Evanston up the North Shore), lat/lon.
+# It runs well past the last station so zoomed-out views never see an edge.
 NORTH_SHORE = [
     (42.0300, -87.6662), (42.0400, -87.6695), (42.0500, -87.6735),
     (42.0600, -87.6775), (42.0700, -87.6825), (42.0800, -87.6870),
-    (42.0950, -87.6950),
+    (42.0950, -87.6950), (42.1100, -87.7200), (42.1350, -87.7520),
+    (42.1600, -87.7700), (42.1900, -87.7900), (42.2500, -87.8100),
+    (42.3500, -87.8250),
 ]
 
 
@@ -292,8 +295,8 @@ def build_lake(city):
     pts = [project(la, lo) for la, lo in shore]
     pts = simplify(pts, 25)
     north, south = pts[-1][1], pts[0][1]
-    east = 40000
-    ring = pts + [(east, north - 20000), (east, south + 20000), (pts[0][0], south + 20000)]
+    east = 120000
+    ring = pts + [(pts[-1][0], north - 60000), (east, north - 60000), (east, south + 60000), (pts[0][0], south + 60000)]
     return [c for p in ring for c in p]
 
 

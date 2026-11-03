@@ -5,7 +5,9 @@ import {
 } from "./lib/eggs.js";
 import { sampleTrains, sampleArrivals } from "./lib/sim.js";
 import { parsePositions, parseArrivals } from "./lib/cta.js";
-import { ICONS, STATION_PLACES, SPOTS, resolvePlaces, tierOf } from "./lib/places.js";
+import { ICONS, PLACES } from "./lib/places.js";
+import { sunElevation, skyPhase } from "./lib/sky.js";
+import { toggleFavorite, loadFavorites, saveFavorites } from "./lib/favorites.js";
 
 const LINES = [
   ["red", "Red"], ["blue", "Blue"], ["brn", "Brown"], ["g", "Green"],
@@ -26,31 +28,35 @@ const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
 const css = getComputedStyle(document.documentElement);
 const color = (name) => css.getPropertyValue(name).trim();
-const COLORS = {
-  ground: rgb(color("--ground")),
-  grid: rgb(color("--grid")),
-  lakeA: rgb(color("--lake-a")),
-  lakeB: rgb(color("--lake-b")),
-  glint: rgb(color("--lake-glint")),
-  shore: rgb(color("--shore")),
-  station: rgb(color("--station")),
-  ink: rgb(color("--ink")),
-};
 const LINE_RGB = Object.fromEntries(LINE_ORDER.map((c) => [c, rgb(color(`--line-${c}`))]));
-COLORS.pier = rgb(color("--pier"));
-COLORS.river = rgb(color("--river"));
-COLORS.riverGreen = rgb(color("--river-green"));
-const LAKE = new Set([COLORS.lakeA, COLORS.lakeB, COLORS.glint]);
+// Map colours come from CSS and change with the sky, so they're re-read
+// whenever the phase does.
+const COLORS = {};
+const LAKE = new Set();
+const SKY_VARS = {
+  ground: "--ground", grid: "--grid", lakeA: "--lake-a", lakeB: "--lake-b", glint: "--lake-glint",
+  shore: "--shore", station: "--station", ink: "--ink", pier: "--pier", river: "--river", riverGreen: "--river-green",
+};
+function readColors() {
+  for (const [k, v] of Object.entries(SKY_VARS)) COLORS[k] = rgb(color(v));
+  LAKE.clear();
+  [COLORS.lakeA, COLORS.lakeB, COLORS.glint].forEach((c) => LAKE.add(c));
+}
+
+// ?sky=night (or day, dusk) previews a phase; otherwise follow the sun.
+const SKY_PARAM = new URLSearchParams(location.search).get("sky");
+function updateSky() {
+  const phase = ["day", "dusk", "night"].includes(SKY_PARAM) ? SKY_PARAM : skyPhase(sunElevation(new Date(), 41.88, -87.63));
+  const root = document.documentElement;
+  if (root.dataset.sky === phase && LAKE.size) return;
+  root.dataset.sky = phase;
+  readColors();
+  document.querySelector('meta[name="theme-color"]').content = color("--ground");
+  state.bgDirty = true;
+}
 
 const FRAMES = Object.fromEntries(Object.entries(SPRITES).map(([k, frames]) => [k, frames.map(parseSprite)]));
 const ICON_FRAMES = Object.fromEntries(Object.entries(ICONS).map(([k, rows]) => [k, parseSprite(rows)]));
-// Minor places start as a small plus in their icon's main colour.
-const DOTS = Object.fromEntries(Object.entries(ICON_FRAMES).map(([k, sprite]) => {
-  const counts = {};
-  for (const [, , ch] of sprite.pixels) counts[ch] = (counts[ch] || 0) + 1;
-  const main = Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0];
-  return [k, parseSprite([`.${main}.`, `${main}${main}${main}`, `.${main}.`])];
-}));
 // Boats heading west face the other way.
 FRAMES.boatWest = SPRITES.boat.map((rows) => parseSprite(rows.map((r) => [...r].reverse().join(""))));
 
@@ -78,6 +84,7 @@ const state = {
   monster: { at: 0, x: 0, y: 0, next: 0 },
   places: [], // station details and standalone spots, in map meters
   // dataAt: when list was true; askedAt: last request; failedAt: last live failure.
+  favs: loadFavorites(),
   board: { open: false, line: "red", station: null, list: [], dataAt: 0, askedAt: 0, live: false, failedAt: 0, rows: [] },
   hover: null,
   selected: null,
@@ -98,13 +105,12 @@ async function init() {
   indexTracks(net);
   const flat = (path) => path.flatMap(([lat, lon]) => { const p = project(lat, lon, net.origin); return [p.x, p.y]; });
   state.water = { river: RIVER.map(flat), pier: flat(NAVY_PIER) };
-  state.places = [
-    ...resolvePlaces(STATION_PLACES, net.stations).map((p) => ({ ...p, x: p.station.x, y: p.station.y, beside: true })),
-    ...SPOTS.map((p) => ({ ...p, ...project(p.lat, p.lon, net.origin) })),
-  ].map((p) => ({ ...p, tier: tierOf(p) })).sort((a, b) => a.tier - b.tier);
+  state.places = PLACES.map((p) => ({ ...p, ...project(p.lat, p.lon, net.origin) })).sort((a, b) => a.tier - b.tier);
   state.monster.next = performance.now() + 9000;
   const summon = codeListener(KONAMI, () => spawnMonster(performance.now(), true));
   addEventListener("keydown", (e) => summon(e.key.toLowerCase()));
+  updateSky();
+  setInterval(updateSky, 60_000);
   buildLegend();
   buildBoard();
   bindInput();
@@ -250,27 +256,21 @@ function paintWaterways(buf, w, h) {
 }
 
 function paintGrid(buf, w, h, ox, oy) {
-  // Chicago's mile streets (Madison, Roosevelt, North, ...) as dotted lines.
-  const { minX, minY, maxX, maxY } = state.bounds;
-  const [x0, y0] = toPx(minX - MILE, minY - MILE);
-  const [x1, y1] = toPx(maxX + MILE, maxY + MILE);
-  const kx0 = Math.ceil((minX - MILE - GRID_ORIGIN.x) / MILE);
-  const kx1 = Math.floor((maxX + MILE - GRID_ORIGIN.x) / MILE);
-  for (let k = kx0; k <= kx1; k++) {
+  // Chicago's mile streets (Madison, Roosevelt, North, ...) as dotted lines
+  // across all the land on screen; the lake is painted over them. Far out
+  // they'd crowd into static, so they drop away.
+  if (MILE / state.view.mpp < 9) return;
+  const tl = toWorld(0, 0);
+  const br = toWorld(w, h);
+  for (let k = Math.ceil((tl.x - GRID_ORIGIN.x) / MILE); k <= Math.floor((br.x - GRID_ORIGIN.x) / MILE); k++) {
     const px = Math.round(toPx(GRID_ORIGIN.x + k * MILE, 0)[0]);
     if (px < 0 || px >= w) continue;
-    for (let py = Math.max(0, Math.round(y0)); py < Math.min(h, y1); py++) {
-      if ((py + oy) % 3 === 0) buf[py * w + px] = COLORS.grid;
-    }
+    for (let py = 0; py < h; py++) if ((py + oy) % 3 === 0) buf[py * w + px] = COLORS.grid;
   }
-  const ky0 = Math.ceil((minY - MILE - GRID_ORIGIN.y) / MILE);
-  const ky1 = Math.floor((maxY + MILE - GRID_ORIGIN.y) / MILE);
-  for (let k = ky0; k <= ky1; k++) {
+  for (let k = Math.ceil((tl.y - GRID_ORIGIN.y) / MILE); k <= Math.floor((br.y - GRID_ORIGIN.y) / MILE); k++) {
     const py = Math.round(toPx(0, GRID_ORIGIN.y + k * MILE)[1]);
     if (py < 0 || py >= h) continue;
-    for (let px = Math.max(0, Math.round(x0)); px < Math.min(w, x1); px++) {
-      if ((px + ox) % 3 === 0) buf[py * w + px] = COLORS.grid;
-    }
+    for (let px = 0; px < w; px++) if ((px + ox) % 3 === 0) buf[py * w + px] = COLORS.grid;
   }
 }
 
@@ -302,8 +302,8 @@ function paintLake(buf, w, h, ox, oy) {
       }
     }
   }
-  // The shoreline is every lake vertex except the three that close it off out east.
-  drawPolyline(buf, w, h, lake.slice(0, -6), 0, COLORS.shore);
+  // The shoreline is every lake vertex except the four that close it off out east.
+  drawPolyline(buf, w, h, lake.slice(0, -8), 0, COLORS.shore);
 }
 
 // Close in, shared track splits into separate lanes and trains grow.
@@ -311,9 +311,6 @@ function laneGap() {
   return state.view.mpp < 40 ? 2 : 1;
 }
 
-function trainSize() {
-  return state.view.mpp < 200 ? 3 : 2;
-}
 
 function paintStations(buf, w, h) {
   const big = state.view.mpp < 40;
@@ -419,32 +416,76 @@ function laneOffset(train) {
   return [(-(best.by - best.ay) / len) * off, ((best.bx - best.ax) / len) * off];
 }
 
+// Trains are little rotated sprites: a body in the line colour with a dark
+// outline so they lift off the track, a headlight at the front and, close
+// in, a row of lit windows. Stencils are worked out once per direction.
+const TRAIN_STENCILS = new Map();
+function trainStencil(dir, near) {
+  const key = `${dir}:${near}`;
+  if (TRAIN_STENCILS.has(key)) return TRAIN_STENCILS.get(key);
+  const a = (dir * Math.PI) / 4;
+  const c = Math.cos(a), sn = Math.sin(a);
+  // Close in, two cars with a coupling between; far out, one short car.
+  const halfLen = near ? 3 : 1;
+  const out = { outline: [], body: [], window: [], light: [], halfLen };
+  for (let y = -5; y <= 5; y++) {
+    for (let x = -5; x <= 5; x++) {
+      const u = x * c + y * sn; // along the direction of travel
+      const v = -x * sn + y * c; // across it
+      if (Math.abs(u) <= halfLen + 0.5 && Math.abs(v) <= 1.3) {
+        const front = Math.round(u) === halfLen && Math.abs(v) < 0.6;
+        const win = near && Math.abs(v) < 0.6 && [1, 2].includes(Math.abs(Math.round(u)));
+        out[front ? "light" : win ? "window" : "body"].push([x, y]);
+      } else if (Math.abs(u) <= halfLen + 1.5 && Math.abs(v) <= 2.3) {
+        out.outline.push([x, y]);
+      }
+    }
+  }
+  TRAIN_STENCILS.set(key, out);
+  return out;
+}
+
+const HEADLIGHT = "#fff6c9";
+const WINDOW = "#e6ecf8";
+const OUTLINE = "#0e1424";
+
 function drawTrains(now) {
   const { w, h } = state.fb;
   state.drawn = [];
   const blinkOn = reduceMotion.matches || Math.floor(now / 350) % 2 === 0;
-  let selectedSpot = null;
-  const size = trainSize();
-  const half = size >> 1;
+  const near = state.view.mpp < 60;
+  const placed = [];
   for (const t of state.trains) {
     if (state.hidden.has(t.line)) continue;
     const [fx, fy] = toPx(t.x, t.y);
-    if (fx < -6 || fy < -6 || fx > w + 6 || fy > h + 6) continue;
+    if (fx < -8 || fy < -8 || fx > w + 8 || fy > h + 8) continue;
     const [ox, oy] = laneOffset(t);
     const px = Math.round(fx + ox);
     const py = Math.round(fy + oy);
+    const dir = ((Math.round(t.angle / (Math.PI / 4)) % 8) + 8) % 8;
+    placed.push({ t, px, py, st: trainStencil(dir, near) });
+  }
+  // Outlines first, so one train's outline never cuts into another's body.
+  ctx.fillStyle = OUTLINE;
+  for (const { px, py, st } of placed) for (const [x, y] of st.outline) ctx.fillRect(px + x, py + y, 1, 1);
+  let selected = null;
+  for (const { t, px, py, st } of placed) {
     const base = t.holiday ? HOLIDAY_LIGHTS[Math.floor(now / 400 + px) % HOLIDAY_LIGHTS.length] : LINE_RGB[t.line];
     // Fading trail behind the train shows which way it is heading.
     const bx = -Math.cos(t.angle), by = -Math.sin(t.angle);
-    [[0.45, 0], [0.65, 1], [0.82, 2]].forEach(([fade, k]) => {
-      const d = size + k;
+    [[0.35, 2], [0.6, 3], [0.8, 4]].forEach(([fade, k]) => {
+      const d = st.halfLen + k;
       ctx.fillStyle = css32(mix(base, COLORS.ground, fade));
       ctx.fillRect(Math.round(px + bx * d), Math.round(py + by * d), 1, 1);
     });
     ctx.fillStyle = css32(base);
-    ctx.fillRect(px - half, py - half, size, size);
+    for (const [x, y] of st.body) ctx.fillRect(px + x, py + y, 1, 1);
+    ctx.fillStyle = WINDOW;
+    for (const [x, y] of st.window) ctx.fillRect(px + x, py + y, 1, 1);
+    ctx.fillStyle = HEADLIGHT;
+    for (const [x, y] of st.light) ctx.fillRect(px + x, py + y, 1, 1);
     state.drawn.push({ train: t, px, py });
-    if (state.selected === t.id) selectedSpot = [px, py];
+    if (state.selected === t.id) selected = { px, py, half: st.halfLen + 1 };
   }
   const b = state.board;
   if (b.open && b.station && blinkOn) {
@@ -452,9 +493,7 @@ function drawTrains(now) {
     const [sx, sy] = toPx(s.x, s.y);
     ring(Math.round(sx), Math.round(sy), 1, css32(LINE_RGB[b.line]));
   }
-  if (selectedSpot && blinkOn) {
-    ring(selectedSpot[0], selectedSpot[1], half, css32(COLORS.ink), size);
-  }
+  if (selected && blinkOn) ring(selected.px, selected.py, selected.half + 1, css32(COLORS.ink));
 }
 
 // A one-pixel square ring, one pixel clear of a box `size` wide.
@@ -529,37 +568,27 @@ function drawEggs(now) {
   drawMonster(now);
 }
 
-// Station details sit just east of their station; spots sit on their spot.
-// Bigger places show from further out and grow sooner; neighbourhood signs
-// stay a small marker until street level. Places are drawn most important
-// first, and one that would land on another waits for a closer zoom.
+// Landmarks sit on their real spot. Major ones show from the city-wide view
+// and grow as you zoom; downtown ones wait until there's room. Most
+// important first, and one that would land on another waits for a closer zoom.
 function drawPlaces() {
   const mpp = state.view.mpp;
   const { w, h } = state.fb;
   const taken = [];
   for (const p of state.places) {
-    const size = placeSize(p.tier, mpp);
-    if (!size) continue;
-    if (p.beside && stationHidden(p.station)) continue;
+    const k = p.tier === 1 ? (mpp < 30 ? 2 : 1) : mpp < 12 ? 2 : mpp < 50 ? 1 : 0;
+    if (!k) continue;
     const [fx, fy] = toPx(p.x, p.y);
-    const px = Math.round(fx) + (p.beside ? (size === "dot" ? 4 : 7 * size) : 0);
-    const py = Math.round(fy) + (size === "dot" ? 1 : 3 * size);
+    const px = Math.round(fx);
+    const py = Math.round(fy) + 3 * k;
     if (px < -16 || py < -16 || px > w + 16 || py > h + 16) continue;
-    const sprite = size === "dot" ? DOTS[p.icon] : ICON_FRAMES[p.icon];
-    const k = size === "dot" ? 1 : size;
+    const sprite = ICON_FRAMES[p.icon];
     const half = (sprite.w * k) >> 1;
     const box = { x0: px - half - 1, y0: py - sprite.h * k, x1: px + half + 1, y1: py + 1 };
     if (taken.some((b) => box.x0 < b.x1 && box.x1 > b.x0 && box.y0 < b.y1 && box.y1 > b.y0)) continue;
     taken.push(box);
     state.eggs.push({ ...drawSprite(sprite, px, py, k), label: p.label, note: p.note });
   }
-}
-
-// null (hidden), "dot", or a pixel scale for the full icon.
-function placeSize(tier, mpp) {
-  if (tier === 1) return mpp < 30 ? 2 : 1;
-  if (tier === 2) return mpp < 12 ? 2 : mpp < 60 ? 1 : null;
-  return mpp < 12 ? 1 : mpp < 40 ? "dot" : null;
 }
 
 function isLake(px, py) {
@@ -719,6 +748,37 @@ function buildBoard() {
     setBoard(lineSel.value, keep ? state.board.station : lineStations(lineSel.value)[0].id);
   });
   stationSel.addEventListener("change", () => setBoard(state.board.line, stationSel.value));
+  document.getElementById("fav-toggle").addEventListener("click", () => {
+    const b = state.board;
+    state.favs = toggleFavorite(state.favs, { line: b.line, station: b.station });
+    saveFavorites(state.favs);
+    renderFavs();
+  });
+  // Drop saved stops that no longer match the network, then open the first.
+  const byId = new Map(state.net.stations.map((s) => [s.id, s]));
+  state.favs = state.favs.filter((f) => byId.get(f.station)?.l.includes(f.line));
+  renderFavs();
+  if (state.favs.length) openBoard(byId.get(state.favs[0].station), state.favs[0].line);
+}
+
+function renderFavs() {
+  const b = state.board;
+  const byId = new Map(state.net.stations.map((s) => [s.id, s]));
+  document.getElementById("board-favs").hidden = !state.favs.length;
+  document.getElementById("fav-list").replaceChildren(...state.favs.map((f) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.style.setProperty("--c", `var(--line-${f.line})`);
+    btn.innerHTML = `<i></i>${esc(byId.get(f.station).name)}`;
+    btn.setAttribute("aria-label", `${byId.get(f.station).name}, ${LINE_NAME[f.line]} Line`);
+    btn.setAttribute("aria-current", String(f.line === b.line && f.station === b.station));
+    btn.addEventListener("click", () => setBoard(f.line, f.station));
+    return btn;
+  }));
+  const saved = state.favs.some((f) => f.line === b.line && f.station === b.station);
+  const toggle = document.getElementById("fav-toggle");
+  toggle.setAttribute("aria-pressed", String(saved));
+  document.getElementById("fav-toggle-label").textContent = saved ? "Saved to your stops" : "Save this stop";
 }
 
 // A line's stations in riding order, from its first terminal outward.
@@ -730,9 +790,10 @@ function lineStations(line) {
     .filter((id) => !seen.has(id) && seen.add(id)).map((id) => names.get(id));
 }
 
-function openBoard(station) {
+function openBoard(station, preferLine) {
   const b = state.board;
-  const line = station ? (station.l.includes(b.line) ? b.line : station.l[0]) : b.line;
+  const want = preferLine || b.line;
+  const line = station ? (station.l.includes(want) ? want : station.l[0]) : want;
   b.open = true;
   document.getElementById("board-toggle").setAttribute("aria-expanded", "true");
   document.getElementById("board-body").hidden = false;
@@ -755,6 +816,7 @@ function setBoard(line, stationId) {
   Object.assign(b, { line, station: stationId, list: [], dataAt: 0, askedAt: 0, rows: [], rowsKey: "" });
   lineSel.value = line;
   stationSel.value = stationId;
+  renderFavs();
   refreshArrivals();
 }
 

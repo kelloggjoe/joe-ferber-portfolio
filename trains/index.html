@@ -3,7 +3,7 @@
 <!-- Cloudflare lets browsers keep CSS and JS for hours, so every asset URL
      carries ?v=. Bump it (here, in the import map, and on the links below)
      whenever trains/ changes. -->
-<html lang="en" data-feed="" data-version="5">
+<html lang="en" data-feed="" data-version="7">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -11,20 +11,22 @@
   <meta name="description" content="Every CTA ’L’ train on an 8-bit map of Chicago.">
   <meta name="theme-color" content="#121a2e">
   <link rel="preload" href="fonts/jersey-10-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="data/network.json?v=5" as="fetch" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=5">
+  <link rel="preload" href="data/network.json?v=7" as="fetch" crossorigin>
+  <link rel="stylesheet" href="styles.css?v=7">
   <script type="importmap">
     {
       "imports": {
-        "./lib/route.js": "./lib/route.js?v=5",
-        "./lib/sim.js": "./lib/sim.js?v=5",
-        "./lib/cta.js": "./lib/cta.js?v=5",
-        "./lib/eggs.js": "./lib/eggs.js?v=5",
-        "./lib/places.js": "./lib/places.js?v=5"
+        "./lib/route.js": "./lib/route.js?v=7",
+        "./lib/sim.js": "./lib/sim.js?v=7",
+        "./lib/cta.js": "./lib/cta.js?v=7",
+        "./lib/eggs.js": "./lib/eggs.js?v=7",
+        "./lib/places.js": "./lib/places.js?v=7",
+        "./lib/sky.js": "./lib/sky.js?v=7",
+        "./lib/favorites.js": "./lib/favorites.js?v=7"
       }
     }
   </script>
-  <script type="module" src="app.js?v=5"></script>
+  <script type="module" src="app.js?v=7"></script>
 </head>
 <body>
   <canvas id="map" tabindex="0" role="img" aria-label="Map of Chicago’s ’L’ lines with a dot for each train"></canvas>
@@ -46,10 +48,18 @@
         <svg viewBox="0 0 7 7" aria-hidden="true"><path d="M0 2h7v1H6v1H5v1H4v1H3V5H2V4H1V3H0z"/></svg>
       </button>
       <div class="board-body" id="board-body" hidden>
+        <div class="board-favs" id="board-favs" hidden>
+          <span>Your stops</span>
+          <div class="fav-list" id="fav-list"></div>
+        </div>
         <div class="board-pick">
           <label>Line<select id="pick-line"></select></label>
           <label>Station<select id="pick-station"></select></label>
         </div>
+        <button type="button" class="fav-toggle" id="fav-toggle" aria-pressed="false">
+          <svg viewBox="0 0 7 7" aria-hidden="true"><path d="M3 0h1v2h3v1H6v1H5v1h1v2H5V6H2v1H1V5h1V4H1V3H0V2h3z"/></svg>
+          <span id="fav-toggle-label">Save this stop</span>
+        </button>
         <ol class="arrivals" id="arrivals"></ol>
         <p class="board-note" id="board-note" aria-live="polite"></p>
       </div>
