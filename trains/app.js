@@ -5,7 +5,7 @@ import {
 } from "./lib/eggs.js";
 import { sampleTrains, sampleArrivals } from "./lib/sim.js";
 import { parsePositions, parseArrivals } from "./lib/cta.js";
-import { ICONS, STATION_PLACES, SPOTS, resolvePlaces } from "./lib/places.js";
+import { ICONS, STATION_PLACES, SPOTS, resolvePlaces, tierOf } from "./lib/places.js";
 
 const LINES = [
   ["red", "Red"], ["blue", "Blue"], ["brn", "Brown"], ["g", "Green"],
@@ -44,6 +44,13 @@ const LAKE = new Set([COLORS.lakeA, COLORS.lakeB, COLORS.glint]);
 
 const FRAMES = Object.fromEntries(Object.entries(SPRITES).map(([k, frames]) => [k, frames.map(parseSprite)]));
 const ICON_FRAMES = Object.fromEntries(Object.entries(ICONS).map(([k, rows]) => [k, parseSprite(rows)]));
+// Minor places start as a small plus in their icon's main colour.
+const DOTS = Object.fromEntries(Object.entries(ICON_FRAMES).map(([k, sprite]) => {
+  const counts = {};
+  for (const [, , ch] of sprite.pixels) counts[ch] = (counts[ch] || 0) + 1;
+  const main = Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0];
+  return [k, parseSprite([`.${main}.`, `${main}${main}${main}`, `.${main}.`])];
+}));
 // Boats heading west face the other way.
 FRAMES.boatWest = SPRITES.boat.map((rows) => parseSprite(rows.map((r) => [...r].reverse().join(""))));
 
@@ -94,7 +101,7 @@ async function init() {
   state.places = [
     ...resolvePlaces(STATION_PLACES, net.stations).map((p) => ({ ...p, x: p.station.x, y: p.station.y, beside: true })),
     ...SPOTS.map((p) => ({ ...p, ...project(p.lat, p.lon, net.origin) })),
-  ];
+  ].map((p) => ({ ...p, tier: tierOf(p) })).sort((a, b) => a.tier - b.tier);
   state.monster.next = performance.now() + 9000;
   const summon = codeListener(KONAMI, () => spawnMonster(performance.now(), true));
   addEventListener("keydown", (e) => summon(e.key.toLowerCase()));
@@ -523,19 +530,36 @@ function drawEggs(now) {
 }
 
 // Station details sit just east of their station; spots sit on their spot.
+// Bigger places show from further out and grow sooner; neighbourhood signs
+// stay a small marker until street level. Places are drawn most important
+// first, and one that would land on another waits for a closer zoom.
 function drawPlaces() {
   const mpp = state.view.mpp;
-  if (mpp > 15) return;
-  const k = mpp < 8 ? 2 : 1;
   const { w, h } = state.fb;
+  const taken = [];
   for (const p of state.places) {
+    const size = placeSize(p.tier, mpp);
+    if (!size) continue;
     if (p.beside && stationHidden(p.station)) continue;
     const [fx, fy] = toPx(p.x, p.y);
-    const px = Math.round(fx) + (p.beside ? 7 * k : 0);
-    const py = Math.round(fy) + 3 * k;
+    const px = Math.round(fx) + (p.beside ? (size === "dot" ? 4 : 7 * size) : 0);
+    const py = Math.round(fy) + (size === "dot" ? 1 : 3 * size);
     if (px < -16 || py < -16 || px > w + 16 || py > h + 16) continue;
-    state.eggs.push({ ...drawSprite(ICON_FRAMES[p.icon], px, py, k), label: p.label, note: p.note });
+    const sprite = size === "dot" ? DOTS[p.icon] : ICON_FRAMES[p.icon];
+    const k = size === "dot" ? 1 : size;
+    const half = (sprite.w * k) >> 1;
+    const box = { x0: px - half - 1, y0: py - sprite.h * k, x1: px + half + 1, y1: py + 1 };
+    if (taken.some((b) => box.x0 < b.x1 && box.x1 > b.x0 && box.y0 < b.y1 && box.y1 > b.y0)) continue;
+    taken.push(box);
+    state.eggs.push({ ...drawSprite(sprite, px, py, k), label: p.label, note: p.note });
   }
+}
+
+// null (hidden), "dot", or a pixel scale for the full icon.
+function placeSize(tier, mpp) {
+  if (tier === 1) return mpp < 30 ? 2 : 1;
+  if (tier === 2) return mpp < 12 ? 2 : mpp < 60 ? 1 : null;
+  return mpp < 12 ? 1 : mpp < 40 ? "dot" : null;
 }
 
 function isLake(px, py) {
