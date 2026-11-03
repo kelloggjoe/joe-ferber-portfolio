@@ -32,5 +32,7 @@ never ships with the site.
    <html lang="en" data-feed="https://trains-api.joeferber.com/">
    ```
 
+The same worker answers `/arrivals?mapid=4xxxx` for the next-trains panel.
+
 The page polls every 30 seconds, glides each train between reports, and falls
 back to the sample run if the feed goes down.

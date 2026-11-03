@@ -3,8 +3,9 @@ import {
   SPRITES, PALETTE, LANDMARKS, NAVY_PIER, RIVER, BOATS, BOAT_RANGE,
   parseSprite, chicagoDate, greenRiver, holidaySeason, monsterPose, codeListener,
 } from "./lib/eggs.js";
-import { sampleTrains } from "./lib/sim.js";
-import { parsePositions } from "./lib/cta.js";
+import { sampleTrains, sampleArrivals } from "./lib/sim.js";
+import { parsePositions, parseArrivals } from "./lib/cta.js";
+import { ICONS, STATION_PLACES, SPOTS, resolvePlaces } from "./lib/places.js";
 
 const LINES = [
   ["red", "Red"], ["blue", "Blue"], ["brn", "Brown"], ["g", "Green"],
@@ -42,6 +43,7 @@ COLORS.riverGreen = rgb(color("--river-green"));
 const LAKE = new Set([COLORS.lakeA, COLORS.lakeB, COLORS.glint]);
 
 const FRAMES = Object.fromEntries(Object.entries(SPRITES).map(([k, frames]) => [k, frames.map(parseSprite)]));
+const ICON_FRAMES = Object.fromEntries(Object.entries(ICONS).map(([k, rows]) => [k, parseSprite(rows)]));
 // Boats heading west face the other way.
 FRAMES.boatWest = SPRITES.boat.map((rows) => parseSprite(rows.map((r) => [...r].reverse().join(""))));
 
@@ -67,6 +69,9 @@ const state = {
   eggs: [], // [{x0, y0, x1, y1, label, note}] sprites drawn in the last frame
   water: null, // projected river and pier
   monster: { at: 0, x: 0, y: 0, next: 0 },
+  places: [], // station details and standalone spots, in map meters
+  // dataAt: when list was true; askedAt: last request; failedAt: last live failure.
+  board: { open: false, line: "red", station: null, list: [], dataAt: 0, askedAt: 0, live: false, failedAt: 0, rows: [] },
   hover: null,
   selected: null,
   live: { prev: new Map(), curr: new Map(), at: 0, ok: false, failed: false },
@@ -86,10 +91,15 @@ async function init() {
   indexTracks(net);
   const flat = (path) => path.flatMap(([lat, lon]) => { const p = project(lat, lon, net.origin); return [p.x, p.y]; });
   state.water = { river: RIVER.map(flat), pier: flat(NAVY_PIER) };
+  state.places = [
+    ...resolvePlaces(STATION_PLACES, net.stations).map((p) => ({ ...p, x: p.station.x, y: p.station.y, beside: true })),
+    ...SPOTS.map((p) => ({ ...p, ...project(p.lat, p.lon, net.origin) })),
+  ];
   state.monster.next = performance.now() + 9000;
   const summon = codeListener(KONAMI, () => spawnMonster(performance.now(), true));
   addEventListener("keydown", (e) => summon(e.key.toLowerCase()));
   buildLegend();
+  buildBoard();
   bindInput();
   resize();
   fit();
@@ -429,18 +439,27 @@ function drawTrains(now) {
     state.drawn.push({ train: t, px, py });
     if (state.selected === t.id) selectedSpot = [px, py];
   }
-  if (selectedSpot && blinkOn) {
-    // A one-pixel ring, one pixel clear of the train.
-    const [px, py] = selectedSpot;
-    const x0 = px - half - 2;
-    const y0 = py - half - 2;
-    const span = size + 4;
-    ctx.fillStyle = css32(COLORS.ink);
-    ctx.fillRect(x0, y0, span, 1);
-    ctx.fillRect(x0, y0 + span - 1, span, 1);
-    ctx.fillRect(x0, y0 + 1, 1, span - 2);
-    ctx.fillRect(x0 + span - 1, y0 + 1, 1, span - 2);
+  const b = state.board;
+  if (b.open && b.station && blinkOn) {
+    const s = state.net.stations.find((x) => x.id === b.station);
+    const [sx, sy] = toPx(s.x, s.y);
+    ring(Math.round(sx), Math.round(sy), 1, css32(LINE_RGB[b.line]));
   }
+  if (selectedSpot && blinkOn) {
+    ring(selectedSpot[0], selectedSpot[1], half, css32(COLORS.ink), size);
+  }
+}
+
+// A one-pixel square ring, one pixel clear of a box `size` wide.
+function ring(px, py, half, fill, size = half * 2 + 1) {
+  const x0 = px - half - 2;
+  const y0 = py - half - 2;
+  const span = size + 4;
+  ctx.fillStyle = fill;
+  ctx.fillRect(x0, y0, span, 1);
+  ctx.fillRect(x0, y0 + span - 1, span, 1);
+  ctx.fillRect(x0, y0 + 1, 1, span - 2);
+  ctx.fillRect(x0 + span - 1, y0 + 1, 1, span - 2);
 }
 
 // ---------------------------------------------------------------------------
@@ -499,7 +518,24 @@ function drawEggs(now) {
     state.eggs.push({ ...drawSprite(FRAMES[b.speed < 0 ? "boatWest" : "boat"][0], px, py, k), label: "Sailboat" });
   }
 
+  drawPlaces();
   drawMonster(now);
+}
+
+// Station details sit just east of their station; spots sit on their spot.
+function drawPlaces() {
+  const mpp = state.view.mpp;
+  if (mpp > 15) return;
+  const k = mpp < 8 ? 2 : 1;
+  const { w, h } = state.fb;
+  for (const p of state.places) {
+    if (p.beside && stationHidden(p.station)) continue;
+    const [fx, fy] = toPx(p.x, p.y);
+    const px = Math.round(fx) + (p.beside ? 7 * k : 0);
+    const py = Math.round(fy) + 3 * k;
+    if (px < -16 || py < -16 || px > w + 16 || py > h + 16) continue;
+    state.eggs.push({ ...drawSprite(ICON_FRAMES[p.icon], px, py, k), label: p.label, note: p.note });
+  }
 }
 
 function isLake(px, py) {
@@ -574,6 +610,7 @@ function frame(now) {
   drawTrains(now);
   updateCounts();
   updateCard();
+  updateBoard(wall);
   requestAnimationFrame(frame);
 }
 
@@ -639,6 +676,163 @@ function setMode() {
 }
 
 // ---------------------------------------------------------------------------
+// Next trains: pick a line and station (or click a station on the map).
+
+const ARRIVALS_EVERY = 30_000;
+
+function buildBoard() {
+  const toggle = document.getElementById("board-toggle");
+  const lineSel = document.getElementById("pick-line");
+  const stationSel = document.getElementById("pick-station");
+  for (const { code, name } of LINES) lineSel.add(new Option(`${name} Line`, code));
+  toggle.addEventListener("click", () => {
+    const b = state.board;
+    if (b.open) closeBoard();
+    else openBoard(b.station ? state.net.stations.find((s) => s.id === b.station) : null);
+  });
+  lineSel.addEventListener("change", () => {
+    const keep = lineStations(lineSel.value).some((s) => s.id === state.board.station);
+    setBoard(lineSel.value, keep ? state.board.station : lineStations(lineSel.value)[0].id);
+  });
+  stationSel.addEventListener("change", () => setBoard(state.board.line, stationSel.value));
+}
+
+// A line's stations in riding order, from its first terminal outward.
+function lineStations(line) {
+  // Every route on the line, so both Green Line branches are listed.
+  const seen = new Set();
+  const names = new Map(state.net.stations.map((s) => [s.id, s]));
+  return state.routes.filter((r) => r.line === line).flatMap((r) => r.stops.map(([, id]) => id))
+    .filter((id) => !seen.has(id) && seen.add(id)).map((id) => names.get(id));
+}
+
+function openBoard(station) {
+  const b = state.board;
+  const line = station ? (station.l.includes(b.line) ? b.line : station.l[0]) : b.line;
+  b.open = true;
+  document.getElementById("board-toggle").setAttribute("aria-expanded", "true");
+  document.getElementById("board-body").hidden = false;
+  setBoard(line, station ? station.id : (b.station || lineStations(line)[0].id));
+}
+
+function closeBoard() {
+  state.board.open = false;
+  document.getElementById("board-toggle").setAttribute("aria-expanded", "false");
+  document.getElementById("board-body").hidden = true;
+}
+
+function setBoard(line, stationId) {
+  const b = state.board;
+  const lineSel = document.getElementById("pick-line");
+  const stationSel = document.getElementById("pick-station");
+  if (b.line !== line || stationSel.options.length === 0) {
+    stationSel.replaceChildren(...lineStations(line).map((s) => new Option(s.name, s.id)));
+  }
+  Object.assign(b, { line, station: stationId, list: [], dataAt: 0, askedAt: 0, rows: [], rowsKey: "" });
+  lineSel.value = line;
+  stationSel.value = stationId;
+  refreshArrivals();
+}
+
+async function refreshArrivals() {
+  const b = state.board;
+  const asked = `${b.line}:${b.station}`;
+  const now = Date.now();
+  b.askedAt = now;
+  // After a live failure, use the sample run for a minute, then try again.
+  if (FEED_URL && now - b.failedAt > 60_000) {
+    try {
+      const res = await fetch(new URL(`arrivals?mapid=${b.station}`, FEED_URL), { cache: "no-store" });
+      if (!res.ok) throw new Error(`arrivals ${res.status}`);
+      const list = parseArrivals(await res.json()).filter((a) => a.line === b.line);
+      if (asked !== `${b.line}:${b.station}`) return; // the pick changed mid-flight
+      Object.assign(b, { list, dataAt: Date.now(), live: true, failedAt: 0 });
+      return renderBoard();
+    } catch (err) {
+      if (asked !== `${b.line}:${b.station}`) return;
+      console.warn("Arrivals unavailable", err);
+      b.failedAt = Date.now();
+    }
+  }
+  Object.assign(b, { live: false, dataAt: now, list: sampleArrivals(state.routes, state.net.stations, now, b.station, b.line) });
+  renderBoard();
+}
+
+let boardTick = 0;
+function updateBoard(now) {
+  const b = state.board;
+  if (!b.open || !b.station) return;
+  if (now - b.askedAt > (b.live ? ARRIVALS_EVERY : 5000)) refreshArrivals();
+  // Count down once a second between refreshes.
+  const tick = Math.floor(now / 1000);
+  if (tick !== boardTick) { boardTick = tick; updateTimes(); }
+}
+
+// Rows are rebuilt only when new data lands, so focus and clicks survive;
+// the countdowns tick in place.
+function renderBoard() {
+  const b = state.board;
+  const ol = document.getElementById("arrivals");
+  const gone = (Date.now() - b.dataAt) / 1000;
+  const list = b.list.filter((a) => a.inSec - gone > -30).slice(0, 8);
+  const key = list.map((a) => `${a.id}>${a.dest}`).join("|");
+  if (list.length && key === b.rowsKey) {
+    // Same trains as before: refresh their times without touching the DOM.
+    b.rows.forEach((r, i) => { r.a = list[i]; });
+    updateTimes();
+  } else if (!list.length) {
+    const li = document.createElement("li");
+    li.className = "empty";
+    li.textContent = "No trains due in the next 45 minutes.";
+    ol.replaceChildren(li);
+    b.rows = [];
+  } else {
+    b.rows = list.map((a) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.style.setProperty("--c", `var(--line-${a.line})`);
+      btn.innerHTML = `<i></i><span>To ${esc(a.dest)}${a.scheduled && b.live ? " <small>sched.</small>" : ""}</span><time></time>`;
+      btn.addEventListener("click", () => showTrain(a.id));
+      const li = document.createElement("li");
+      li.append(btn);
+      return { a, btn, li, time: btn.querySelector("time") };
+    });
+    ol.replaceChildren(...b.rows.map((r) => r.li));
+    updateTimes();
+  }
+  b.rowsKey = key;
+  document.getElementById("board-note").textContent = b.live
+    ? "CTA predictions. “sched.” means the train hasn’t left its terminal yet."
+    : b.failedAt
+      ? "Can’t reach CTA arrivals right now, so these times come from the sample run."
+      : "Times from the sample run, which follows the real routes and stops.";
+}
+
+function updateTimes() {
+  const b = state.board;
+  const gone = (Date.now() - b.dataAt) / 1000;
+  for (const { a, btn, time } of b.rows) {
+    const left = Math.max(0, a.inSec - gone);
+    const mins = Math.round(left / 60);
+    const label = left < 60 ? "Due" : `${mins} min`;
+    if (time.textContent === label) continue;
+    time.textContent = label;
+    time.className = left < 60 ? "due" : "";
+    btn.setAttribute("aria-label", `${LINE_NAME[a.line]} Line to ${a.dest}, ${left < 60 ? "due now" : `in ${mins} minutes`}. Show on map.`);
+  }
+}
+
+function showTrain(id) {
+  // Run numbers only line up when the board and the map use the same source.
+  if (state.board.live !== state.live.ok) return;
+  const t = state.trains.find((x) => x.id === id);
+  if (!t) return;
+  if (state.hidden.has(t.line)) document.querySelector(`[data-line="${t.line}"]`).click();
+  setView(t.x, t.y, Math.min(state.view.mpp, 25));
+  select(id);
+}
+
+// ---------------------------------------------------------------------------
 // Legend, card, tooltip
 
 function buildLegend() {
@@ -699,14 +893,14 @@ function hitTest(px, py) {
     if (dist < bestD) { bestD = dist; best = d.train; }
   }
   if (best) return { kind: "train", train: best };
-  for (let i = state.eggs.length - 1; i >= 0; i--) {
-    const e = state.eggs[i];
-    if (px >= e.x0 - 1 && px <= e.x1 + 2 && py >= e.y0 - 1 && py <= e.y1 + 2) return { kind: "egg", egg: e };
-  }
   for (const s of state.net.stations) {
     if (stationHidden(s)) continue;
     const [sx, sy] = toPx(s.x, s.y);
     if (Math.hypot(sx - px, sy - py) < 3) return { kind: "station", station: s };
+  }
+  for (let i = state.eggs.length - 1; i >= 0; i--) {
+    const e = state.eggs[i];
+    if (px >= e.x0 - 1 && px <= e.x1 + 2 && py >= e.y0 - 1 && py <= e.y1 + 2) return { kind: "egg", egg: e };
   }
   return null;
 }
@@ -722,7 +916,7 @@ function showTip(hit, clientX, clientY) {
     tip.innerHTML = `<b>${esc(e.label)}</b>${e.note ? ` · ${esc(e.note)}` : ""}`;
   } else {
     const s = hit.station;
-    tip.innerHTML = `<b>${esc(s.name)}</b> · ${s.l.map((c) => LINE_NAME[c]).join(", ")}`;
+    tip.innerHTML = `<b>${esc(s.name)}</b> · ${s.l.map((c) => LINE_NAME[c]).join(", ")} · click for next trains`;
   }
   tip.hidden = false;
   const r = tip.getBoundingClientRect();
@@ -800,6 +994,7 @@ function bindInput() {
     if (wasTap && e.type === "pointerup") {
       const hit = hitTest(...fbPoint(e));
       if (hit?.kind === "train") select(hit.train.id);
+      else if (hit?.kind === "station") { openBoard(hit.station); showTip(null); }
       else if (hit && e.pointerType !== "mouse") showTip(hit, e.clientX, e.clientY);
       else { select(null); showTip(null); }
     }

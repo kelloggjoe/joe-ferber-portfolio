@@ -233,25 +233,44 @@ def build_routes(tracks, stations):
     return routes
 
 
-def route_stops(pts, line_stations, max_off=250):
-    """Distance along the route of each station it passes, in travel order."""
+def route_stops(pts, line_stations, max_off=120, far_off=300):
+    """Distance along the route of each station it passes, in travel order.
+
+    Stations within max_off of the track count; a station with no match at
+    all (a terminal set back from the end of the track, like O'Hare) gets a
+    second look out to far_off. Keeping the first radius tight stops a stop
+    a block away, like Quincy beside the Van Buren side of the Loop, from
+    being counted as a pass.
+    """
     cum = [0.0]
     for i in range(len(pts) - 1):
         cum.append(cum[-1] + dist(pts[i], pts[i + 1]))
-    hits = []
-    for s in line_stations:
-        # A route can pass a station twice (out and back); keep every pass.
+
+    def passes(s, limit):
+        # Each run of segments within reach is one pass; keep its closest point.
+        found, run = [], None
         for i in range(len(pts) - 1):
             q, d = closest_on_segment(pts[i], pts[i + 1], s["pt"])
-            if d <= max_off:
-                hits.append((round(cum[i] + dist(pts[i], q)), s["id"]))
+            if d <= limit:
+                at = cum[i] + dist(pts[i], q)
+                if run is None or d < run[1]:
+                    run = (at, d) if run is None or at - run[0] < 300 else run
+                if run and at - run[0] >= 300:
+                    found.append(run[0])
+                    run = (at, d)
+            elif run is not None:
+                found.append(run[0])
+                run = None
+        if run is not None:
+            found.append(run[0])
+        return found
+
+    hits = []
+    for s in line_stations:
+        found = passes(s, max_off) or passes(s, far_off)
+        hits += [(round(at), s["id"]) for at in found]
     hits.sort()
-    out = []
-    for at, sid in hits:
-        if out and out[-1][1] == sid and at - out[-1][0] < 300:
-            continue  # same pass split across two segments
-        out.append([at, sid])
-    return out
+    return [[at, sid] for at, sid in hits]
 
 
 def build_lake(city):

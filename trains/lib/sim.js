@@ -55,8 +55,56 @@ export function positionAt(tt, seconds) {
 
 export function sampleTrains(routes, stations, nowMs, counts = TRAIN_COUNTS, opts = {}) {
   const names = new Map(stations.map((s) => [s.id, s.name]));
-  const phase = opts.phase || ((line, k) => hash(`${line}:${k}`));
   const seconds = nowMs / 1000;
+  return fleet(routes, counts, opts).map(({ id, rn, line, route, tt, offset }) => {
+    const pos = positionAt(tt, seconds + offset);
+    const p = pointAt(route, pos.s);
+    const s = ((pos.s % route.length) + route.length) % route.length;
+    return {
+      id,
+      rn,
+      line,
+      x: p.x,
+      y: p.y,
+      angle: p.angle,
+      next: names.get(pos.moving ? pos.leg.next : pos.leg.stop),
+      dest: destAt(route, s),
+      approaching: pos.moving && pos.left < 20,
+      delayed: false,
+    };
+  });
+}
+
+// When each sample train on `line` next pulls into `stationId`, within the
+// horizon, soonest first. Read straight off the same timetables as the map.
+export function sampleArrivals(routes, stations, nowMs, stationId, line, horizon = 45 * 60, counts = TRAIN_COUNTS) {
+  const seconds = nowMs / 1000;
+  const out = [];
+  for (const { id, rn, route, tt, offset } of fleet(routes, { [line]: counts[line] })) {
+    const t = (((seconds + offset) % tt.period) + tt.period) % tt.period;
+    for (const leg of tt.legs) {
+      if (leg.stop !== stationId) continue;
+      // Standing at the platform counts as due until the doors close.
+      const since = (t - leg.t0 + tt.period) % tt.period;
+      const inSec = since < leg.dwell ? 0 : tt.period - since;
+      if (inSec > horizon) continue;
+      out.push({ id, rn, line, inSec: Math.round(inSec), dest: destAt(route, leg.s0), scheduled: true });
+    }
+  }
+  out.sort((a, b) => a.inSec - b.inSec);
+  // One listing per train per pass, even if a stop sits on the route twice in quick succession.
+  return out.filter((a, i) => !out.slice(0, i).some((b) => b.id === a.id && a.inSec - b.inSec < 90));
+}
+
+// What the front of the train says at distance s: the far end until it
+// gets there, then home. Shared by the map and the arrivals board.
+function destAt(route, s) {
+  return s < route.turn - 60 ? route.ends[1] : route.ends[0];
+}
+
+// Every sample train with its route, timetable and place in the cycle.
+function fleet(routes, counts, opts = {}) {
+  const phase = opts.phase || ((line, k) => hash(`${line}:${k}`));
   const trains = [];
   for (const [line, total] of Object.entries(counts)) {
     const lineRoutes = routes.filter((r) => r.line === line);
@@ -68,21 +116,8 @@ export function sampleTrains(routes, stations, nowMs, counts = TRAIN_COUNTS, opt
       // Spread the line's trains evenly, then nudge each so headways vary.
       const slot = Math.floor(k / lineRoutes.length);
       const offset = ((slot + phase(line, k) * 0.6) / perRoute) * tt.period;
-      const pos = positionAt(tt, seconds + offset);
-      const p = pointAt(route, pos.s);
-      const s = ((pos.s % route.length) + route.length) % route.length;
-      trains.push({
-        id: `${line}-${RUN_BASE[line] + k}`,
-        rn: String(RUN_BASE[line] + k).padStart(3, "0"),
-        line,
-        x: p.x,
-        y: p.y,
-        angle: p.angle,
-        next: names.get(pos.moving ? pos.leg.next : pos.leg.stop),
-        dest: s < route.turn ? route.ends[1] : route.ends[0],
-        approaching: pos.moving && pos.left < 20,
-        delayed: false,
-      });
+      const rn = String(RUN_BASE[line] + k).padStart(3, "0");
+      trains.push({ id: `${line}-${RUN_BASE[line] + k}`, rn, line, route, tt, offset });
     }
   }
   return trains;

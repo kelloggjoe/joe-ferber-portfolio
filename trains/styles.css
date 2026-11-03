@@ -155,6 +155,83 @@ h1 {
   font-size: var(--type-1);
 }
 
+/* Next trains */
+
+.board {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: var(--px) solid var(--edge);
+}
+
+.board-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 28px;
+}
+.board-toggle svg { width: 14px; height: 14px; }
+.board-toggle[aria-expanded="true"] svg { transform: scaleY(-1); }
+.board-toggle:hover { color: var(--line-y); }
+
+.board-pick {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 6px 10px;
+  margin-top: 8px;
+  color: var(--ink-2);
+}
+.board-pick label { display: contents; }
+
+select {
+  min-width: 0;
+  padding: 2px 26px 2px 6px;
+  border: var(--px) solid var(--edge);
+  border-radius: 0;
+  background: var(--ground) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 7 7' shape-rendering='crispEdges'%3E%3Cpath fill='%23aab5cf' d='M0 2h7v1H6v1H5v1H4v1H3V5H2V4H1V3H0z'/%3E%3C/svg%3E") no-repeat right 6px center;
+  color: var(--ink);
+  font: inherit;
+  appearance: none;
+  cursor: pointer;
+}
+select:hover { border-color: var(--ink-2); }
+
+.arrivals {
+  display: grid;
+  gap: 2px;
+  max-height: 40vh;
+  margin: 10px 0 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+.arrivals button {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 26px;
+  padding: 0 4px;
+  text-align: left;
+}
+.arrivals button:hover { background: rgb(255 255 255 / 0.06); }
+.arrivals i {
+  width: calc(var(--px) * 3);
+  height: calc(var(--px) * 3);
+  background: var(--c);
+}
+.arrivals time { font-variant-numeric: tabular-nums; }
+.arrivals .due { color: var(--line-y); }
+.arrivals small { color: var(--ink-2); font-size: inherit; }
+.arrivals .empty { color: var(--ink-2); padding: 0 4px; }
+
+.board-note {
+  margin: 8px 0 0;
+  color: var(--ink-2);
+}
+
 /* Line legend: each entry hides or shows that line. */
 
 .legend {
@@ -277,8 +354,11 @@ h1 {
     top: max(10px, env(safe-area-inset-top));
     left: 10px;
     width: calc(100vw - 20px);
+    max-height: calc(100dvh - 90px);
+    overflow-y: auto;
     padding: 8px 10px 10px;
   }
+  .arrivals { max-height: none; }
   .status { margin-top: 8px; }
   .note { display: none; }
 
