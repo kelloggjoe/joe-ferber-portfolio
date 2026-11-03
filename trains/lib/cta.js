@@ -1,4 +1,4 @@
-// CTA Train Tracker "ttpositions" feed, as passed through by the proxy in
+// CTA Train Tracker feeds ("ttpositions" and "ttarrivals"), as passed through by the proxy in
 // _cta-proxy/. Docs: https://www.transitchicago.com/developers/ttdocs/
 
 import { project } from "./route.js";
@@ -36,4 +36,31 @@ export function parsePositions(feed, origin) {
     }
   }
   return trains;
+}
+
+const ROUTE_CODES = { Red: "red", Blue: "blue", Brn: "brn", G: "g", Org: "o", P: "p", Pink: "pnk", Y: "y" };
+
+// "ttarrivals" predictions for one station, soonest first. Times count from
+// the response's own timestamp (predictions can be a minute older). All the
+// timestamps are Chicago local time, so only their differences matter.
+export function parseArrivals(feed) {
+  const tt = feed && feed.ctatt;
+  if (!tt) throw new Error("Unexpected response from the arrivals feed");
+  if (tt.errCd && tt.errCd !== "0") throw new Error(tt.errNm || `Arrivals feed error ${tt.errCd}`);
+  const asOf = Date.parse(tt.tmst);
+  return [].concat(tt.eta || [])
+    .map((e) => {
+      const line = ROUTE_CODES[e.rt];
+      return {
+        id: `${line}-${e.rn}`,
+        rn: e.rn,
+        line,
+        dest: e.destNm,
+        inSec: Math.max(0, Math.round((Date.parse(e.arrT) - (asOf || Date.parse(e.prdt))) / 1000)),
+        scheduled: e.isSch === "1",
+        delayed: e.isDly === "1",
+      };
+    })
+    .filter((a) => a.line)
+    .sort((a, b) => a.inSec - b.inSec);
 }

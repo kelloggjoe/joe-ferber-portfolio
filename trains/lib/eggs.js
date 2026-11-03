@@ -30,6 +30,7 @@ export const PALETTE = {
   r: "#ff4a4a", k: "#3f4d72", y: "#ffd166",
   c: "#8fd8ff", b: "#9aa6c2",
   g: "#4be08a", d: "#25a05e", t: "#ff5a7a", f: "#cfe8ff",
+  u: "#b48cff", n: "#c98a52", e: "#ff9230", l: "#34b8ff", x: "#0e1424",
 };
 
 // Where each landmark sits, and how far in you have to zoom (meters per

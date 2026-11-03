@@ -2,8 +2,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { project, buildRoute, pointAt } from "../trains/lib/route.js";
-import { makeTimetable, positionAt, sampleTrains, TRAIN_COUNTS } from "../trains/lib/sim.js";
-import { parsePositions } from "../trains/lib/cta.js";
+import { makeTimetable, positionAt, sampleTrains, sampleArrivals, TRAIN_COUNTS } from "../trains/lib/sim.js";
+import { parsePositions, parseArrivals } from "../trains/lib/cta.js";
 
 const network = JSON.parse(readFileSync(new URL("../trains/data/network.json", import.meta.url)));
 const routes = network.routes.map(buildRoute);
@@ -104,3 +104,71 @@ test("parsePositions surfaces API errors", () => {
 function pick(p) {
   return { x: Math.round(p.x), y: Math.round(p.y) };
 }
+
+test("sampleArrivals lists upcoming trains at a station, soonest first", () => {
+  const now = Date.UTC(2026, 10, 2, 18, 0, 0);
+  const fullerton = network.stations.find((s) => s.name === "Fullerton");
+  const list = sampleArrivals(routes, network.stations, now, fullerton.id, "red");
+  assert.ok(list.length >= 4, `only ${list.length} arrivals`);
+  assert.ok(list.every((a) => a.line === "red" && a.inSec >= 0 && a.inSec <= 45 * 60));
+  assert.deepEqual(list.map((a) => a.inSec), list.map((a) => a.inSec).sort((a, b) => a - b));
+  const dests = new Set(list.map((a) => a.dest));
+  assert.ok(dests.has("Howard") && dests.has("95th/Dan Ryan"), [...dests].join(", "));
+});
+
+test("sampleArrivals agrees with where the trains are", () => {
+  const now = Date.UTC(2026, 10, 2, 18, 0, 0);
+  const fullerton = network.stations.find((s) => s.name === "Fullerton");
+  const first = sampleArrivals(routes, network.stations, now, fullerton.id, "red")[0];
+  // Just after the predicted arrival, that train is stopped at Fullerton.
+  const later = sampleTrains(routes, network.stations, now + (first.inSec + 2) * 1000);
+  const t = later.find((x) => x.id === first.id);
+  assert.equal(t.next, "Fullerton");
+});
+
+test("parseArrivals reads CTA predictions in minutes", () => {
+  const feed = {
+    ctatt: {
+      tmst: "2026-11-02T20:30:00", errCd: "0",
+      eta: [
+        { staId: "41220", rn: "815", rt: "Red", destNm: "Howard", prdt: "2026-11-02T20:30:00", arrT: "2026-11-02T20:34:20", isApp: "0", isSch: "0", isDly: "0" },
+        { staId: "41220", rn: "412", rt: "Brn", destNm: "Kimball", prdt: "2026-11-02T20:30:00", arrT: "2026-11-02T20:30:40", isApp: "1", isSch: "1", isDly: "0" },
+      ],
+    },
+  };
+  const list = parseArrivals(feed);
+  assert.deepEqual(list.map((a) => [a.line, a.inSec, a.scheduled]), [["brn", 40, true], ["red", 260, false]]);
+  assert.equal(list[1].id, "red-815");
+});
+
+test("sampleArrivals lists each train once per pass", () => {
+  const now = Date.UTC(2026, 10, 2, 18, 0, 0);
+  for (const [name, line] of [["Quincy/Wells", "o"], ["LaSalle/Van Buren", "pnk"], ["Quincy/Wells", "brn"]]) {
+    const st = network.stations.find((s) => s.name === name);
+    const list = sampleArrivals(routes, network.stations, now, st.id, line);
+    const byTrain = Object.groupBy(list, (a) => a.id);
+    for (const [id, hits] of Object.entries(byTrain)) {
+      const times = hits.map((h) => h.inSec).sort((a, b) => a - b);
+      for (let i = 1; i < times.length; i++) assert.ok(times[i] - times[i - 1] > 90, `${line} ${name}: ${id} at ${times}`);
+    }
+  }
+});
+
+test("a train standing at the platform shows as due", () => {
+  const fullerton = network.stations.find((s) => s.name === "Fullerton");
+  const now = Date.UTC(2026, 10, 2, 18, 0, 0);
+  const first = sampleArrivals(routes, network.stations, now, fullerton.id, "red")[0];
+  const during = sampleArrivals(routes, network.stations, now + (first.inSec + 5) * 1000, fullerton.id, "red");
+  assert.ok(during.some((a) => a.id === first.id && a.inSec === 0), "still listed while dwelling");
+});
+
+test("the board and the train agree on where a train is headed", () => {
+  const now = Date.UTC(2026, 10, 2, 18, 0, 0);
+  for (const [name, line] of [["State/Lake", "p"], ["Belmont", "p"], ["Roosevelt", "o"]]) {
+    const st = network.stations.find((s) => s.name === name && s.l.includes(line));
+    for (const a of sampleArrivals(routes, network.stations, now, st.id, line).slice(0, 3)) {
+      const t = sampleTrains(routes, network.stations, now + (a.inSec + 1) * 1000).find((x) => x.id === a.id);
+      assert.equal(t.dest, a.dest, `${a.id} at ${name}`);
+    }
+  }
+});

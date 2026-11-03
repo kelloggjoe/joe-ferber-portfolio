@@ -3,7 +3,7 @@
 <!-- Cloudflare lets browsers keep CSS and JS for hours, so every asset URL
      carries ?v=. Bump it (here, in the import map, and on the links below)
      whenever trains/ changes. -->
-<html lang="en" data-feed="" data-version="3">
+<html lang="en" data-feed="" data-version="4">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -11,19 +11,20 @@
   <meta name="description" content="Every CTA ’L’ train on an 8-bit map of Chicago.">
   <meta name="theme-color" content="#121a2e">
   <link rel="preload" href="fonts/jersey-10-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="data/network.json?v=3" as="fetch" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=3">
+  <link rel="preload" href="data/network.json?v=4" as="fetch" crossorigin>
+  <link rel="stylesheet" href="styles.css?v=4">
   <script type="importmap">
     {
       "imports": {
-        "./lib/route.js": "./lib/route.js?v=3",
-        "./lib/sim.js": "./lib/sim.js?v=3",
-        "./lib/cta.js": "./lib/cta.js?v=3",
-        "./lib/eggs.js": "./lib/eggs.js?v=3"
+        "./lib/route.js": "./lib/route.js?v=4",
+        "./lib/sim.js": "./lib/sim.js?v=4",
+        "./lib/cta.js": "./lib/cta.js?v=4",
+        "./lib/eggs.js": "./lib/eggs.js?v=4",
+        "./lib/places.js": "./lib/places.js?v=4"
       }
     }
   </script>
-  <script type="module" src="app.js?v=3"></script>
+  <script type="module" src="app.js?v=4"></script>
 </head>
 <body>
   <canvas id="map" tabindex="0" role="img" aria-label="Map of Chicago’s ’L’ lines with a dot for each train"></canvas>
@@ -39,6 +40,20 @@
       <time id="clock"></time>
     </p>
     <p class="note" id="note">Simulated trains running the real routes and stops. Live CTA positions are coming soon.</p>
+    <section class="board">
+      <button type="button" class="board-toggle" id="board-toggle" aria-expanded="false" aria-controls="board-body">
+        <span>Next trains</span>
+        <svg viewBox="0 0 7 7" aria-hidden="true"><path d="M0 2h7v1H6v1H5v1H4v1H3V5H2V4H1V3H0z"/></svg>
+      </button>
+      <div class="board-body" id="board-body" hidden>
+        <div class="board-pick">
+          <label>Line<select id="pick-line"></select></label>
+          <label>Station<select id="pick-station"></select></label>
+        </div>
+        <ol class="arrivals" id="arrivals"></ol>
+        <p class="board-note" id="board-note" aria-live="polite"></p>
+      </div>
+    </section>
   </header>
 
   <nav class="legend panel" aria-label="Show or hide lines" id="legend"></nav>
