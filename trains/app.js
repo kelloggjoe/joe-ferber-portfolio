@@ -1,4 +1,8 @@
-import { buildRoute } from "./lib/route.js";
+import { buildRoute, project } from "./lib/route.js";
+import {
+  SPRITES, PALETTE, LANDMARKS, NAVY_PIER, RIVER, BOATS, BOAT_RANGE,
+  parseSprite, chicagoDate, greenRiver, holidaySeason, monsterPose, codeListener,
+} from "./lib/eggs.js";
 import { sampleTrains } from "./lib/sim.js";
 import { parsePositions } from "./lib/cta.js";
 
@@ -32,6 +36,20 @@ const COLORS = {
   ink: rgb(color("--ink")),
 };
 const LINE_RGB = Object.fromEntries(LINE_ORDER.map((c) => [c, rgb(color(`--line-${c}`))]));
+COLORS.pier = rgb(color("--pier"));
+COLORS.river = rgb(color("--river"));
+COLORS.riverGreen = rgb(color("--river-green"));
+const LAKE = new Set([COLORS.lakeA, COLORS.lakeB, COLORS.glint]);
+
+const FRAMES = Object.fromEntries(Object.entries(SPRITES).map(([k, frames]) => [k, frames.map(parseSprite)]));
+// Boats heading west face the other way.
+FRAMES.boatWest = SPRITES.boat.map((rows) => parseSprite(rows.map((r) => [...r].reverse().join(""))));
+
+// ?date=2026-03-14 previews the date-driven surprises.
+const dateParam = new URLSearchParams(location.search).get("date");
+const today = chicagoDate(dateParam ? new Date(`${dateParam}T12:00:00-06:00`) : new Date());
+const SEASON = { green: greenRiver(today), holiday: holidaySeason(today) };
+const KONAMI = ["arrowup", "arrowup", "arrowdown", "arrowdown", "arrowleft", "arrowright", "arrowleft", "arrowright", "b", "a"];
 
 const state = {
   net: null,
@@ -46,6 +64,9 @@ const state = {
   hidden: new Set(),
   trains: [],
   drawn: [], // [{train, px, py}] from the last frame, for hit testing
+  eggs: [], // [{x0, y0, x1, y1, label, note}] sprites drawn in the last frame
+  water: null, // projected river and pier
+  monster: { at: 0, x: 0, y: 0, next: 0 },
   hover: null,
   selected: null,
   live: { prev: new Map(), curr: new Map(), at: 0, ok: false, failed: false },
@@ -63,6 +84,11 @@ async function init() {
   state.net = net;
   state.routes = net.routes.map(buildRoute);
   indexTracks(net);
+  const flat = (path) => path.flatMap(([lat, lon]) => { const p = project(lat, lon, net.origin); return [p.x, p.y]; });
+  state.water = { river: RIVER.map(flat), pier: flat(NAVY_PIER) };
+  state.monster.next = performance.now() + 9000;
+  const summon = codeListener(KONAMI, () => spawnMonster(performance.now(), true));
+  addEventListener("keydown", (e) => summon(e.key.toLowerCase()));
   buildLegend();
   bindInput();
   resize();
@@ -103,7 +129,7 @@ function indexTracks(net) {
 
 function resize() {
   const dpr = devicePixelRatio || 1;
-  const cssPx = innerWidth < 700 ? 2 : 3;
+  const cssPx = 2;
   const devPx = Math.max(1, Math.round(cssPx * dpr));
   const w = Math.ceil((innerWidth * dpr) / devPx);
   const h = Math.ceil((innerHeight * dpr) / devPx);
@@ -183,15 +209,27 @@ function paintBackground() {
 
   paintGrid(buf, w, h, ox, oy);
   paintLake(buf, w, h, ox, oy);
+  paintWaterways(buf, w, h);
   const gap = laneGap();
   for (const t of state.net.tracks) {
     for (const lane of t.lanes) {
-      const c = mix(LINE_RGB[lane.code], COLORS.ground, state.hidden.has(lane.code) ? 0.82 : 0.38);
+      const c = mix(LINE_RGB[lane.code], COLORS.ground, state.hidden.has(lane.code) ? 0.8 : 0.3);
       drawPolyline(buf, w, h, t.pts, lane.off * gap, c);
     }
   }
   paintStations(buf, w, h);
+  state.bgBuf = buf;
   state.bgDirty = false;
+}
+
+function paintWaterways(buf, w, h) {
+  const river = SEASON.green ? COLORS.riverGreen : COLORS.river;
+  for (const path of state.water.river) {
+    drawPolyline(buf, w, h, path, 0, river);
+    if (state.view.mpp < 20) drawPolyline(buf, w, h, path, 1, river);
+  }
+  drawPolyline(buf, w, h, state.water.pier, 0, COLORS.pier);
+  if (state.view.mpp < 60) drawPolyline(buf, w, h, state.water.pier, 1, COLORS.pier);
 }
 
 function paintGrid(buf, w, h, ox, oy) {
@@ -253,11 +291,11 @@ function paintLake(buf, w, h, ox, oy) {
 
 // Close in, shared track splits into separate lanes and trains grow.
 function laneGap() {
-  return state.view.mpp < 25 ? 2 : 1;
+  return state.view.mpp < 40 ? 2 : 1;
 }
 
 function trainSize() {
-  return state.view.mpp < 45 ? 3 : 2;
+  return state.view.mpp < 200 ? 3 : 2;
 }
 
 function paintStations(buf, w, h) {
@@ -323,7 +361,16 @@ function setPx(buf, w, h, x, y, c) {
 // Trains
 
 function currentTrains(now) {
-  return state.live.ok ? liveTrains(now) : sampleTrains(state.routes, state.net.stations, now);
+  if (state.live.ok) return liveTrains(now);
+  const trains = sampleTrains(state.routes, state.net.stations, now);
+  if (SEASON.holiday) {
+    // One train per line gets the lights, the way the CTA Holiday Train does.
+    const lit = new Set(["y"]);
+    for (const t of trains) {
+      if (!lit.has(t.line)) { t.holiday = true; lit.add(t.line); }
+    }
+  }
+  return trains;
 }
 
 function liveTrains(now) {
@@ -369,7 +416,7 @@ function drawTrains(now) {
     const [ox, oy] = laneOffset(t);
     const px = Math.round(fx + ox);
     const py = Math.round(fy + oy);
-    const base = LINE_RGB[t.line];
+    const base = t.holiday ? HOLIDAY_LIGHTS[Math.floor(now / 400 + px) % HOLIDAY_LIGHTS.length] : LINE_RGB[t.line];
     // Fading trail behind the train shows which way it is heading.
     const bx = -Math.cos(t.angle), by = -Math.sin(t.angle);
     [[0.45, 0], [0.65, 1], [0.82, 2]].forEach(([fade, k]) => {
@@ -397,6 +444,124 @@ function drawTrains(now) {
 }
 
 // ---------------------------------------------------------------------------
+// Landmarks, boats and the lake monster. Sprites keep their size at every
+// zoom: one sprite pixel is one map pixel.
+
+const HOLIDAY_LIGHTS = ["#ff4a4a", "#4be08a", "#ffd166"].map(rgb);
+
+function drawSprite(sprite, px, py, k = 1, rows = sprite.h) {
+  // Anchored at the bottom centre, k map pixels per sprite pixel. rows < h
+  // shows only the top of the sprite, sitting on py, so things can rise
+  // out of the water.
+  const x0 = px - ((sprite.w * k) >> 1);
+  const y0 = py - rows * k + 1;
+  for (const [x, y, ch] of sprite.pixels) {
+    if (y >= rows) continue;
+    ctx.fillStyle = PALETTE[ch];
+    ctx.fillRect(x0 + x * k, y0 + y * k, k, k);
+  }
+  return { x0, y0, x1: x0 + sprite.w * k - 1, y1: py };
+}
+
+// Close in, sprites double up so they read as characters, not specks.
+function spriteScale() {
+  return state.view.mpp < 60 ? 2 : 1;
+}
+
+function drawEggs(now) {
+  const { w, h } = state.fb;
+  const still = reduceMotion.matches;
+  state.eggs = [];
+  const onScreen = (px, py) => px > -24 && py > -24 && px < w + 24 && py < h + 24;
+  const k = spriteScale();
+
+  for (const l of LANDMARKS) {
+    if (state.view.mpp > l.maxMpp) continue;
+    const p = project(l.lat, l.lon, state.net.origin);
+    const [fx, fy] = toPx(p.x, p.y);
+    const px = Math.round(fx), py = Math.round(fy);
+    if (!onScreen(px, py)) continue;
+    const frames = FRAMES[l.sprite];
+    const f = still || !l.every ? 0 : Math.floor(now / l.every) % frames.length;
+    state.eggs.push({ ...drawSprite(frames[f], px, py, k), label: l.label, note: l.note });
+  }
+
+  const t = Date.now() / 1000;
+  const [xa, xb] = BOAT_RANGE.map((lon) => project(41.9, lon, state.net.origin).x);
+  for (const b of BOATS) {
+    const start = project(b.lat, b.lon0, state.net.origin);
+    const span = xb - xa;
+    const x = xa + ((((start.x - xa + b.speed * t) % span) + span) % span);
+    const [fx, fy] = toPx(x, start.y);
+    const px = Math.round(fx);
+    const py = Math.round(fy) + (still ? 0 : Math.floor(t / 1.3) % 2);
+    if (!onScreen(px, py) || !isLake(px, py + 1)) continue;
+    state.eggs.push({ ...drawSprite(FRAMES[b.speed < 0 ? "boatWest" : "boat"][0], px, py, k), label: "Sailboat" });
+  }
+
+  drawMonster(now);
+}
+
+function isLake(px, py) {
+  const { w, h } = state.fb;
+  return px >= 0 && py >= 0 && px < w && py < h && LAKE.has(state.bgBuf[py * w + px]);
+}
+
+function drawMonster(now) {
+  const m = state.monster;
+  if (!m.at) {
+    if (now >= m.next) spawnMonster(now);
+    if (!m.at) return;
+  }
+  const pose = monsterPose((now - m.at) / 1000);
+  if (pose.done) {
+    m.at = 0;
+    m.next = now + 40_000 + Math.random() * 80_000;
+    return;
+  }
+  const [fx, fy] = toPx(m.x, m.y);
+  const px = Math.round(fx), py = Math.round(fy);
+  if (pose.foam >= 0) drawSprite(FRAMES.foam[pose.foam], px, py + 2, 2);
+  if (pose.rows > 0) {
+    const box = drawSprite(FRAMES.monster[pose.blink ? 1 : 0], px, py, 2, pose.rows);
+    state.eggs.push({ ...box, label: "Lake Michigan monster", note: "probably just a log" });
+  }
+}
+
+// Surface somewhere in open water that's on screen and not under a panel.
+function spawnMonster(now, eager = false) {
+  const m = state.monster;
+  if (m.at) return;
+  const { w, h } = state.fb;
+  const blocked = panelRects();
+  const tries = eager ? 400 : 60;
+  for (let i = 0; i < tries; i++) {
+    // The monster is drawn at double size: 24 by 14 map pixels plus foam.
+    const px = 14 + Math.floor(Math.random() * (w - 28));
+    const py = 16 + Math.floor(Math.random() * (h - 20));
+    if (blocked.some((r) => px + 14 > r.x0 && px - 14 < r.x1 && py + 4 > r.y0 && py - 16 < r.y1)) continue;
+    let open = true;
+    for (let y = py - 15; y <= py + 3 && open; y++) {
+      for (let x = px - 13; x <= px + 13 && open; x++) open = isLake(x, y);
+    }
+    if (!open) continue;
+    const at = toWorld(px, py);
+    Object.assign(m, { at: now, x: at.x, y: at.y });
+    return;
+  }
+  m.next = now + 15_000;
+}
+
+function panelRects() {
+  const c = canvas.getBoundingClientRect();
+  const k = state.fb.w / c.width;
+  return [...document.querySelectorAll(".panel")].filter((el) => !el.hidden).map((el) => {
+    const r = el.getBoundingClientRect();
+    return { x0: (r.left - c.left) * k, y0: (r.top - c.top) * k, x1: (r.right - c.left) * k, y1: (r.bottom - c.top) * k };
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Frame loop
 
 let lastCounts = "";
@@ -405,6 +570,7 @@ function frame(now) {
   state.trains = currentTrains(wall);
   if (state.bgDirty) paintBackground();
   ctx.putImageData(state.bg, 0, 0);
+  drawEggs(now);
   drawTrains(now);
   updateCounts();
   updateCard();
@@ -511,7 +677,7 @@ function updateCard(force) {
     select(null);
     return;
   }
-  const key = `${t.id}|${t.dest}|${t.next}|${t.approaching}|${t.delayed}`;
+  const key = `${t.id}|${t.dest}|${t.next}|${t.approaching}|${t.delayed}|${t.holiday}`;
   if (!force && key === cardKey) return;
   cardKey = key;
   document.getElementById("card-swatch").style.setProperty("--c", `var(--line-${t.line})`);
@@ -519,8 +685,10 @@ function updateCard(force) {
   document.getElementById("card-dest").textContent = t.dest ?? "Not reported";
   document.getElementById("card-next").textContent = t.next || "Not reported";
   const flag = document.getElementById("card-flag");
-  flag.hidden = !(t.delayed || t.approaching);
-  flag.textContent = t.delayed ? "Running late" : `Pulling into ${t.next}`;
+  flag.hidden = !(t.delayed || t.approaching || t.holiday);
+  flag.textContent = t.delayed ? "Running late"
+    : t.holiday ? "The Holiday Train, lit up for December"
+    : `Pulling into ${t.next}`;
 }
 
 function hitTest(px, py) {
@@ -531,6 +699,10 @@ function hitTest(px, py) {
     if (dist < bestD) { bestD = dist; best = d.train; }
   }
   if (best) return { kind: "train", train: best };
+  for (let i = state.eggs.length - 1; i >= 0; i--) {
+    const e = state.eggs[i];
+    if (px >= e.x0 - 1 && px <= e.x1 + 2 && py >= e.y0 - 1 && py <= e.y1 + 2) return { kind: "egg", egg: e };
+  }
   for (const s of state.net.stations) {
     if (stationHidden(s)) continue;
     const [sx, sy] = toPx(s.x, s.y);
@@ -545,6 +717,9 @@ function showTip(hit, clientX, clientY) {
   if (hit.kind === "train") {
     const t = hit.train;
     tip.innerHTML = `<b>${LINE_NAME[t.line]} ${esc(t.rn)}</b> to ${esc(t.dest ?? "Not reported")}`;
+  } else if (hit.kind === "egg") {
+    const e = hit.egg;
+    tip.innerHTML = `<b>${esc(e.label)}</b>${e.note ? ` · ${esc(e.note)}` : ""}`;
   } else {
     const s = hit.station;
     tip.innerHTML = `<b>${esc(s.name)}</b> · ${s.l.map((c) => LINE_NAME[c]).join(", ")}`;
@@ -625,7 +800,7 @@ function bindInput() {
     if (wasTap && e.type === "pointerup") {
       const hit = hitTest(...fbPoint(e));
       if (hit?.kind === "train") select(hit.train.id);
-      else if (hit?.kind === "station" && e.pointerType !== "mouse") showTip(hit, e.clientX, e.clientY);
+      else if (hit && e.pointerType !== "mouse") showTip(hit, e.clientX, e.clientY);
       else { select(null); showTip(null); }
     }
     drag = null;
