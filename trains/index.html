@@ -1,0 +1,59 @@
+<!doctype html>
+<!-- Set data-feed to the proxy URL in _cta-proxy/ to switch from the sample run to live CTA positions. -->
+<html lang="en" data-feed="">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Chicago ’L’ Tracker | Joe Ferber</title>
+  <meta name="description" content="Every CTA ’L’ train on an 8-bit map of Chicago.">
+  <meta name="theme-color" content="#0a0c12">
+  <link rel="preload" href="fonts/pixelify-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="data/network.json" as="fetch" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <canvas id="map" tabindex="0" role="img" aria-label="Map of Chicago’s ’L’ lines with a dot for each train"></canvas>
+
+  <header class="hud panel">
+    <div class="hud-top">
+      <h1>Chicago ’L’</h1>
+      <a class="home" href="/">joeferber.com</a>
+    </div>
+    <p class="status">
+      <span class="mode" id="mode">Sample run</span>
+      <span id="count">Loading trains</span>
+      <time id="clock"></time>
+    </p>
+    <p class="note" id="note">Simulated trains running the real routes and stops. Live CTA positions are coming soon.</p>
+  </header>
+
+  <nav class="legend panel" aria-label="Show or hide lines" id="legend"></nav>
+
+  <div class="zoom panel" role="group" aria-label="Map zoom">
+    <button type="button" data-zoom="in" aria-label="Zoom in">
+      <svg viewBox="0 0 7 7" aria-hidden="true"><path d="M3 0h1v3h3v1H4v3H3V4H0V3h3z"/></svg>
+    </button>
+    <button type="button" data-zoom="out" aria-label="Zoom out">
+      <svg viewBox="0 0 7 7" aria-hidden="true"><path d="M0 3h7v1H0z"/></svg>
+    </button>
+    <button type="button" data-zoom="fit" aria-label="Show the whole system">
+      <svg viewBox="0 0 7 7" aria-hidden="true"><path d="M0 0h3v1H1v2H0zM4 0h3v3H6V1H4zM0 4h1v2h2v1H0zM6 4h1v3H4V6h2z"/></svg>
+    </button>
+  </div>
+
+  <aside class="card panel" id="card" aria-live="polite" hidden>
+    <button type="button" class="card-close" id="card-close" aria-label="Close train details">
+      <svg viewBox="0 0 7 7" aria-hidden="true"><path d="M0 0h1v1h1v1h1v1h1V2h1V1h1V0h1v1H6v1H5v1H4v1h1v1h1v1h1v1H6V6H5V5H4V4H3v1H2v1H1v1H0V6h1V5h1V4h1V3H2V2H1V1H0z"/></svg>
+    </button>
+    <p class="card-line"><i id="card-swatch"></i><span id="card-title"></span></p>
+    <dl>
+      <dt>To</dt><dd id="card-dest"></dd>
+      <dt>Next</dt><dd id="card-next"></dd>
+    </dl>
+    <p class="card-flag" id="card-flag" hidden></p>
+  </aside>
+
+  <div class="tip" id="tip" hidden></div>
+</body>
+</html>
