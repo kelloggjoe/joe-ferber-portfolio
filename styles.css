@@ -27,6 +27,8 @@ a { color: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 4px solid var(--amber); outline-offset: 4px; }
 ::selection { background: var(--amber); color: var(--ink); }
+h1, h2, h3 { text-wrap: balance; }
+p, li, dd { text-wrap: pretty; }
 
 .skip-link {
   position: fixed; left: 1rem; top: -5rem; z-index: 1000;
@@ -170,10 +172,13 @@ button, a { -webkit-tap-highlight-color: transparent; }
 
 .site-footer { width: min(calc(100% - 2rem), var(--max)); margin: 0 auto; padding: 2rem 0; border-top: 2px solid var(--ink); display: flex; justify-content: space-between; gap: 1rem; font-size: .9rem; font-weight: 600; }
 .site-footer p { margin: 0; }
+.site-footer a { text-underline-offset: 3px; }
 
-@media (max-width: 560px) { .contact-shape { display: none; } }
-
-.reveal { opacity: 1; transform: none; }
+@media (max-width: 560px) {
+  .contact-shape { display: none; }
+  .marquee-track { flex-wrap: wrap; gap: .35rem 1.25rem; font-size: .78rem; }
+  .marquee-track i { display: none; }
+}
 
 @media (max-width: 900px) {
   .menu-button { display: inline-flex; align-items: center; justify-content: center; }
@@ -207,6 +212,4 @@ button, a { -webkit-tap-highlight-color: transparent; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-  .marquee-track { transform: none; }
-  .reveal { opacity: 1; transform: none; }
 }
