@@ -93,6 +93,9 @@ h1 span{color:#5b6f93}
 .panel .k{font-family:var(--mono);font-size:13px;color:var(--accent-strong);margin-bottom:14px}
 h2{font-weight:400;font-size:clamp(32px,3.4vw,48px);line-height:1.12;letter-spacing:-.025em;margin:0 0 18px;color:var(--ink-deep);text-wrap:balance}
 .panel p{font-size:18px;line-height:1.55;color:var(--ink-2);margin:0;max-width:28em;text-wrap:pretty}
+.panel .go{display:inline-flex;align-items:center;gap:6px;margin-top:24px;font-size:16px;font-weight:500;color:var(--accent-strong)}
+.panel .go svg{width:10px;height:10px;transition:transform .18s var(--ease)}
+.panel .go:hover svg{transform:translateX(3px)}
 .metric{display:flex;align-items:baseline;gap:12px;margin-top:26px;padding-top:18px;border-top:1px solid var(--rule);max-width:28em}
 .metric b{font-weight:400;font-size:40px;letter-spacing:-.03em;color:var(--ink-deep)}
 .metric span{font-size:14px;color:var(--ink-muted)}
@@ -241,6 +244,16 @@ h2{font-weight:400;font-size:clamp(32px,3.4vw,48px);line-height:1.12;letter-spac
   .book3d .spine.spn{--base:11px}
   .detail{min-height:0}
 }
+.books-teaser{padding:150px 0 40px}
+.books-teaser .sec-head h2 span{display:block;margin-top:6px;color:#5b6f93}
+.sec-link{color:var(--ink-deep);display:inline-flex;align-items:center;gap:10px;border-bottom:1px solid transparent;transition:border-color .2s var(--ease)}
+.sec-link svg{width:16px;height:16px;transition:transform .2s var(--ease)}
+.sec-link:hover{border-bottom-color:currentColor}.sec-link:hover svg{transform:translateX(4px)}
+.bk-row{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:16px;align-items:end}
+.bk-tile{display:block;border-radius:4px;overflow:hidden;box-shadow:var(--shadow-soft);transition:transform .25s var(--ease-out),box-shadow .25s var(--ease)}
+.bk-tile img{display:block;width:100%;height:auto;aspect-ratio:2/3;object-fit:cover}
+.bk-tile:hover{transform:translateY(-6px);box-shadow:var(--shadow-float)}
+@media (max-width:900px){.bk-row{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}}
 .close{padding:170px 0 120px;text-align:left}
 .close h2{font-size:clamp(36px,4.4vw,60px);max-width:14em}
 footer{border-top:1px solid var(--rule);background:var(--ground-muted);padding:40px 0;font-size:14px;color:var(--ink-2)}
@@ -315,7 +328,7 @@ footer nav{gap:24px;font-weight:400;font-size:14px}footer nav a{color:var(--ink-
   <div class="wrap">
     <a class="mark" href="#top">Joe Ferber</a>
     <button class="menu" type="button" aria-expanded="false" aria-controls="site-nav"><span>Menu</span></button>
-    <nav id="site-nav" aria-label="Primary"><a href="#work">Work</a><a href="#experience">Experience</a><a href="#about">About</a><a href="#books">Books</a><a href="assets/Joe_Ferber_Resume.pdf" download>Resume</a><a class="btn btn-nav" href="mailto:joe.ferber@kellogg.northwestern.edu">Contact <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 1l4 4-4 4"/></svg></a></nav>
+    <nav id="site-nav" aria-label="Primary"><a href="#work">Work</a><a href="#experience">Experience</a><a href="#about">About</a><a href="/books/">Books</a><a href="assets/Joe_Ferber_Resume.pdf" download>Resume</a><a class="btn btn-nav" href="mailto:joe.ferber@kellogg.northwestern.edu">Contact <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 1l4 4-4 4"/></svg></a></nav>
   </div>
 </header>
 
@@ -325,7 +338,7 @@ footer nav{gap:24px;font-weight:400;font-size:14px}footer nav a{color:var(--ink-
   <div class="wrap hero-grid">
     <div class="hero-copy">
     <h1>Complex systems, <span>made useful.</span></h1>
-    <p class="lede">I'm Joe Ferber. I take complicated operations apart, find the layer that matters, and build what fixes it. Senior Technology Consultant at Orbus, MBAi at Kellogg and McCormick.</p>
+    <p class="lede">I'm Joe Ferber, a Senior Technology Consultant at Orbus and an MBAi candidate at Kellogg and McCormick. I work on operations problems that need a business case and working software.</p>
     <div class="ctas">
       <a class="btn btn-primary" href="#work">See the work <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 1l4 4-4 4"/></svg></a>
       <a class="btn btn-quiet" href="assets/Joe_Ferber_Resume.pdf" download>Download resume <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 1l4 4-4 4"/></svg></a>
@@ -342,22 +355,22 @@ footer nav{gap:24px;font-weight:400;font-size:14px}footer nav a{color:var(--ink-
   <div class="stage">
     <div class="wrap">
       <div class="copy">
-        <div class="panel on" data-step="0"><div class="k">How I work</div><h2>Every system has layers. The fix is usually in one of them.</h2><p>Scroll to take one apart.</p></div>
-        <div class="panel" data-step="1"><div class="k">Layer 1 · Operating reality</div><h2>Start with how the work actually runs.</h2><p>At Epic I led hospital implementations from planning through go-live, and standardized the workflows each new site reused.</p><div class="metric"><b>11</b><span>go-lives on time across $21.1M in budgets</span></div></div>
-        <div class="panel" data-step="2"><div class="k">Layer 2 · Data</div><h2>Find the signal in the portfolio.</h2><p>At Orbus I've shaped modernization strategy across 35+ organizations, sorting what to keep, fix, and retire.</p><div class="metric"><b>$3.2M</b><span>cumulative savings supported</span></div></div>
-        <div class="panel" data-step="3"><div class="k">Layer 3 · Systems</div><h2>Change the system, not the slide.</h2><p>I designed a generative AI integration from the feedback of 400+ enterprise users.</p><div class="metric"><b>55%</b><span>less time on architecture analysis</span></div></div>
-        <div class="panel" data-step="4"><div class="k">Layer 4 · Product</div><h2>Ship something people use.</h2><p>Ledger Leagues runs private NFL leagues on weekly head-to-head picks. The Chicago 'L' tracker puts every train on one map.</p><div class="metric"><b>2</b><span>products live today</span></div></div>
-        <div class="panel" data-step="5"><div class="k">All four layers</div><h2>Made useful.</h2><p>Strategy that holds up all the way down to the system people touch.</p></div>
+        <div class="panel on" data-step="0"><div class="k">How I work</div><h2>Each layer is one of my projects.</h2><p>Scroll to pull the stack apart.</p></div>
+        <div class="panel" data-step="1"><div class="k">Layer 1 · Go-Live Readiness</div><h2>Start with what's blocking the launch.</h2><p>Go-Live Readiness puts every workstream, open risk, and next action on one screen. A cross-functional team can see what still has to happen before anyone makes the go or no-go call.</p><a class="go" target="_blank" rel="noreferrer" href="https://kelloggjoe.github.io/go-live-readiness/">Open Go-Live Readiness <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 1l4 4-4 4"/></svg></a></div>
+        <div class="panel" data-step="2"><div class="k">Layer 2 · Mapper and Studio</div><h2>Decide what's worth the money.</h2><p>Modernization Mapper sorts a company's applications into keep, evolve, replace, or retire by business value and technical health. Prioritization Studio scores roadmap ideas on reach, impact, confidence, and effort.</p><a class="go" target="_blank" rel="noreferrer" href="https://kelloggjoe.github.io/modernization-mapper/">Open the Mapper <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 1l4 4-4 4"/></svg></a></div>
+        <div class="panel" data-step="3"><div class="k">Layer 3 · Chicago 'L' tracker</div><h2>Map the whole system first.</h2><p>The 'L' tracker draws every CTA line and station on an 8-bit map of Chicago and runs trains along the real routes. It's built to switch to live train positions once the CTA feed is connected.</p><a class="go" href="/trains/">Open the map <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 1l4 4-4 4"/></svg></a></div>
+        <div class="panel" data-step="4"><div class="k">Layer 4 · Ledger Leagues</div><h2>Then ship something people use.</h2><p>Ledger Leagues runs private NFL leagues. Each week everyone gets 1,000 virtual credits to bet on head-to-head picks, and whoever ends the week with the bigger return wins the matchup.</p><a class="go" target="_blank" rel="noreferrer" href="https://www.ledgerleagues.com">Visit Ledger Leagues <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 1l4 4-4 4"/></svg></a></div>
+        <div class="panel" data-step="5"><div class="k">All four layers</div><h2>Complex systems, made useful.</h2><p>All five projects are live. Open any of them below.</p><div class="ctas"><a class="btn btn-primary" href="#work">See the work <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 1l4 4-4 4"/></svg></a></div></div>
         <div class="progress" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
       </div>
       <div class="viz" aria-hidden="true">
         <div class="stack" id="stack">
-          <div class="plate"><div class="tag"><span>01 operating reality</span><span>epic</span></div><div class="body"><div class="cells" id="cells"></div></div></div>
-          <div class="plate"><div class="tag"><span>02 data</span><span>orbus</span></div><div class="body bars"><span style="width:92%"></span><span class="hot" style="width:64%"></span><span style="width:80%"></span><span style="width:48%"></span><span class="hot" style="width:72%"></span><span style="width:86%"></span><span style="width:58%"></span><span style="width:76%"></span></div></div>
-          <div class="plate"><div class="tag"><span>03 systems</span><span>gen ai</span></div><div class="body"><svg viewBox="0 0 300 260" class="net" width="100%" height="100%">
+          <div class="plate"><div class="tag"><span>01 readiness</span><span>workstreams</span></div><div class="body"><div class="cells" id="cells"></div></div></div>
+          <div class="plate"><div class="tag"><span>02 mapper + studio</span><span>portfolio</span></div><div class="body bars"><span style="width:92%"></span><span class="hot" style="width:64%"></span><span style="width:80%"></span><span style="width:48%"></span><span class="hot" style="width:72%"></span><span style="width:86%"></span><span style="width:58%"></span><span style="width:76%"></span></div></div>
+          <div class="plate"><div class="tag"><span>03 'l' tracker</span><span>routes</span></div><div class="body"><svg viewBox="0 0 300 260" class="net" width="100%" height="100%">
             <line x1="50" y1="60" x2="150" y2="40"/><line class="hot" x1="150" y1="40" x2="250" y2="90"/><line x1="50" y1="60" x2="90" y2="170"/><line class="hot" x1="150" y1="40" x2="170" y2="150"/><line class="hot" x1="170" y1="150" x2="250" y2="200"/><line x1="90" y1="170" x2="170" y2="150"/><line x1="250" y1="90" x2="250" y2="200"/>
             <circle cx="50" cy="60" r="10"/><circle class="hot" cx="150" cy="40" r="10"/><circle cx="250" cy="90" r="10"/><circle cx="90" cy="170" r="10"/><circle class="hot" cx="170" cy="150" r="10"/><circle cx="250" cy="200" r="10"/></svg></div></div>
-          <div class="plate"><div class="tag"><span>04 product</span><span>ledger leagues</span></div><div class="body"><div class="mini"><div class="r"><span>Week 6 · final</span><span>H2H</span></div><div class="r win"><span>Backseat GMs</span><span>1,450</span></div><div class="r"><span>Sunday Scaries</span><span>1,175</span></div></div></div></div>
+          <div class="plate"><div class="tag"><span>04 ledger leagues</span><span>product</span></div><div class="body"><div class="mini"><div class="r"><span>Week 6 · final</span><span>H2H</span></div><div class="r win"><span>Backseat GMs</span><span>1,450</span></div><div class="r"><span>Sunday Scaries</span><span>1,175</span></div></div></div></div>
         </div>
       </div>
     </div>
@@ -368,7 +381,7 @@ footer nav{gap:24px;font-weight:400;font-size:14px}footer nav a{color:var(--ink-
 <section class="work" id="work">
   <div class="guides" aria-hidden="true"><div class="wrap"><span></span><span></span><span></span><span></span></div></div>
   <div class="wrap" style="position:relative">
-    <div class="sec-head reveal"><h2>Selected work. <span>Products and tools that turn competing priorities into decisions teams can act on.</span></h2></div>
+    <div class="sec-head reveal"><h2>Selected work. <span>A live product, a train map, and three planning tools I built on my own time.</span></h2></div>
     <div class="bento">
       <a class="card c7 reveal" target="_blank" rel="noreferrer" href="https://www.ledgerleagues.com">
         <div class="art ll" aria-hidden="true"><div class="match"><div class="r"><span>Example matchup · week 6</span><span>final</span></div><div class="r win"><span>Backseat GMs</span><b>1,450 credits</b></div><div class="r"><span>Sunday Scaries</span><span>1,175 credits</span></div></div><div class="chip">+275 credits</div></div>
@@ -376,7 +389,7 @@ footer nav{gap:24px;font-weight:400;font-size:14px}footer nav a{color:var(--ink-
       </a>
       <a class="card c5 reveal" href="/trains/">
         <div class="art trn" aria-hidden="true"><svg viewBox="0 0 300 230"><g fill="none" stroke-width="3" stroke-linecap="round"><path d="M200 10 V220" stroke="#e5484d"/><path d="M40 70 C100 70 150 110 200 120" stroke="#4c8dff"/><path d="M200 120 C230 100 250 70 260 30" stroke="#b7791f"/><path d="M120 200 C160 170 180 140 200 120" stroke="#3fb950"/></g><g fill="#fff"><circle cx="200" cy="60" r="4"/><circle cx="96" cy="76" r="4"/><circle cx="246" cy="66" r="4"/><circle cx="156" cy="168" r="4"/><circle cx="200" cy="180" r="4"/></g></svg></div>
-        <h3>Chicago 'L' tracker</h3><p>Every CTA train on an 8-bit map, gliding between reports.</p><span class="go">Open the map <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 1l4 4-4 4"/></svg></span>
+        <h3>Chicago 'L' tracker</h3><p>Every CTA line on an 8-bit map of Chicago, with trains running the real routes.</p><span class="go">Open the map <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 1l4 4-4 4"/></svg></span>
       </a>
       <a class="card c4 reveal" target="_blank" rel="noreferrer" href="https://kelloggjoe.github.io/modernization-mapper/"><div class="art small" aria-hidden="true"><span class="ax y">business value</span><span class="ax x">technical health</span><div class="mm"><div>evolve</div><div class="keep">keep</div><div>retire</div><div>replace</div><i style="left:22%;top:14%">ERP</i><i class="hot" style="left:66%;top:20%">CRM</i><i style="left:16%;top:62%">HR</i><i style="left:72%;top:58%">BI</i></div></div><h3>Modernization Mapper</h3><p>Weigh application value against technical health and turn a crowded portfolio into a plan.</p></a>
       <a class="card c4 reveal" target="_blank" rel="noreferrer" href="https://kelloggjoe.github.io/go-live-readiness/"><div class="art small" aria-hidden="true"><div class="gl"><div class="row"><span>Data migration</span><span class="seg"><b class="y"></b><b class="y"></b><b class="y"></b><b class="y"></b><b class="y"></b></span><span>100%</span></div><div class="row"><span>Integrations</span><span class="seg"><b class="y"></b><b class="y"></b><b class="y"></b><b class="y"></b><b></b></span><span>80%</span></div><div class="row"><span>Training</span><span class="seg"><b class="y"></b><b class="y"></b><b class="r"></b><b></b><b></b></span><span>55%</span></div><div class="gate"><span>Go / no-go</span><em>1 critical risk open</em></div></div></div><h3>Go-Live Readiness</h3><p>Track workstream readiness and expose launch risk before go-live.</p></a>
@@ -388,7 +401,7 @@ footer nav{gap:24px;font-weight:400;font-size:14px}footer nav a{color:var(--ink-
 
 <section class="experience" id="experience">
   <div class="wrap">
-    <div class="sec-head reveal"><h2>Experience. <span>Strategy grounded in operating reality, and delivery that holds up.</span></h2></div>
+    <div class="sec-head reveal"><h2>Experience. <span>Consulting since 2020, first at Epic and now at Orbus.</span></h2></div>
     <article class="job reveal">
       <div class="job-meta"><b>Orbus Software</b><span>2022 to present</span></div>
       <div class="job-body">
@@ -411,8 +424,8 @@ footer nav{gap:24px;font-weight:400;font-size:14px}footer nav a{color:var(--ink-
 <section class="about" id="about">
   <div class="wrap about-grid">
     <div class="reveal">
-      <h2>Built for the space between strategy and execution.</h2>
-      <p class="lede">I'm drawn to problems that are too technical for hand-waving and too human for a purely technical answer. My background spans enterprise architecture, healthcare implementation, applied AI, and the operating work it takes to move from a recommendation to a result.</p>
+      <h2>About me</h2>
+      <p class="lede">I studied neuroscience and psychology at Vanderbilt, then spent two years at Epic getting hospitals live on new software. At Orbus I help large organizations work out which of their applications to keep, fix, or retire. Now I'm at Northwestern for a joint MBA and master's in AI, and I build small tools on the side.</p>
     </div>
     <div class="edu reveal">
       <div class="edu-row"><span class="k">Education</span></div>
@@ -422,39 +435,22 @@ footer nav{gap:24px;font-weight:400;font-size:14px}footer nav a{color:var(--ink-
   </div>
 </section>
 
-<section class="books" id="books">
+<section class="books-teaser" id="books">
   <div class="wrap">
-    <div class="sec-head reveal"><h2>On the shelf. <span>Books that show up in how I work.</span></h2></div>
-    <p class="note">Five nonfiction, two fiction, from my Goodreads.</p>
-    <div class="library reveal">
-      <div class="guides" aria-hidden="true"><div class="wrap"><span></span><span></span><span></span><span></span></div></div>
-      <div class="book-stage" id="stage" tabindex="0" role="img" aria-roledescription="3D book" aria-label="Selected book. Drag or use the arrow keys to turn it.">
-        <div class="ground" id="ground"></div>
-        <div class="lift" id="lift">
-          <div class="book3d" id="book3d">
-            <div class="f front"><img class="cvimg" alt="" draggable="false"></div>
-            <div class="f back"><div class="blurb"><b>Joe's note</b><span class="bn"></span></div><span class="mk">joeferber.com / shelf</span></div>
-            <div class="f spine spn"></div>
-            <div class="f edge"></div><div class="f top"></div><div class="f bot"></div>
-          </div>
-        </div>
-        <span class="hint">Drag to turn the book</span>
-      </div>
-      <div class="detail" id="detail" aria-live="polite"></div>
-      <div class="row" id="row" role="list" aria-label="Bookshelf"></div>
-    </div>
+    <div class="sec-head reveal"><h2><a class="sec-link" href="/books/">Book recommendations <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 1l4 4-4 4"/></svg></a> <span>Seven books I'd hand a friend, each with a note on why.</span></h2></div>
+    <div class="bk-row reveal"><a class="bk-tile" href="/books/#american-prometheus"><img src="assets/books/american-prometheus.jpg" alt="American Prometheus by Kai Bird and Martin J. Sherwin" loading="lazy" width="200" height="300"></a><a class="bk-tile" href="/books/#moneyball"><img src="assets/books/moneyball.jpg" alt="Moneyball by Michael Lewis" loading="lazy" width="200" height="300"></a><a class="bk-tile" href="/books/#playing-for-keeps"><img src="assets/books/playing-for-keeps.jpg" alt="Playing for Keeps by David Halberstam" loading="lazy" width="200" height="300"></a><a class="bk-tile" href="/books/#missing-microbes"><img src="assets/books/missing-microbes.jpg" alt="Missing Microbes by Martin J. Blaser" loading="lazy" width="200" height="300"></a><a class="bk-tile" href="/books/#road-to-nowhere"><img src="assets/books/road-to-nowhere.jpg" alt="Road to Nowhere by Paris Marx" loading="lazy" width="200" height="300"></a><a class="bk-tile" href="/books/#project-hail-mary"><img src="assets/books/project-hail-mary.jpg" alt="Project Hail Mary by Andy Weir" loading="lazy" width="200" height="300"></a><a class="bk-tile" href="/books/#tomorrow"><img src="assets/books/tomorrow.jpg" alt="Tomorrow, and Tomorrow, and Tomorrow by Gabrielle Zevin" loading="lazy" width="200" height="300"></a></div>
   </div>
 </section>
 
 <section class="close">
   <div class="wrap reveal">
     <h2>Have a hard problem worth working on?</h2>
-    <p class="lede">I'm always interested in thoughtful product work, complicated systems, and teams that care about getting both the decision and the delivery right.</p>
+    <p class="lede">If you're working on a messy product or operations problem, I'd like to hear about it.</p>
     <div class="ctas"><a class="btn btn-primary" href="mailto:joe.ferber@kellogg.northwestern.edu">Email Joe <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 1l4 4-4 4"/></svg></a><a class="btn btn-quiet" href="https://www.linkedin.com/in/joe-ferber/">LinkedIn <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 1l4 4-4 4"/></svg></a></div>
   </div>
 </section>
 
-<footer><div class="wrap"><span>© <span id="year">2026</span> Joe Ferber · Chicago</span><nav aria-label="Footer"><a href="#work">Work</a><a href="/trains/">'L' tracker</a><a href="assets/Joe_Ferber_Resume.pdf" download>Resume</a><a href="https://www.linkedin.com/in/joe-ferber/">LinkedIn</a><a href="https://github.com/kelloggjoe/joe-ferber-portfolio">Source</a></nav></div></footer>
+<footer><div class="wrap"><span>© <span id="year">2026</span> Joe Ferber · Chicago</span><nav aria-label="Footer"><a href="#work">Work</a><a href="/books/">Books</a><a href="/trains/">'L' tracker</a><a href="assets/Joe_Ferber_Resume.pdf" download>Resume</a><a href="https://www.linkedin.com/in/joe-ferber/">LinkedIn</a><a href="https://github.com/kelloggjoe/joe-ferber-portfolio">Source</a></nav></div></footer>
 
 <script>
 const menuBtn=document.querySelector('.menu'),siteNav=document.getElementById('site-nav');
@@ -481,93 +477,6 @@ function frame(){
   ticks.forEach((t,i)=>t.style.setProperty('--f',seg(p,...bounds[i])));
 }
 let raf=0;addEventListener('scroll',()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(frame)},{passive:true});addEventListener('resize',frame);frame();
-const BOOKS=[
- ["American Prometheus","Kai Bird and Martin J. Sherwin","#1f1c1a","#fff",60,"Nonfiction · Science","The best book I read that year. Oppenheimer was a theoretical physicist who ended up running one of the largest technical projects in history, and the book is as much about leading brilliant, difficult people as it is about physics. The second half, where the institutions that relied on him turn on him in the 1954 security hearing, shows how fragile trust can be. Six hundred pages, and I couldn't put it down for long stretches.","american-prometheus"],
- ["Moneyball","Michael Lewis","#5f615e","#fff",40,"Nonfiction · Business","An incredibly intriguing story for a book about statistics. The Oakland A's couldn't outspend anyone, so they changed what they measured and found value in numbers the rest of the market ignored, like on-base percentage. What stays with me is less the math than the resistance to it: the hard part was getting an organization to trust evidence over instinct. I learned quite a lot.","moneyball"],
- ["Playing for Keeps","David Halberstam","#111111","#fff",48,"Nonfiction · Business","Halberstam is really writing about how a business got built around one athlete. Jordan's talent was the raw material, but it took Nike, the NBA's marketing machine, and a new era of television to turn him into a global brand. I loved the detail on the deals and the decisions behind them, and it's a great case study in how product, distribution, and timing compound.","playing-for-keeps"],
- ["Missing Microbes","Martin J. Blaser","#f4f1ea","#061b31",42,"Nonfiction · Science","My neuroscience background made this one hard to put down. Blaser argues that decades of antibiotic overuse have quietly wiped out microbes our bodies depend on, and he connects that loss to the rise of conditions like asthma, allergies, and obesity. It's a great case study in second-order effects: a fix that works brilliantly in the moment and carries costs nobody was measuring.","missing-microbes"],
- ["Road to Nowhere","Paris Marx","#d9d8df","#061b31",44,"Nonfiction · Technology","A sharp critique of Silicon Valley's plans for transportation, from ride-hailing to self-driving cars to the Hyperloop. Marx argues that many of these ideas were shaped to fit a business model rather than a city, and that the unglamorous answer is usually better transit. Having built a tracker for Chicago's trains, I appreciated the case that good technology often makes existing systems work better instead of replacing them.","road-to-nowhere"],
- ["Project Hail Mary","Andy Weir","#1d170b","#fff",50,"Fiction","If you don't like science, you'll hate it. I like science, so I loved it. A science teacher wakes up alone on a spaceship with no memory and has to reason his way, one experiment at a time, toward saving Earth. It's the most satisfying kind of problem solving, where every answer is earned, and the pacing is perfect. If it works for you, John Scalzi is the next stop.","project-hail-mary"],
- ["Tomorrow, and Tomorrow, and Tomorrow","Gabrielle Zevin","#4e6474","#fff",46,"Fiction","Not my typical book, but I couldn't put it down for long stretches. It follows two friends who build video games together over thirty years, and it's really about creative partnership: how collaborators push each other, misread each other, and keep coming back. The video game details were cool, and the ending landed.","tomorrow"]];
-const row=document.getElementById('row'),detail=document.getElementById('detail'),stage=document.getElementById('stage'),book=document.getElementById('book3d'),lift=document.getElementById('lift'),ground=document.getElementById('ground');
-const pad=n=>String(n).padStart(2,'0');
-const chev=d=>`<svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="${d}"/></svg>`;
-const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
-let cur=-1,ry=-24,rx=8,vel=0,target=null,drag=null,lastTouch=0;
-const REST=-24;
-function apply(){
-  book.style.setProperty('--ry',ry+'deg');book.style.setProperty('--rx',rx+'deg');
-  const r=ry*Math.PI/180;book.style.setProperty('--sh',(50+Math.sin(r)*70)+'%');
-  ground.style.setProperty('--gs',(.62+.38*Math.abs(Math.cos(r))).toFixed(3));
-}
-function tick(t){
-  if(!drag){
-    if(target!==null){ry+=(target-ry)*.12;rx+=(8-rx)*.12;if(Math.abs(target-ry)<.1){ry=target;target=null}}
-    else if(Math.abs(vel)>.05){ry+=vel;vel*=.94;lastTouch=t}
-    else if(!still&&t-lastTouch>2600){const want=REST+Math.sin(t/1600)*7;ry+=(want-ry)*.02;rx+=(8-rx)*.05}
-  }
-  apply();requestAnimationFrame(tick);
-}
-requestAnimationFrame(tick);
-stage.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,id:e.pointerId,moved:false};target=null;vel=0;stage.setPointerCapture(e.pointerId);stage.classList.add('drag')});
-stage.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.x=e.clientX;drag.y=e.clientY;ry+=dx*.55;rx=Math.max(-22,Math.min(28,rx-dy*.25));vel=dx*.55;lastTouch=performance.now()});
-const end=e=>{if(!drag)return;drag=null;stage.classList.remove('drag');lastTouch=performance.now()};
-stage.addEventListener('pointerup',end);stage.addEventListener('pointercancel',end);stage.addEventListener('lostpointercapture',end);
-stage.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();target=(target??ry)+(e.key==='ArrowLeft'?-45:45);lastTouch=performance.now()}if(e.key==='Home'){target=REST}});
-const SPINES={
- "american-prometheus":{bg:"#151311",fg:"#fff",ac:"#e0453a",title:"American Prometheus",author:"Bird & Sherwin",tf:"'Cormorant Garamond',serif",tw:600,tls:".1em",tz:1.08,band:"#c1272d",bandh:"14px"},
- "moneyball":{bg:"#6b6d6a",fg:"#fff",ac:"#ff5a4e",title:"Moneyball",author:"Lewis",tf:"Oswald,sans-serif",tw:600,tls:".08em",tz:1.2,art:"moneyball",ax:"55%",ov:"rgba(20,20,20,.55)"},
- "playing-for-keeps":{bg:"#0e0e0e",fg:"#fff",ac:"#ff4a3d",title:"Playing for Keeps",author:"Halberstam",tf:"Arvo,serif",tw:700,tls:".02em",tz:1.02,band:"#d7261e",bandh:"12px"},
- "missing-microbes":{bg:"#fbfaf6",fg:"#111",ac:"#a4500f",title:"Missing Microbes",author:"Blaser",tf:"Oswald,sans-serif",tw:600,tls:".06em",tz:1.15,band:"#e8892b",bandh:"6px"},
- "road-to-nowhere":{bg:"#dcdde3",fg:"#111",ac:"#111",title:"Road to Nowhere",author:"Marx",tf:"Inter,sans-serif",tw:600,tls:".01em",tz:1.05,band:"#f2cf1d",bandh:"10px"},
- "project-hail-mary":{bg:"#111",fg:"#fff",ac:"#f2c230",title:"Project Hail Mary",author:"Weir",tf:"Jost,sans-serif",tw:500,tls:".2em",tz:1,art:"project-hail-mary",ax:"18%",ov:"rgba(0,0,0,.45)"},
- "tomorrow":{bg:"#2f5f7f",fg:"#fff",ac:"#ffd34d",title:"Tomorrow, and Tomorrow, and Tomorrow",author:"Zevin",tf:"Jost,sans-serif",tw:600,tls:".03em",tz:1,art:"tomorrow",ax:"72%",ov:"rgba(16,40,70,.35)",stroke:".4px #0d2236"}};
-function paintSpine(el,slug){
-  const d=SPINES[slug];
-  const v={'--bg':d.bg,'--fg':d.fg,'--ac':d.ac,'--tf':d.tf,'--tw':d.tw,'--tls':d.tls,'--tz':d.tz,'--band':d.band||'transparent','--bandh':d.bandh||'0px','--art':d.art?`url(assets/books/${d.art}.jpg)`:'none','--ax':d.ax||'50%','--ov':d.ov||'transparent','--stroke':d.stroke||'0'};
-  for(const k in v)el.style.setProperty(k,v[k]);
-  el.innerHTML=`<span class="band"></span><span class="rot"><span class="st">${d.title}</span><span class="sa">${d.author}</span></span>`;
-}
-BOOKS.forEach(([t,a,c,fg,d,g,note,img],i)=>{
-  const b=document.createElement('button');b.className='sb';b.type='button';b.setAttribute('role','listitem');
-  b.setAttribute('aria-label',`${t} by ${a}`);b.setAttribute('aria-pressed','false');
-  b.style.cssText=`--h:${t.length>18?184:150+((i*37)%4)*8}px;--w:${t.length>18?Math.max(36,Math.round(d*.74)):Math.max(30,Math.round(d*.66))}px`;
-  b.classList.add('spn');paintSpine(b,img);b.addEventListener('click',()=>pick(i));row.appendChild(b);
-});
-BOOKS.forEach(b=>{const im=new Image();im.src=`assets/books/${b[7]}.jpg`});
-function sizeSpine(b){b.style.setProperty('--len',b.offsetHeight+'px');b.style.setProperty('--sw',b.offsetWidth+'px')}
-function fitSpines(){
-  [...row.children].forEach(b=>{
-    b.classList.remove('sp-wrap');
-    const st=b.querySelector('.st'),sa=b.querySelector('.sa'),base=11;
-    const extra=sa.offsetWidth+base*.8+parseFloat(getComputedStyle(b).getPropertyValue('--bandh')||0)+base*1.6+8;
-    const w=st.scrollWidth;let need=w+extra;
-    if(need>262){b.classList.add('sp-wrap');need=Math.ceil(w*.62)+extra}
-    b.style.setProperty('--h',Math.max(150,Math.min(262,Math.ceil(need)))+'px');sizeSpine(b);
-  });
-  sizeSpine(book.querySelector('.spine'));
-}
-fitSpines();
-if(document.fonts){Promise.all(["600 13px Oswald","600 13px 'Cormorant Garamond'","700 13px Arvo","500 13px Jost","600 13px Jost"].map(f=>document.fonts.load(f))).then(fitSpines,fitSpines)}
-addEventListener('load',fitSpines);
-function pick(i){
-  i=(i+BOOKS.length)%BOOKS.length;const first=cur===-1;cur=i;
-  const [t,a,c,fg,d,g,note,img]=BOOKS[i];
-  [...row.children].forEach((x,j)=>{x.classList.toggle('picked',j===i);x.setAttribute('aria-pressed',String(j===i))});
-  book.style.setProperty('--c',c);book.style.setProperty('--fg',fg);book.style.setProperty('--bd',(innerWidth<900?d*.8:d)+'px');
-  book.querySelector('.cvimg').src=`assets/books/${img}.jpg`;
-  const sp3=book.querySelector('.spine');paintSpine(sp3,img);sp3.classList.remove('sp-wrap');sizeSpine(sp3);{const t3=sp3.querySelector('.st');if(t3.scrollWidth>t3.clientWidth+1)sp3.classList.add('sp-wrap')}
-  book.querySelector('.bn').textContent=note;
-  stage.setAttribute('aria-label',`${t} by ${a}. Drag or use the arrow keys to turn it.`);
-  if(!first&&!still){lift.classList.add('enter');ry=-90;rx=0;vel=0;void lift.offsetWidth;lift.classList.remove('enter')}
-  target=REST;lastTouch=performance.now();
-  if(!first&&row.scrollWidth>row.clientWidth){const b=row.children[i];row.scrollTo({left:b.offsetLeft-row.clientWidth/2,behavior:'smooth'})}
-  detail.classList.add('swap');
-  setTimeout(()=>{detail.innerHTML=`<div class="k"><span>${g}</span><b>${pad(i+1)} / ${pad(BOOKS.length)}</b></div><h3>${t}</h3><p class="by">${a}</p><p>${note}</p><div class="sw"><button type="button" aria-label="Previous book" data-d="-1">${chev('M7 1L3 5l4 4')}</button><button type="button" aria-label="Next book" data-d="1">${chev('M3 1l4 4-4 4')}</button></div>`;
-    detail.querySelectorAll('.sw button').forEach(btn=>btn.addEventListener('click',()=>pick(cur+ +btn.dataset.d)));
-    detail.classList.remove('swap')},first?0:160);
-}
-pick(0);
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
 document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%3)*60+'ms';io.observe(el)});
 </script>
