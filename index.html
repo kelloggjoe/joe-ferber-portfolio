@@ -121,12 +121,6 @@ h2{font-weight:400;font-size:clamp(32px,3.4vw,48px);line-height:1.12;letter-spac
 .mini .r:first-child{border-top:0;color:var(--ink-muted);font-size:12px}
 .plate.on .mini .win{color:var(--accent-strong);font-weight:500}
 
-.metrics{background:var(--ground-muted);border-block:1px solid var(--rule);padding:88px 0}
-.metrics .wrap{display:grid;grid-template-columns:repeat(4,1fr)}
-.metrics div{padding:0 24px;border-left:1px solid var(--rule)}
-.metrics div:first-child{border-left:0;padding-left:0}
-.metrics b{display:block;font-weight:300;font-size:clamp(36px,4vw,56px);letter-spacing:-.035em;color:var(--ink-deep);line-height:1.05}
-.metrics span{display:block;font-size:14px;color:var(--ink-2);margin-top:8px;max-width:16em}
 
 .work{padding:140px 0 120px;position:relative}
 .sec-head{max-width:40em;margin-bottom:56px}
@@ -183,10 +177,10 @@ h2{font-weight:400;font-size:clamp(32px,3.4vw,48px);line-height:1.12;letter-spac
 .books .sec-head h2 span{color:#5b6f93}
 .books .note{font-family:var(--mono);font-size:12px;color:var(--ink-muted);margin:0 0 40px}
 .library{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:32px 40px;border-block:1px solid var(--rule);padding:32px 0 36px;overflow:hidden}
-.stage{position:relative;z-index:1;height:440px;display:grid;place-items:center;perspective:1500px;cursor:grab;touch-action:pan-y;outline:none;border-radius:10px;user-select:none;-webkit-user-select:none}
-.stage.drag{cursor:grabbing}
-.stage:focus-visible{box-shadow:0 0 0 2px var(--accent)}
-.stage .hint{position:absolute;left:0;bottom:4px;font-family:var(--mono);font-size:11px;color:var(--ink-muted)}
+.book-stage{position:relative;z-index:1;height:440px;display:grid;place-items:center;perspective:1500px;cursor:grab;touch-action:pan-y;outline:none;border-radius:10px;user-select:none;-webkit-user-select:none}
+.book-stage.drag{cursor:grabbing}
+.book-stage:focus-visible{box-shadow:0 0 0 2px var(--accent)}
+.book-stage .hint{position:absolute;left:0;bottom:4px;font-family:var(--mono);font-size:11px;color:var(--ink-muted)}
 .ground{position:absolute;left:50%;bottom:34px;width:280px;height:34px;margin-left:-140px;background:radial-gradient(closest-side,rgba(10,37,64,.26),rgba(10,37,64,0));transform:scaleX(var(--gs,1));pointer-events:none}
 .lift{transition:transform .8s var(--ease-out),opacity .5s var(--ease)}
 .lift.enter{transform:translateY(60px);opacity:0;transition:none}
@@ -204,13 +198,9 @@ h2{font-weight:400;font-size:clamp(32px,3.4vw,48px);line-height:1.12;letter-spac
 .book3d .top,.book3d .bot{width:calc(var(--bw) - 10px);height:calc(var(--bd) - 6px);margin:calc((var(--bd) - 6px)/-2) 0 0 calc((var(--bw) - 10px)/-2);background:repeating-linear-gradient(0deg,#fbf8f1 0 1px,#e8e1d1 1px 2px);box-shadow:inset 0 0 6px rgba(0,0,0,.12)}
 .book3d .top{transform:rotateX(90deg) translateZ(calc(var(--bh)/2 - 4px)) translateX(4px)}
 .book3d .bot{transform:rotateX(-90deg) translateZ(calc(var(--bh)/2 - 4px)) translateX(4px)}
-.front .frame{position:absolute;inset:14px 14px 14px 22px;border:1px solid currentColor;opacity:.28;border-radius:2px}
-.front .ring{position:absolute;right:-56px;top:-46px;width:200px;height:200px;border-radius:50%;border:1px solid currentColor;opacity:.3}
-.front .ring::after{content:"";position:absolute;inset:34px;border-radius:50%;border:1px solid currentColor}
-.front .diag{position:absolute;left:-20%;right:-20%;top:60%;height:1px;background:currentColor;opacity:.32;transform:rotate(-12deg)}
-.front .tt{position:absolute;left:34px;right:26px;top:44px;font:300 27px/1.08 var(--sans);letter-spacing:-.025em;text-wrap:balance}
-.front .au{position:absolute;left:34px;bottom:30px;font:500 11px var(--mono);letter-spacing:.05em;text-transform:uppercase;opacity:.85}
-.front .no{position:absolute;left:34px;top:18px;font:500 11px var(--mono);opacity:.7}
+.front .cvimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;user-select:none}
+.front::before{content:"";position:absolute;inset:0;z-index:2;background:linear-gradient(90deg,rgba(0,0,0,.28) 0,rgba(255,255,255,.12) 2.5%,rgba(0,0,0,.06) 5%,rgba(0,0,0,0) 9%);pointer-events:none}
+.front::after{z-index:3}
 .front::after,.back::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,rgba(255,255,255,0) calc(var(--sh,50%) - 22%),rgba(255,255,255,.2) var(--sh,50%),rgba(255,255,255,0) calc(var(--sh,50%) + 22%));pointer-events:none}
 .back .blurb{position:absolute;left:28px;right:30px;top:36px;bottom:56px;font:400 12px/1.5 var(--sans);opacity:.9;overflow:hidden}
 .back .bn{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:13;overflow:hidden}
@@ -239,9 +229,8 @@ h2{font-weight:400;font-size:clamp(32px,3.4vw,48px);line-height:1.12;letter-spac
 .sb.picked span{opacity:0}
 @media (max-width:900px){
   .library{grid-template-columns:1fr;padding:20px 0;gap:16px}
-  .stage{height:360px}
+  .book-stage{height:360px}
   .book3d{--bw:180px;--bh:262px;--bd:38px}
-  .front .tt{font-size:22px;left:28px;top:32px}
   .detail{min-height:0}
 }
 .close{padding:170px 0 120px;text-align:left}
@@ -304,8 +293,6 @@ footer nav{gap:24px;font-weight:400;font-size:14px}footer nav a{color:var(--ink-
   .stage .wrap{grid-template-columns:1fr;grid-template-rows:40vh auto;gap:12px}
   .viz{order:-1;height:40vh}.stack{width:54vw}
   .copy{height:300px}.progress{bottom:-18px}
-  .metrics .wrap{grid-template-columns:1fr 1fr;row-gap:36px}
-  .metrics div:nth-child(3){border-left:0;padding-left:0}
   .bento{grid-template-columns:1fr}.c7,.c5,.c4{grid-column:auto}
   .guides{display:none}
 }
@@ -369,14 +356,6 @@ footer nav{gap:24px;font-weight:400;font-size:14px}footer nav a{color:var(--ink-
   </div>
 </section>
 
-<section class="metrics">
-  <div class="wrap">
-    <div class="reveal"><b>11</b><span>hospital go-lives delivered on time</span></div>
-    <div class="reveal"><b>$21.1M</b><span>in implementation budgets</span></div>
-    <div class="reveal"><b>$3.2M</b><span>cumulative portfolio savings supported</span></div>
-    <div class="reveal"><b>400+</b><span>enterprise users behind the AI integration design</span></div>
-  </div>
-</section>
 
 <section class="work" id="work">
   <div class="guides" aria-hidden="true"><div class="wrap"><span></span><span></span><span></span><span></span></div></div>
@@ -441,11 +420,11 @@ footer nav{gap:24px;font-weight:400;font-size:14px}footer nav a{color:var(--ink-
     <p class="note">Five nonfiction, two fiction, from my Goodreads.</p>
     <div class="library reveal">
       <div class="guides" aria-hidden="true"><div class="wrap"><span></span><span></span><span></span><span></span></div></div>
-      <div class="stage" id="stage" tabindex="0" role="img" aria-roledescription="3D book" aria-label="Selected book. Drag or use the arrow keys to turn it.">
+      <div class="book-stage" id="stage" tabindex="0" role="img" aria-roledescription="3D book" aria-label="Selected book. Drag or use the arrow keys to turn it.">
         <div class="ground" id="ground"></div>
         <div class="lift" id="lift">
           <div class="book3d" id="book3d">
-            <div class="f front"><span class="frame"></span><span class="ring"></span><span class="diag"></span><span class="tt"></span><span class="au"></span><span class="no"></span></div>
+            <div class="f front"><img class="cvimg" alt="" draggable="false"></div>
             <div class="f back"><div class="blurb"><b>Joe's note</b><span class="bn"></span></div><span class="mk">joeferber.com / shelf</span></div>
             <div class="f spine"><span class="t"></span><span class="n"></span></div>
             <div class="f edge"></div><div class="f top"></div><div class="f bot"></div>
@@ -495,13 +474,13 @@ function frame(){
 }
 let raf=0;addEventListener('scroll',()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(frame)},{passive:true});addEventListener('resize',frame);frame();
 const BOOKS=[
- ["American Prometheus","Kai Bird and Martin J. Sherwin","#0a2540","#fff",60,"Nonfiction · Science","The best book I read that year. Oppenheimer was a theoretical physicist who ended up running one of the largest technical projects in history, and the book is as much about leading brilliant, difficult people as it is about physics. The second half, where the institutions that relied on him turn on him in the 1954 security hearing, shows how fragile trust can be. Six hundred pages, and I couldn't put it down for long stretches."],
- ["Moneyball","Michael Lewis","#533afd","#fff",40,"Nonfiction · Business","An incredibly intriguing story for a book about statistics. The Oakland A's couldn't outspend anyone, so they changed what they measured and found value in numbers the rest of the market ignored, like on-base percentage. What stays with me is less the math than the resistance to it: the hard part was getting an organization to trust evidence over instinct. I learned quite a lot."],
- ["When McKinsey Comes to Town","Walt Bogdanich and Michael Forsythe","#e2e4ff","#0a2540",46,"Nonfiction · Business","I read this as someone who works in consulting, which made it uncomfortable in a useful way. The reporting traces what happens when advice is tuned to a client's next quarter and nobody owns what happens downstream. It's a sharp reminder that a recommendation is only as good as the incentives behind it, and that the people most affected by a decision are rarely in the room."],
- ["Missing Microbes","Martin J. Blaser","#425466","#fff",42,"Nonfiction · Science","My neuroscience background made this one hard to put down. Blaser argues that decades of antibiotic overuse have quietly wiped out microbes our bodies depend on, and he connects that loss to the rise of conditions like asthma, allergies, and obesity. It's a great case study in second-order effects: a fix that works brilliantly in the moment and carries costs nobody was measuring."],
- ["Road to Nowhere","Paris Marx","#fd8596","#061b31",44,"Nonfiction · Technology","A sharp critique of Silicon Valley's plans for transportation, from ride-hailing to self-driving cars to the Hyperloop. Marx argues that many of these ideas were shaped to fit a business model rather than a city, and that the unglamorous answer is usually better transit. Having built a tracker for Chicago's trains, I appreciated the case that good technology often makes existing systems work better instead of replacing them."],
- ["Project Hail Mary","Andy Weir","#80caff","#061b31",50,"Fiction","If you don't like science, you'll hate it. I like science, so I loved it. A science teacher wakes up alone on a spaceship with no memory and has to reason his way, one experiment at a time, toward saving Earth. It's the most satisfying kind of problem solving, where every answer is earned, and the pacing is perfect. If it works for you, John Scalzi is the next stop."],
- ["Tomorrow, and Tomorrow, and Tomorrow","Gabrielle Zevin","#fe9615","#061b31",46,"Fiction","Not my typical book, but I couldn't put it down for long stretches. It follows two friends who build video games together over thirty years, and it's really about creative partnership: how collaborators push each other, misread each other, and keep coming back. The video game details were cool, and the ending landed."]];
+ ["American Prometheus","Kai Bird and Martin J. Sherwin","#1f1c1a","#fff",60,"Nonfiction · Science","The best book I read that year. Oppenheimer was a theoretical physicist who ended up running one of the largest technical projects in history, and the book is as much about leading brilliant, difficult people as it is about physics. The second half, where the institutions that relied on him turn on him in the 1954 security hearing, shows how fragile trust can be. Six hundred pages, and I couldn't put it down for long stretches.","american-prometheus"],
+ ["Moneyball","Michael Lewis","#5f615e","#fff",40,"Nonfiction · Business","An incredibly intriguing story for a book about statistics. The Oakland A's couldn't outspend anyone, so they changed what they measured and found value in numbers the rest of the market ignored, like on-base percentage. What stays with me is less the math than the resistance to it: the hard part was getting an organization to trust evidence over instinct. I learned quite a lot.","moneyball"],
+ ["When McKinsey Comes to Town","Walt Bogdanich and Michael Forsythe","#0b0b09","#fff",46,"Nonfiction · Business","I read this as someone who works in consulting, which made it uncomfortable in a useful way. The reporting traces what happens when advice is tuned to a client's next quarter and nobody owns what happens downstream. It's a sharp reminder that a recommendation is only as good as the incentives behind it, and that the people most affected by a decision are rarely in the room.","when-mckinsey"],
+ ["Missing Microbes","Martin J. Blaser","#f4f1ea","#061b31",42,"Nonfiction · Science","My neuroscience background made this one hard to put down. Blaser argues that decades of antibiotic overuse have quietly wiped out microbes our bodies depend on, and he connects that loss to the rise of conditions like asthma, allergies, and obesity. It's a great case study in second-order effects: a fix that works brilliantly in the moment and carries costs nobody was measuring.","missing-microbes"],
+ ["Road to Nowhere","Paris Marx","#d9d8df","#061b31",44,"Nonfiction · Technology","A sharp critique of Silicon Valley's plans for transportation, from ride-hailing to self-driving cars to the Hyperloop. Marx argues that many of these ideas were shaped to fit a business model rather than a city, and that the unglamorous answer is usually better transit. Having built a tracker for Chicago's trains, I appreciated the case that good technology often makes existing systems work better instead of replacing them.","road-to-nowhere"],
+ ["Project Hail Mary","Andy Weir","#1d170b","#fff",50,"Fiction","If you don't like science, you'll hate it. I like science, so I loved it. A science teacher wakes up alone on a spaceship with no memory and has to reason his way, one experiment at a time, toward saving Earth. It's the most satisfying kind of problem solving, where every answer is earned, and the pacing is perfect. If it works for you, John Scalzi is the next stop.","project-hail-mary"],
+ ["Tomorrow, and Tomorrow, and Tomorrow","Gabrielle Zevin","#4e6474","#fff",46,"Fiction","Not my typical book, but I couldn't put it down for long stretches. It follows two friends who build video games together over thirty years, and it's really about creative partnership: how collaborators push each other, misread each other, and keep coming back. The video game details were cool, and the ending landed.","tomorrow"]];
 const row=document.getElementById('row'),detail=document.getElementById('detail'),stage=document.getElementById('stage'),book=document.getElementById('book3d'),lift=document.getElementById('lift'),ground=document.getElementById('ground');
 const pad=n=>String(n).padStart(2,'0');
 const chev=d=>`<svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="${d}"/></svg>`;
@@ -533,12 +512,13 @@ BOOKS.forEach(([t,a,c,fg,d],i)=>{
   b.style.cssText=`--c:${c};--fg:${fg};--h:${t.length>18?150:118+((i*37)%4)*8}px;--w:${t.length>18?Math.max(34,Math.round(d*.72)):Math.round(d*.62)}px`;
   b.innerHTML=`<span>${t}</span>`;b.addEventListener('click',()=>pick(i));row.appendChild(b);
 });
+BOOKS.forEach(b=>{const im=new Image();im.src=`assets/books/${b[7]}.jpg`});
 function pick(i){
   i=(i+BOOKS.length)%BOOKS.length;const first=cur===-1;cur=i;
-  const [t,a,c,fg,d,g,note]=BOOKS[i];
+  const [t,a,c,fg,d,g,note,img]=BOOKS[i];
   [...row.children].forEach((x,j)=>{x.classList.toggle('picked',j===i);x.setAttribute('aria-pressed',String(j===i))});
   book.style.setProperty('--c',c);book.style.setProperty('--fg',fg);book.style.setProperty('--bd',(innerWidth<900?d*.8:d)+'px');
-  book.querySelector('.tt').textContent=t;book.querySelector('.au').textContent=a;book.querySelector('.no').textContent=pad(i+1);
+  book.querySelector('.cvimg').src=`assets/books/${img}.jpg`;
   book.querySelector('.spine .t').textContent=t;book.querySelector('.spine .n').textContent=pad(i+1);
   book.querySelector('.bn').textContent=note;
   stage.setAttribute('aria-label',`${t} by ${a}. Drag or use the arrow keys to turn it.`);
