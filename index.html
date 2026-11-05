@@ -20,7 +20,7 @@
 <meta property="og:image:alt" content="Joe Ferber: Complex systems, made useful.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Source+Code+Pro:wght@400;500&family=Oswald:wght@500;600&family=Jost:wght@500;600&family=Cormorant+Garamond:wght@600&family=Arvo:wght@700&display=swap" rel="stylesheet">
 <style>
 :root{
   --ground:#fff; --ground-muted:#f6f9fc; --panel:#fff;
@@ -180,7 +180,7 @@ h2{font-weight:400;font-size:clamp(32px,3.4vw,48px);line-height:1.12;letter-spac
 .book-stage{position:relative;z-index:1;height:440px;display:grid;place-items:center;perspective:1500px;cursor:grab;touch-action:pan-y;outline:none;border-radius:10px;user-select:none;-webkit-user-select:none}
 .book-stage.drag{cursor:grabbing}
 .book-stage:focus-visible{box-shadow:0 0 0 2px var(--accent)}
-.book-stage .hint{position:absolute;left:0;bottom:4px;font-family:var(--mono);font-size:11px;color:var(--ink-muted)}
+.book-stage .hint{position:absolute;left:50%;transform:translateX(-50%);bottom:6px;white-space:nowrap;font-family:var(--mono);font-size:11px;color:var(--ink-muted)}
 .ground{position:absolute;left:50%;bottom:34px;width:280px;height:34px;margin-left:-140px;background:radial-gradient(closest-side,rgba(10,37,64,.26),rgba(10,37,64,0));transform:scaleX(var(--gs,1));pointer-events:none}
 .lift{transition:transform .8s var(--ease-out),opacity .5s var(--ease)}
 .lift.enter{transform:translateY(60px);opacity:0;transition:none}
@@ -190,10 +190,7 @@ h2{font-weight:400;font-size:clamp(32px,3.4vw,48px);line-height:1.12;letter-spac
   background-image:linear-gradient(90deg,rgba(0,0,0,.26) 0,rgba(255,255,255,.1) 2.5%,rgba(0,0,0,.06) 5%,rgba(0,0,0,0) 9%),repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 3px),repeating-linear-gradient(90deg,rgba(0,0,0,.035) 0 1px,transparent 1px 3px)}
 .book3d .front{border-radius:2px 6px 6px 2px;transform:translateZ(calc(var(--bd)/2))}
 .book3d .back{border-radius:6px 2px 2px 6px;transform:rotateY(180deg) translateZ(calc(var(--bd)/2));background-image:linear-gradient(270deg,rgba(0,0,0,.26) 0,rgba(255,255,255,.1) 2.5%,rgba(0,0,0,0) 9%),repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 3px)}
-.book3d .spine{width:var(--bd);height:var(--bh);margin:calc(var(--bh)/-2) 0 0 calc(var(--bd)/-2);transform:rotateY(-90deg) translateZ(calc(var(--bw)/2));background:var(--c);color:var(--fg);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:18px 0 16px;
-  background-image:linear-gradient(90deg,rgba(0,0,0,.3),rgba(255,255,255,.16) 30%,rgba(255,255,255,.04) 60%,rgba(0,0,0,.3))}
-.book3d .spine .t{writing-mode:vertical-rl;transform:rotate(180deg);font:400 14px/1.1 var(--sans);max-height:calc(var(--bh) - 70px);overflow:hidden}
-.book3d .spine .n{font:500 11px var(--mono);opacity:.75}
+.book3d .spine{width:var(--bd);height:var(--bh);margin:calc(var(--bh)/-2) 0 0 calc(var(--bd)/-2);transform:rotateY(-90deg) translateZ(calc(var(--bw)/2))}
 .book3d .edge{width:calc(var(--bd) - 6px);height:calc(var(--bh) - 10px);margin:calc((var(--bh) - 10px)/-2) 0 0 calc((var(--bd) - 6px)/-2);transform:rotateY(90deg) translateZ(calc(var(--bw)/2 - 4px));background:repeating-linear-gradient(90deg,#fbf8f1 0 1px,#e8e1d1 1px 2px);box-shadow:inset 0 0 6px rgba(0,0,0,.12)}
 .book3d .top,.book3d .bot{width:calc(var(--bw) - 10px);height:calc(var(--bd) - 6px);margin:calc((var(--bd) - 6px)/-2) 0 0 calc((var(--bw) - 10px)/-2);background:repeating-linear-gradient(0deg,#fbf8f1 0 1px,#e8e1d1 1px 2px);box-shadow:inset 0 0 6px rgba(0,0,0,.12)}
 .book3d .top{transform:rotateX(90deg) translateZ(calc(var(--bh)/2 - 4px)) translateX(4px)}
@@ -218,19 +215,30 @@ h2{font-weight:400;font-size:clamp(32px,3.4vw,48px);line-height:1.12;letter-spac
 .detail .sw svg{width:10px;height:10px}
 .detail>*{transition:opacity .25s var(--ease)}
 .detail.swap>*{opacity:0}
-.row{grid-column:1/-1;position:relative;z-index:1;display:flex;align-items:flex-end;gap:6px;height:178px;padding-top:24px;border-top:1px solid var(--rule);overflow-x:auto;scrollbar-width:none}
+.row{grid-column:1/-1;position:relative;z-index:1;display:flex;align-items:flex-end;gap:6px;height:290px;padding-top:24px;border-top:1px solid var(--rule);overflow-x:auto;scrollbar-width:none}
 .row::-webkit-scrollbar{display:none}
 .row::after{content:"";position:sticky;right:0}
-.sb{--h:120px;--w:28px;--c:#0a2540;--fg:#fff;position:relative;flex:0 0 var(--w);height:var(--h);border:0;padding:0;cursor:pointer;border-radius:3px;background:var(--c);color:var(--fg);background-image:linear-gradient(90deg,rgba(255,255,255,.14),rgba(255,255,255,0) 35%,rgba(0,0,0,0) 75%,rgba(0,0,0,.1));box-shadow:0 2px 6px rgba(10,37,64,.1);transition:transform .3s var(--ease-out),box-shadow .3s var(--ease),opacity .3s var(--ease);font:inherit;display:flex;align-items:center;justify-content:center}
-.sb span{writing-mode:vertical-rl;transform:rotate(180deg);font:400 11px/1.1 var(--sans);max-height:calc(var(--h) - 14px);overflow:hidden;text-align:left}
+.sb{--h:120px;--w:28px;--c:#0a2540;--fg:#fff;position:relative;flex:0 0 var(--w);height:var(--h);border:0;padding:0;cursor:pointer;border-radius:3px;box-shadow:0 2px 6px rgba(10,37,64,.1);transition:transform .3s var(--ease-out),box-shadow .3s var(--ease),opacity .3s var(--ease);font:inherit;display:flex;align-items:center;justify-content:center}
+.spn{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;gap:10px;background-color:var(--bg,#111);color:var(--fg,#fff);background-image:var(--art,none);background-size:auto 100%;background-position:var(--ax,50%) 0;background-repeat:no-repeat}
+.spn::before{content:"";position:absolute;inset:0;background:var(--ov,transparent);pointer-events:none}
+.spn::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.28),rgba(255,255,255,.14) 30%,rgba(255,255,255,.03) 60%,rgba(0,0,0,.28));pointer-events:none}
+.spn>*{position:relative;z-index:1}
+.spn .band{position:absolute;z-index:0;left:0;right:0;top:0;height:var(--bandh,0);background:var(--band,transparent)}
+.spn .rot{position:absolute;z-index:1;left:50%;top:calc(50% + var(--bandh,0px) / 2);width:calc(var(--len,200px) - var(--bandh,0px) - 1.6 * var(--base));height:calc(var(--sw,30px) - 4px);transform:translate(-50%,-50%) rotate(90deg);display:flex;align-items:center;justify-content:space-between;gap:calc(.8 * var(--base))}
+.spn .st{min-width:0;font-family:var(--tf,var(--sans));font-weight:var(--tw,500);font-size:calc(var(--base) * var(--tz,1));letter-spacing:var(--tls,.02em);line-height:1.3;text-transform:uppercase;white-space:nowrap;overflow:hidden;-webkit-text-stroke:var(--stroke,0)}
+.spn.sp-wrap .st{line-height:1.15;white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+.spn .sa{flex:none;font-family:var(--af,var(--sans));font-weight:600;font-size:max(11px,calc(var(--base) * .82));letter-spacing:.06em;text-transform:uppercase;color:var(--ac,currentColor);white-space:nowrap}
+.sb.spn{--base:11px}
+.book3d .spine.spn{--base:13px;border-radius:6px}
 .sb:hover:not(.picked){transform:translateY(-10px);box-shadow:var(--shadow-float)}
 .sb:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-.sb.picked{background:none;box-shadow:none;outline:1px dashed #b7c3d2;outline-offset:-1px;color:transparent}
-.sb.picked span{opacity:0}
+.sb.picked{background:none!important;box-shadow:none;outline:1px dashed #b7c3d2;outline-offset:-1px}
+.sb.picked>*,.sb.picked::before,.sb.picked::after{opacity:0}
 @media (max-width:900px){
   .library{grid-template-columns:1fr;padding:20px 0;gap:16px}
   .book-stage{height:360px}
   .book3d{--bw:180px;--bh:262px;--bd:38px}
+  .book3d .spine.spn{--base:11px}
   .detail{min-height:0}
 }
 .close{padding:170px 0 120px;text-align:left}
@@ -426,7 +434,7 @@ footer nav{gap:24px;font-weight:400;font-size:14px}footer nav a{color:var(--ink-
           <div class="book3d" id="book3d">
             <div class="f front"><img class="cvimg" alt="" draggable="false"></div>
             <div class="f back"><div class="blurb"><b>Joe's note</b><span class="bn"></span></div><span class="mk">joeferber.com / shelf</span></div>
-            <div class="f spine"><span class="t"></span><span class="n"></span></div>
+            <div class="f spine spn"></div>
             <div class="f edge"></div><div class="f top"></div><div class="f bot"></div>
           </div>
         </div>
@@ -476,7 +484,7 @@ let raf=0;addEventListener('scroll',()=>{cancelAnimationFrame(raf);raf=requestAn
 const BOOKS=[
  ["American Prometheus","Kai Bird and Martin J. Sherwin","#1f1c1a","#fff",60,"Nonfiction · Science","The best book I read that year. Oppenheimer was a theoretical physicist who ended up running one of the largest technical projects in history, and the book is as much about leading brilliant, difficult people as it is about physics. The second half, where the institutions that relied on him turn on him in the 1954 security hearing, shows how fragile trust can be. Six hundred pages, and I couldn't put it down for long stretches.","american-prometheus"],
  ["Moneyball","Michael Lewis","#5f615e","#fff",40,"Nonfiction · Business","An incredibly intriguing story for a book about statistics. The Oakland A's couldn't outspend anyone, so they changed what they measured and found value in numbers the rest of the market ignored, like on-base percentage. What stays with me is less the math than the resistance to it: the hard part was getting an organization to trust evidence over instinct. I learned quite a lot.","moneyball"],
- ["When McKinsey Comes to Town","Walt Bogdanich and Michael Forsythe","#0b0b09","#fff",46,"Nonfiction · Business","I read this as someone who works in consulting, which made it uncomfortable in a useful way. The reporting traces what happens when advice is tuned to a client's next quarter and nobody owns what happens downstream. It's a sharp reminder that a recommendation is only as good as the incentives behind it, and that the people most affected by a decision are rarely in the room.","when-mckinsey"],
+ ["Playing for Keeps","David Halberstam","#111111","#fff",48,"Nonfiction · Business","Halberstam is really writing about how a business got built around one athlete. Jordan's talent was the raw material, but it took Nike, the NBA's marketing machine, and a new era of television to turn him into a global brand. I loved the detail on the deals and the decisions behind them, and it's a great case study in how product, distribution, and timing compound.","playing-for-keeps"],
  ["Missing Microbes","Martin J. Blaser","#f4f1ea","#061b31",42,"Nonfiction · Science","My neuroscience background made this one hard to put down. Blaser argues that decades of antibiotic overuse have quietly wiped out microbes our bodies depend on, and he connects that loss to the rise of conditions like asthma, allergies, and obesity. It's a great case study in second-order effects: a fix that works brilliantly in the moment and carries costs nobody was measuring.","missing-microbes"],
  ["Road to Nowhere","Paris Marx","#d9d8df","#061b31",44,"Nonfiction · Technology","A sharp critique of Silicon Valley's plans for transportation, from ride-hailing to self-driving cars to the Hyperloop. Marx argues that many of these ideas were shaped to fit a business model rather than a city, and that the unglamorous answer is usually better transit. Having built a tracker for Chicago's trains, I appreciated the case that good technology often makes existing systems work better instead of replacing them.","road-to-nowhere"],
  ["Project Hail Mary","Andy Weir","#1d170b","#fff",50,"Fiction","If you don't like science, you'll hate it. I like science, so I loved it. A science teacher wakes up alone on a spaceship with no memory and has to reason his way, one experiment at a time, toward saving Earth. It's the most satisfying kind of problem solving, where every answer is earned, and the pacing is perfect. If it works for you, John Scalzi is the next stop.","project-hail-mary"],
@@ -506,20 +514,49 @@ stage.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;
 const end=e=>{if(!drag)return;drag=null;stage.classList.remove('drag');lastTouch=performance.now()};
 stage.addEventListener('pointerup',end);stage.addEventListener('pointercancel',end);stage.addEventListener('lostpointercapture',end);
 stage.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();target=(target??ry)+(e.key==='ArrowLeft'?-45:45);lastTouch=performance.now()}if(e.key==='Home'){target=REST}});
-BOOKS.forEach(([t,a,c,fg,d],i)=>{
+const SPINES={
+ "american-prometheus":{bg:"#151311",fg:"#fff",ac:"#e0453a",title:"American Prometheus",author:"Bird & Sherwin",tf:"'Cormorant Garamond',serif",tw:600,tls:".1em",tz:1.08,band:"#c1272d",bandh:"14px"},
+ "moneyball":{bg:"#6b6d6a",fg:"#fff",ac:"#ff5a4e",title:"Moneyball",author:"Lewis",tf:"Oswald,sans-serif",tw:600,tls:".08em",tz:1.2,art:"moneyball",ax:"55%",ov:"rgba(20,20,20,.55)"},
+ "playing-for-keeps":{bg:"#0e0e0e",fg:"#fff",ac:"#ff4a3d",title:"Playing for Keeps",author:"Halberstam",tf:"Arvo,serif",tw:700,tls:".02em",tz:1.02,band:"#d7261e",bandh:"12px"},
+ "missing-microbes":{bg:"#fbfaf6",fg:"#111",ac:"#a4500f",title:"Missing Microbes",author:"Blaser",tf:"Oswald,sans-serif",tw:600,tls:".06em",tz:1.15,band:"#e8892b",bandh:"6px"},
+ "road-to-nowhere":{bg:"#dcdde3",fg:"#111",ac:"#111",title:"Road to Nowhere",author:"Marx",tf:"Inter,sans-serif",tw:600,tls:".01em",tz:1.05,band:"#f2cf1d",bandh:"10px"},
+ "project-hail-mary":{bg:"#111",fg:"#fff",ac:"#f2c230",title:"Project Hail Mary",author:"Weir",tf:"Jost,sans-serif",tw:500,tls:".2em",tz:1,art:"project-hail-mary",ax:"18%",ov:"rgba(0,0,0,.45)"},
+ "tomorrow":{bg:"#2f5f7f",fg:"#fff",ac:"#ffd34d",title:"Tomorrow, and Tomorrow, and Tomorrow",author:"Zevin",tf:"Jost,sans-serif",tw:600,tls:".03em",tz:1,art:"tomorrow",ax:"72%",ov:"rgba(16,40,70,.35)",stroke:".4px #0d2236"}};
+function paintSpine(el,slug){
+  const d=SPINES[slug];
+  const v={'--bg':d.bg,'--fg':d.fg,'--ac':d.ac,'--tf':d.tf,'--tw':d.tw,'--tls':d.tls,'--tz':d.tz,'--band':d.band||'transparent','--bandh':d.bandh||'0px','--art':d.art?`url(assets/books/${d.art}.jpg)`:'none','--ax':d.ax||'50%','--ov':d.ov||'transparent','--stroke':d.stroke||'0'};
+  for(const k in v)el.style.setProperty(k,v[k]);
+  el.innerHTML=`<span class="band"></span><span class="rot"><span class="st">${d.title}</span><span class="sa">${d.author}</span></span>`;
+}
+BOOKS.forEach(([t,a,c,fg,d,g,note,img],i)=>{
   const b=document.createElement('button');b.className='sb';b.type='button';b.setAttribute('role','listitem');
   b.setAttribute('aria-label',`${t} by ${a}`);b.setAttribute('aria-pressed','false');
-  b.style.cssText=`--c:${c};--fg:${fg};--h:${t.length>18?150:118+((i*37)%4)*8}px;--w:${t.length>18?Math.max(34,Math.round(d*.72)):Math.round(d*.62)}px`;
-  b.innerHTML=`<span>${t}</span>`;b.addEventListener('click',()=>pick(i));row.appendChild(b);
+  b.style.cssText=`--h:${t.length>18?184:150+((i*37)%4)*8}px;--w:${t.length>18?Math.max(36,Math.round(d*.74)):Math.max(30,Math.round(d*.66))}px`;
+  b.classList.add('spn');paintSpine(b,img);b.addEventListener('click',()=>pick(i));row.appendChild(b);
 });
 BOOKS.forEach(b=>{const im=new Image();im.src=`assets/books/${b[7]}.jpg`});
+function sizeSpine(b){b.style.setProperty('--len',b.offsetHeight+'px');b.style.setProperty('--sw',b.offsetWidth+'px')}
+function fitSpines(){
+  [...row.children].forEach(b=>{
+    b.classList.remove('sp-wrap');
+    const st=b.querySelector('.st'),sa=b.querySelector('.sa'),base=11;
+    const extra=sa.offsetWidth+base*.8+parseFloat(getComputedStyle(b).getPropertyValue('--bandh')||0)+base*1.6+8;
+    const w=st.scrollWidth;let need=w+extra;
+    if(need>262){b.classList.add('sp-wrap');need=Math.ceil(w*.62)+extra}
+    b.style.setProperty('--h',Math.max(150,Math.min(262,Math.ceil(need)))+'px');sizeSpine(b);
+  });
+  sizeSpine(book.querySelector('.spine'));
+}
+fitSpines();
+if(document.fonts){Promise.all(["600 13px Oswald","600 13px 'Cormorant Garamond'","700 13px Arvo","500 13px Jost","600 13px Jost"].map(f=>document.fonts.load(f))).then(fitSpines,fitSpines)}
+addEventListener('load',fitSpines);
 function pick(i){
   i=(i+BOOKS.length)%BOOKS.length;const first=cur===-1;cur=i;
   const [t,a,c,fg,d,g,note,img]=BOOKS[i];
   [...row.children].forEach((x,j)=>{x.classList.toggle('picked',j===i);x.setAttribute('aria-pressed',String(j===i))});
   book.style.setProperty('--c',c);book.style.setProperty('--fg',fg);book.style.setProperty('--bd',(innerWidth<900?d*.8:d)+'px');
   book.querySelector('.cvimg').src=`assets/books/${img}.jpg`;
-  book.querySelector('.spine .t').textContent=t;book.querySelector('.spine .n').textContent=pad(i+1);
+  const sp3=book.querySelector('.spine');paintSpine(sp3,img);sp3.classList.remove('sp-wrap');sizeSpine(sp3);{const t3=sp3.querySelector('.st');if(t3.scrollWidth>t3.clientWidth+1)sp3.classList.add('sp-wrap')}
   book.querySelector('.bn').textContent=note;
   stage.setAttribute('aria-label',`${t} by ${a}. Drag or use the arrow keys to turn it.`);
   if(!first&&!still){lift.classList.add('enter');ry=-90;rx=0;vel=0;void lift.offsetWidth;lift.classList.remove('enter')}
