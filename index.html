@@ -166,34 +166,9 @@ h2{font-weight:400;font-size:clamp(32px,3.4vw,48px);line-height:1.12;letter-spac
 .mono{font-family:var(--mono);font-size:11px;color:var(--ink-muted)}
 
 /* Ledger Leagues */
-.v-ll .slip{left:20%;right:16%;top:12%;padding:14px 16px;font-size:12px;color:var(--ink-2);--fx:0;transform-origin:20% 100%;opacity:.9}
-.v-ll .slip .r{display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid var(--rule)}
-.v-ll .slip .r:first-child{border-top:0}
-.v-ll .slip .won{color:#0d7a3e;background:#e6f6ec;padding:1px 6px;border-radius:4px;font:500 11px var(--mono)}
 .live.v-ll .slip,.live .v-ll .slip{transform:perspective(1100px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translate3d(14%,-22%,0) rotate(5deg)}
-.v-ll .mc{left:9%;right:11%;top:30%;padding:16px 18px;font-size:14px}
-.v-ll .mc .r{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--rule)}
-.v-ll .mc .r:first-child{border-top:0;padding-top:0}
-.v-ll .mc .r span:first-child{display:flex;align-items:center;gap:10px}
-.v-ll .mc .av{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:600 10px var(--sans);color:#fff;background:var(--accent-strong)}
-.v-ll .mc .av.b{background:#8792a2}
-.v-ll .mc .win b{font-weight:500;color:var(--accent-strong)}
-.v-ll .mc b,.v-ll .mc .r>span:last-child{font-variant-numeric:tabular-nums}
-.v-ll .chip{right:9%;bottom:12%}
 
 /* 'L' tracker */
-.v-l{background:#0b1430}
-.v-l::before{background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:8px 8px;-webkit-mask-image:none;mask-image:none}
-.pc .v-l{-webkit-mask-image:linear-gradient(to bottom,transparent,#000 22%);mask-image:linear-gradient(to bottom,transparent,#000 22%)}
-.v-l svg{position:absolute;inset:0;width:100%;height:100%;z-index:1}
-.v-l .lake{fill:#13265a}
-.v-l .ln{fill:none;stroke-width:3.5;stroke-linejoin:miter;opacity:.85;transition:opacity .5s var(--ease)}
-.v-l .st{fill:#fff}
-.v-l .tr rect{stroke:#0b1430;stroke-width:.8}
-.v-l .glow{opacity:0;transition:opacity .6s var(--ease)}
-.live .v-l .glow,.live.v-l .glow{opacity:1}
-.v-l .chip{left:8%;bottom:10%;background:#fff;color:var(--ink);font-size:11px}
-.v-l .chip i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#3fb950;margin-right:7px;vertical-align:1px}
 
 /* Modernization Mapper */
 .mm-c{--g1:#80caff;--g2:#635bff;--g3:#bfe6ff}
@@ -249,13 +224,92 @@ h2{font-weight:400;font-size:clamp(32px,3.4vw,48px);line-height:1.12;letter-spac
 .v-ps .rk strong{font-weight:500;color:var(--ink-deep);font-variant-numeric:tabular-nums}
 .v-ps .chip{right:9%;bottom:9%}
 
-/* screenshot projects */
-.v-shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--op,50% 50%);transform:scale(1.02);transition:transform 6s cubic-bezier(.2,.6,.2,1)}
-.pc .v-shot{-webkit-mask-image:linear-gradient(to bottom,transparent,#000 26%);mask-image:linear-gradient(to bottom,transparent,#000 26%)}
-.live .v-shot img,.live.v-shot img{transform:scale(1.12) translate3d(-2%,-2%,0)}
-.v-shot .chip{left:7%;bottom:9%;background:rgba(255,255,255,.94);color:var(--ink);backdrop-filter:blur(6px)}
-.v-shot .chip.r{left:auto;right:7%}
-.v-shot .chip b{font-weight:500;color:var(--accent-strong);font-variant-numeric:tabular-nums}
+.v-ll .slip{left:20%;right:16%;top:12%;padding:14px 16px;font-size:12px;color:var(--ink-2);--fx:0;transform-origin:20% 100%;opacity:.9}
+.v-ll .slip .r{display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid var(--rule)}
+.v-ll .slip .r:first-child{border-top:0}
+.v-ll .slip .won{color:#0d7a3e;background:#e6f6ec;padding:1px 6px;border-radius:4px;font:500 11px var(--mono)}
+.live.v-ll .slip,.live .v-ll .slip{transform:perspective(1100px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translate3d(14%,-22%,0) rotate(5deg)}
+.v-ll .mc{left:9%;right:11%;top:30%;padding:16px 18px;font-size:14px}
+.v-ll .mc .r{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--rule)}
+.v-ll .mc .r:first-child{border-top:0;padding-top:0}
+.v-ll .mc .r span:first-child{display:flex;align-items:center;gap:10px}
+.v-ll .mc .av{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:600 10px var(--sans);color:#fff;background:var(--accent-strong)}
+.v-ll .mc .av.b{background:#8792a2}
+.v-ll .mc .win b{font-weight:500;color:var(--accent-strong)}
+.v-ll .mc b,.v-ll .mc .r>span:last-child{font-variant-numeric:tabular-nums}
+.v-ll .chip{right:9%;bottom:12%}
+/* 'L' tracker: a dark map window floating on the field, with an arrivals card */
+.l-c{--g1:#80caff;--g2:#635bff;--g3:#c9e8ff}
+.v-l .mapw{left:6%;right:22%;top:5%;bottom:10%;background:#0b1430;overflow:hidden;border-radius:12px}
+.v-l .bar{position:absolute;inset:0 0 auto;height:24px;display:flex;align-items:center;gap:5px;padding:0 10px;background:#111c3f;border-bottom:1px solid rgba(255,255,255,.06);z-index:2}
+.v-l .bar i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.18)}
+.v-l .bar span{margin-left:8px;font:400 10px var(--mono);color:#8ea0c8}
+.v-l .mapw svg{position:absolute;inset:24px 0 0;width:100%;height:calc(100% - 24px)}
+.v-l .px{fill:none;stroke:rgba(255,255,255,.045);stroke-width:1}
+.v-l .lake{fill:#16285e}
+.v-l .shore{fill:none;stroke:#2b4a9a;stroke-width:2;stroke-dasharray:3 3}
+.v-l .moon{fill:#ffe9a8}
+.v-l .ln{fill:none;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.v-l .halo{fill:none;stroke-width:11;stroke-linecap:round;stroke-linejoin:round;opacity:.16;transition:opacity .6s var(--ease)}
+.live .v-l .halo{opacity:.3}
+.v-l .stn rect{fill:#fff;stroke:#0b1430;stroke-width:1.5}
+.v-l .loop{fill:none;stroke:#fff;stroke-width:1.5;stroke-dasharray:2 3;opacity:.5}
+.v-l .tr rect{stroke:#fff;stroke-width:1}
+.v-l .arr{right:5%;bottom:7%;width:min(46%,230px);padding:14px 14px 8px;font-size:12px}
+.v-l .arr .t{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.v-l .arr .t b{font-weight:500;font-size:13px;color:var(--ink-deep)}
+.v-l .arr .r{display:grid;grid-template-columns:8px 1fr auto;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--rule);color:var(--ink-2)}
+.v-l .arr .r i{width:8px;height:8px;border-radius:2px}
+.v-l .arr .r span:last-child{font:500 11px var(--mono);color:var(--ink-deep);font-variant-numeric:tabular-nums}
+
+/* Dynamic City: isometric blocks on the field, with a clock card */
+.city-c{--g1:#80caff;--g2:#f44bcc;--g3:#ffd7a8}
+.v-city .iso{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+.v-city .gnd{fill:#fff;stroke:#d6deea}
+.v-city .road{stroke:#e8ecf7;stroke-width:9;stroke-linecap:round}
+.v-city .bay{fill:#d7ecff}
+.v-city .tw polygon{stroke:rgba(10,37,64,.12);stroke-width:.6;stroke-linejoin:round}
+.v-city .tw .t{fill:#fff}.v-city .tw .l{fill:#e6e8ff}.v-city .tw .r{fill:#c3c5fb}
+.v-city .tw.hot .t{fill:#f1efff}.v-city .tw.hot .l{fill:#8f88ff}.v-city .tw.hot .r{fill:#5b52f0}
+.v-city .tw{transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(.8);transition:transform .9s var(--ease-out);transition-delay:calc(var(--d)*18ms)}
+.live .v-city .tw{transform:none}
+.v-city .ppl circle{fill:var(--ink-deep)}
+.v-city .ppl circle.a{fill:#f44bcc}
+.v-city .clk{left:6%;top:8%;padding:12px 14px;display:grid;gap:2px;min-width:150px}
+.v-city .clk b{font-weight:500;font-size:20px;letter-spacing:-.01em;color:var(--ink-deep);font-variant-numeric:tabular-nums}
+.v-city .clk .spd{font:500 11px var(--mono);color:var(--accent-strong)}
+.v-city .chip{right:6%;bottom:9%}
+
+/* Snack League: play art and a draft board */
+.snack-c{--g1:#fe9615;--g2:#635bff;--g3:#ffd166}
+.v-sn .pa{left:6%;right:20%;top:6%;padding:12px 14px 10px}
+.v-sn .pa .t,.v-sn .dr .t{display:flex;justify-content:space-between;font-size:12px;font-weight:500;color:var(--ink-deep);margin-bottom:8px}
+.v-sn .pa svg{display:block;width:100%;height:auto;border-radius:6px;background:#f6f9fc}
+.v-sn .yd{stroke:#dbe3ee;stroke-width:1}
+.v-sn .los{stroke:var(--accent);stroke-width:1.5;stroke-dasharray:4 3}
+.v-sn .o{fill:#fff;stroke:var(--accent-strong);stroke-width:2}
+.v-sn .x{stroke:#8792a2;stroke-width:2;stroke-linecap:round}
+.v-sn .rt{fill:none;stroke:var(--ink-deep);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.v-sn .ball{fill:none;stroke:#fe9615;stroke-width:1.6;stroke-dasharray:3 3;opacity:.0;transition:opacity .4s var(--ease) .6s}
+.live .v-sn .ball{opacity:1}
+.live .v-sn .rt{stroke-dasharray:1;animation:draw .9s var(--ease-out) both}
+.live .v-sn .rt:nth-of-type(2){animation-delay:.1s}.live .v-sn .rt:nth-of-type(3){animation-delay:.2s}
+@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.v-sn .dr{right:6%;bottom:8%;width:min(50%,250px);padding:12px 14px}
+.v-sn .tabs{display:flex;gap:4px;margin-bottom:10px}
+.v-sn .tabs span{font:400 10px var(--mono);color:var(--ink-muted);padding:3px 6px;border-radius:5px;background:var(--ground-muted)}
+.v-sn .tabs span.on{background:#efeeff;color:var(--accent-strong)}
+.v-sn .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.v-sn .tl{position:relative;aspect-ratio:1;border-radius:8px;background:var(--ground-muted);display:grid;place-items:center;border:1.5px solid transparent;transition:border-color .3s,background .3s}
+.v-sn .tl svg{width:62%;height:62%;transition:transform .5s var(--ease-out)}
+.live .v-sn .tl.pick{border-color:var(--accent-strong);background:#f4f3ff}
+.live .v-sn .tl.pick svg{transform:scale(1.1) rotate(-6deg)}
+.v-sn .tl.q{font:500 15px var(--mono);color:#b6c2d3;border:1.5px dashed #d6deea}
+.v-sn .bits i{position:absolute;left:50%;top:45%;width:5px;height:5px;border-radius:50%;background:#e5484d;opacity:0}
+.live .v-sn .bits i{animation:pop .9s var(--ease-out) .5s both}
+.v-sn .bits i:nth-child(2){--tx:-22px;--ty:-20px;background:#ffd166}.v-sn .bits i:nth-child(1){--tx:20px;--ty:-24px}.v-sn .bits i:nth-child(3){--tx:24px;--ty:6px}.v-sn .bits i:nth-child(4){--tx:-18px;--ty:10px;background:#3fb950}
+@keyframes pop{0%{opacity:1;transform:translate(-50%,-50%)}100%{opacity:0;transform:translate(calc(-50% + var(--tx)),calc(-50% + var(--ty)))}}
+.v-sn .chip{left:6%;bottom:9%}
 
 /* expanded project */
 html:has(.pd[open]){overflow:hidden}
@@ -523,36 +577,45 @@ footer nav{flex-wrap:wrap;gap:8px 24px;font-weight:400;font-size:14px}footer nav
           <div class="chip pop">Backseat GMs win by 275</div>
         </div>
       </article>
-      <article class="pc w reveal" data-p="l-tracker">
+      <article class="pc w l-c reveal" data-p="l-tracker">
         <div class="pc-head"><p class="k">Chicago 'L' tracker</p><h3><button class="pc-open" type="button" aria-haspopup="dialog">Every CTA train on an 8-bit map of Chicago</button></h3></div>
         <span class="xp" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9.5 2.5h4v4M6.5 13.5h-4v-4"/></svg></span>
-        <div class="vis v-l" aria-hidden="true">
-          <svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid slice" shape-rendering="crispEdges">
-            <path class="lake" d="M334 0H400V260H352L338 214L326 160L336 96L330 0Z"/>
-            <g class="ln-g">
-              <path class="ln" stroke="#c60c30" d="M286 0V260"/>
-              <path class="ln" stroke="#00a1de" d="M40 24L122 106H254V186L196 244"/>
-              <path class="ln" stroke="#62361b" d="M196 30L254 88V146"/>
-              <path class="ln" stroke="#009b3a" d="M18 160H254M290 172V204L326 240"/>
-              <path class="ln" stroke="#f9461c" d="M254 176L166 260"/>
-              <path class="ln" stroke="#e27ea6" d="M52 222L118 176H254"/>
-              <path class="ln" stroke="#522398" d="M300 0L294 96V140"/>
-              <path class="ln" stroke="#f9e300" d="M254 146H292V176H254Z" stroke-width="3"/>
-            </g>
-            <g class="glow" fill="#fff" opacity=".9"><rect x="282" y="58" width="8" height="8"/><rect x="118" y="102" width="8" height="8"/><rect x="250" y="156" width="8" height="8"/><rect x="40" y="156" width="8" height="8"/><rect x="200" y="236" width="8" height="8"/></g>
-            <g class="st"><rect x="283" y="40" width="6" height="6"/><rect x="283" y="210" width="6" height="6"/><rect x="74" y="56" width="6" height="6"/><rect x="190" y="103" width="6" height="6"/><rect x="214" y="58" width="6" height="6"/><rect x="100" y="157" width="6" height="6"/><rect x="150" y="173" width="6" height="6"/><rect x="198" y="217" width="6" height="6"/></g>
-            <g class="tr">
-              <g><rect x="-6" y="-3" width="12" height="6" fill="#ff3355"/><animateMotion dur="11s" repeatCount="indefinite" rotate="auto" begin="-2s" path="M286 0V260"/></g>
-              <g><rect x="-6" y="-3" width="12" height="6" fill="#ff3355"/><animateMotion dur="11s" repeatCount="indefinite" rotate="auto" begin="-8s" keyPoints="1;0" keyTimes="0;1" calcMode="linear" path="M286 0V260"/></g>
-              <g><rect x="-6" y="-3" width="12" height="6" fill="#33c3ff"/><animateMotion dur="13s" repeatCount="indefinite" rotate="auto" begin="-5s" path="M40 24L122 106H254V186L196 244"/></g>
-              <g><rect x="-6" y="-3" width="12" height="6" fill="#a8693d"/><animateMotion dur="8s" repeatCount="indefinite" rotate="auto" begin="-1s" path="M196 30L254 88V146H292V176H254V146"/></g>
-              <g><rect x="-6" y="-3" width="12" height="6" fill="#2fd16a"/><animateMotion dur="12s" repeatCount="indefinite" rotate="auto" begin="-6s" keyPoints="1;0" keyTimes="0;1" calcMode="linear" path="M18 160H254"/></g>
-              <g><rect x="-6" y="-3" width="12" height="6" fill="#ff7a4d"/><animateMotion dur="7s" repeatCount="indefinite" rotate="auto" begin="-3s" path="M254 176L166 260"/></g>
-              <g><rect x="-6" y="-3" width="12" height="6" fill="#ff9cc4"/><animateMotion dur="10s" repeatCount="indefinite" rotate="auto" begin="-4s" path="M52 222L118 176H254"/></g>
-              <g><rect x="-6" y="-3" width="12" height="6" fill="#8a5cd6"/><animateMotion dur="9s" repeatCount="indefinite" rotate="auto" begin="-7s" path="M300 0L294 96V140"/></g>
-            </g>
-          </svg>
-          <div class="chip"><i></i>All eight lines</div>
+        <div class="vis v-l" aria-hidden="true"><div class="field"></div>
+          <div class="fl mapw"><div class="bar"><i></i><i></i><i></i><span>joeferber.com/trains</span></div>
+            <svg viewBox="0 0 400 236" preserveAspectRatio="xMidYMid slice">
+              <path class="px" d="M0 8H400M0 16H400M0 24H400M0 32H400M0 40H400M0 48H400M0 56H400M0 64H400M0 72H400M0 80H400M0 88H400M0 96H400M0 104H400M0 112H400M0 120H400M0 128H400M0 136H400M0 144H400M0 152H400M0 160H400M0 168H400M0 176H400M0 184H400M0 192H400M0 200H400M0 208H400M0 216H400M0 224H400M0 232H400"/>
+              <path class="lake" d="M334 0H400V236H350L342 212L330 196L326 160L332 120L336 80L330 40L326 0Z"/>
+              <path class="shore" d="M326 0L330 40L336 80L332 120L326 160L330 196L342 212L350 236"/>
+              <path class="moon" d="M372 14h8v4h4v8h-4v4h-8v-4h4v-8h-4z"/>
+              <g class="halos">
+                <path class="halo" stroke="#c60c30" d="M286 0V236"/><path class="halo" stroke="#00a1de" d="M40 18L116 94H254V172L200 226"/><path class="halo" stroke="#009b3a" d="M18 148H254"/>
+              </g>
+              <path class="ln" stroke="#62361b" d="M196 24L254 82V134"/>
+              <path class="ln" stroke="#522398" d="M302 0L296 90V134"/>
+              <path class="ln" stroke="#f9461c" d="M254 164L178 236"/>
+              <path class="ln" stroke="#e27ea6" d="M52 210L112 164H254"/>
+              <path class="ln" stroke="#009b3a" d="M18 148H254M290 164V192L322 226"/>
+              <path class="ln" stroke="#00a1de" d="M40 18L116 94H254V172L200 226"/>
+              <path class="ln" stroke="#c60c30" d="M286 0V236"/>
+              <rect class="loop" x="248" y="128" width="46" height="42" rx="4"/>
+              <g class="stn"><rect x="282" y="34" width="8" height="8" rx="2"/><rect x="282" y="200" width="8" height="8" rx="2"/><rect x="70" y="44" width="8" height="8" rx="2"/><rect x="180" y="90" width="8" height="8" rx="2"/><rect x="218" y="48" width="8" height="8" rx="2"/><rect x="92" y="144" width="8" height="8" rx="2"/><rect x="140" y="160" width="8" height="8" rx="2"/><rect x="212" y="204" width="8" height="8" rx="2"/><rect x="250" y="124" width="9" height="9" rx="2"/></g>
+              <g class="tr">
+                <g><rect x="-7" y="-3.5" width="14" height="7" rx="3.5" fill="#ff3355"/><animateMotion dur="11s" repeatCount="indefinite" rotate="auto" begin="-2s" path="M286 0V236"/></g>
+                <g><rect x="-7" y="-3.5" width="14" height="7" rx="3.5" fill="#ff3355"/><animateMotion dur="11s" repeatCount="indefinite" rotate="auto" begin="-8s" keyPoints="1;0" keyTimes="0;1" calcMode="linear" path="M286 0V236"/></g>
+                <g><rect x="-7" y="-3.5" width="14" height="7" rx="3.5" fill="#33c3ff"/><animateMotion dur="13s" repeatCount="indefinite" rotate="auto" begin="-5s" path="M40 18L116 94H254V172L200 226"/></g>
+                <g><rect x="-7" y="-3.5" width="14" height="7" rx="3.5" fill="#a8693d"/><animateMotion dur="8s" repeatCount="indefinite" rotate="auto" begin="-1s" path="M196 24L254 82V134H294V170H254V134"/></g>
+                <g><rect x="-7" y="-3.5" width="14" height="7" rx="3.5" fill="#2fd16a"/><animateMotion dur="12s" repeatCount="indefinite" rotate="auto" begin="-6s" keyPoints="1;0" keyTimes="0;1" calcMode="linear" path="M18 148H254"/></g>
+                <g><rect x="-7" y="-3.5" width="14" height="7" rx="3.5" fill="#ff7a4d"/><animateMotion dur="7s" repeatCount="indefinite" rotate="auto" begin="-3s" path="M254 164L178 236"/></g>
+                <g><rect x="-7" y="-3.5" width="14" height="7" rx="3.5" fill="#ff9cc4"/><animateMotion dur="10s" repeatCount="indefinite" rotate="auto" begin="-4s" path="M52 210L112 164H254"/></g>
+                <g><rect x="-7" y="-3.5" width="14" height="7" rx="3.5" fill="#8a5cd6"/><animateMotion dur="9s" repeatCount="indefinite" rotate="auto" begin="-7s" path="M302 0L296 90V134"/></g>
+              </g>
+            </svg>
+          </div>
+          <div class="fl arr"><div class="t"><b>Clark/Lake</b><span class="mono">next trains</span></div>
+            <div class="r"><i style="background:#00a1de"></i><span>Blue to O'Hare</span><span><span data-from="6" data-to="2">2</span> min</span></div>
+            <div class="r"><i style="background:#009b3a"></i><span>Green to Harlem</span><span><span data-from="9" data-to="5">5</span> min</span></div>
+            <div class="r"><i style="background:#e27ea6"></i><span>Pink to 54th/Cermak</span><span><span data-from="12" data-to="8">8</span> min</span></div>
+          </div>
         </div>
       </article>
       <article class="pc mm-c reveal" data-p="modernization-mapper">
@@ -590,18 +653,38 @@ footer nav{flex-wrap:wrap;gap:8px 24px;font-weight:400;font-size:14px}footer nav
           <div class="chip pop">Queue re-ranked</div>
         </div>
       </article>
-      <article class="pc w reveal" data-p="dynamic-city">
+      <article class="pc w city-c reveal" data-p="dynamic-city">
         <div class="pc-head"><p class="k">Dynamic City Renderer</p><h3><button class="pc-open" type="button" aria-haspopup="dialog">A 3D model of central Miami you can walk or fly through</button></h3></div>
         <span class="xp" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9.5 2.5h4v4M6.5 13.5h-4v-4"/></svg></span>
-        <div class="vis v-shot" style="--op:50% 45%" aria-hidden="true"><img src="assets/dynamic-city.jpg" alt="" loading="lazy" width="1200" height="640">
-          <div class="chip">City clock <b data-clock="460">7:40 AM</b></div><div class="chip r">About 300 people</div>
+        <div class="vis v-city" aria-hidden="true"><div class="field"></div>
+          <svg class="iso" viewBox="40 6 320 236" preserveAspectRatio="xMidYMid meet"></svg>
+          <div class="fl clk"><span class="mono">City clock</span><b data-clock="460">7:40 AM</b><span class="spd">▸▸ sped up</span></div>
+          <div class="chip pop">About 300 people</div>
         </div>
       </article>
-      <article class="pc w reveal" data-p="snack-league">
+      <article class="pc w snack-c reveal" data-p="snack-league">
         <div class="pc-head"><p class="k">Snack League</p><h3><button class="pc-open" type="button" aria-haspopup="dialog">Eleven-on-eleven football where every player is a snack</button></h3></div>
         <span class="xp" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9.5 2.5h4v4M6.5 13.5h-4v-4"/></svg></span>
-        <div class="vis v-shot" style="--op:50% 50%" aria-hidden="true"><img src="assets/snack-league.jpg" alt="" loading="lazy" width="1200" height="640">
-          <div class="chip">Draft <b>11</b> of 25 snacks</div><div class="chip r">Keyboard or gamepad</div>
+        <div class="vis v-sn" aria-hidden="true"><div class="field"></div>
+          <div class="fl pa"><div class="t"><span>Play call</span><span class="mono">11 on 11</span></div>
+            <svg viewBox="0 0 300 150">
+              <path class="yd" d="M30 0V150M60 0V150M90 0V150M120 0V150M180 0V150M210 0V150M240 0V150M270 0V150"/>
+              <path class="los" d="M150 0V150"/>
+              <path class="rt" pathLength="1" d="M138 18H200L232 44"/><path class="rt" pathLength="1" d="M138 132H186L208 104"/><path class="rt" pathLength="1" d="M104 75Q130 104 172 108"/>
+              <path class="ball" d="M118 75Q178 6 230 42"/>
+              <g class="o"><circle cx="138" cy="18" r="5"/><circle cx="138" cy="54" r="5"/><circle cx="138" cy="66" r="5"/><circle cx="138" cy="78" r="5"/><circle cx="138" cy="90" r="5"/><circle cx="138" cy="102" r="5"/><circle cx="138" cy="132" r="5"/><circle cx="118" cy="75" r="5"/><circle cx="104" cy="75" r="5"/><circle cx="126" cy="40" r="5"/><circle cx="126" cy="112" r="5"/></g>
+              <path class="x" d="M160 52l6 6m0-6l-6 6M160 70l6 6m0-6l-6 6M160 88l6 6m0-6l-6 6M176 30l6 6m0-6l-6 6M176 112l6 6m0-6l-6 6M196 70l6 6m0-6l-6 6M226 20l6 6m0-6l-6 6M226 124l6 6m0-6l-6 6"/>
+            </svg>
+          </div>
+          <div class="fl dr"><div class="t"><span>Draft board</span><span class="mono">25 snacks</span></div>
+            <div class="tabs"><span>Balance</span><span>Technique</span><span class="on">Speed</span><span>Power</span></div>
+            <div class="tiles">
+              <div class="tl pick"><svg viewBox="0 0 40 40"><path d="M6 9L34 9L20 37Z" fill="#ffd166"/><path d="M5 6Q20 2 35 6L34 11Q20 7 6 11Z" fill="#e0a458"/><circle cx="15" cy="15" r="3" fill="#e5484d"/><circle cx="24" cy="18" r="2.6" fill="#e5484d"/><circle cx="20" cy="27" r="2.2" fill="#e5484d"/></svg><span class="bits"><i></i><i></i><i></i><i></i></span></div>
+              <div class="tl"><svg viewBox="0 0 40 40"><path d="M8 20Q8 8 20 8Q32 8 32 20Z" fill="#e0a458"/><rect x="7" y="21" width="26" height="4" rx="2" fill="#3fb950"/><rect x="7" y="25" width="26" height="5" rx="2.5" fill="#7a3e1d"/><path d="M8 31H32Q32 35 28 35H12Q8 35 8 31Z" fill="#e0a458"/></svg></div>
+              <div class="tl q">?</div>
+            </div>
+          </div>
+          <div class="chip pop">Big hit, toppings off</div>
         </div>
       </article>
     </div>
@@ -752,6 +835,21 @@ function setLive(root,host,on){
   root.querySelectorAll('[data-alt]').forEach(el=>{el._o??=el.textContent;clearTimeout(el._t);el._t=setTimeout(()=>{el.textContent=on?el.dataset.alt:el._o},on?260:0)});
   root.querySelectorAll('[data-clock]').forEach(el=>{clearInterval(el._i);if(on&&!reduce){let m=+el.dataset.clock;el._i=setInterval(()=>{m+=4;el.textContent=clockTxt(m)},70)}else el.textContent=clockTxt(+el.dataset.clock)});
 }
+document.querySelectorAll('svg.iso').forEach(svg=>{
+  const s=17,cx=200,cy=96,P=(x,y,z=0)=>[(cx+(x-y)*s*.866).toFixed(1),(cy+(x+y)*s*.5-z).toFixed(1)].join(','),pts=a=>a.map(p=>P(...p)).join(' ');
+  const road=x=>x===3,ave=y=>y===5;
+  let o=`<polygon class="bay" points="${pts([[8,0],[9.6,0],[9.6,8],[8,8]])}"/><polygon class="gnd" points="${pts([[0,0],[8,0],[8,8],[0,8]])}"/>`;
+  o+=`<line class="road" x1="${P(3.5,.2).split(',')[0]}" y1="${P(3.5,.2).split(',')[1]}" x2="${P(3.5,7.8).split(',')[0]}" y2="${P(3.5,7.8).split(',')[1]}"/><line class="road" x1="${P(.2,5.5).split(',')[0]}" y1="${P(.2,5.5).split(',')[1]}" x2="${P(7.8,5.5).split(',')[0]}" y2="${P(7.8,5.5).split(',')[1]}"/>`;
+  const cells=[];for(let x=0;x<8;x++)for(let y=0;y<8;y++)if(!road(x)&&!ave(y))cells.push([x,y]);
+  cells.sort((a,b)=>a[0]+a[1]-b[0]-b[1]||a[0]-b[0]).forEach(([x,y],i)=>{
+    const tall=x>=5&&y<=3,h=8+((x*7+y*13)%5)*7+(tall?38+((x+y)%3)*16:0),a=.12,b=.88,X=x+a,Y=y+a,X2=x+b,Y2=y+b;
+    const hot=(x===6&&y===1)||(x===5&&y===3);
+    o+=`<g class="tw${hot?' hot':''}" style="--d:${i}"><polygon class="l" points="${pts([[X,Y2,0],[X2,Y2,0],[X2,Y2,h],[X,Y2,h]])}"/><polygon class="r" points="${pts([[X2,Y,0],[X2,Y2,0],[X2,Y2,h],[X2,Y,h]])}"/><polygon class="t" points="${pts([[X,Y,h],[X2,Y,h],[X2,Y2,h],[X,Y2,h]])}"/></g>`;
+  });
+  const walk=(a,b,d,beg,c='')=>`<circle r="2.6"${c?` class="${c}"`:''}><animateMotion dur="${d}s" begin="${beg}s" repeatCount="indefinite" path="M${P(...a)}L${P(...b)}"/></circle>`;
+  o+='<g class="ppl">'+walk([3.3,.3],[3.3,7.7],9,-1)+walk([3.7,7.7],[3.7,.3],11,-5,'a')+walk([.3,5.3],[7.7,5.3],10,-3)+walk([7.7,5.7],[.3,5.7],8,-6,'a')+walk([3.3,.3],[3.3,7.7],9,-6)+'</g>';
+  svg.innerHTML=o;
+});
 const cards=[...document.querySelectorAll('.pc')];
 cards.forEach(c=>{
   const vis=c.querySelector('.vis');setLive(vis,c,false);
