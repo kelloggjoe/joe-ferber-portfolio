@@ -263,7 +263,7 @@ h2{font-weight:400;font-size:clamp(32px,3.4vw,48px);line-height:1.12;letter-spac
 .v-l .arr .r span:last-child{font:500 11px var(--mono);color:var(--ink-deep);font-variant-numeric:tabular-nums}
 
 /* Dynamic City: isometric blocks on the field, with a clock card */
-.city-c{--g1:#80caff;--g2:#f44bcc;--g3:#ffd7a8}
+.pc.city-c{grid-column:1/-1;--g1:#80caff;--g2:#f44bcc;--g3:#ffd7a8}
 .v-city .iso{position:absolute;inset:0;width:100%;height:100%;z-index:1}
 .v-city .gnd{fill:#fff;stroke:#d6deea}
 .v-city .road{stroke:#e8ecf7;stroke-width:9;stroke-linecap:round}
@@ -641,15 +641,6 @@ footer nav{flex-wrap:wrap;gap:8px 24px;font-weight:400;font-size:14px}footer nav
           <div class="chip pop">Queue re-ranked</div>
         </div>
       </article>
-      <article class="pc w city-c reveal" data-p="dynamic-city">
-        <div class="pc-head"><p class="k">Dynamic City Renderer</p><h3><button class="pc-open" type="button" aria-haspopup="dialog">A 3D model of central Miami you can walk or fly through</button></h3></div>
-        <span class="xp" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9.5 2.5h4v4M6.5 13.5h-4v-4"/></svg></span>
-        <div class="vis v-city" aria-hidden="true"><div class="field"></div>
-          <svg class="iso" viewBox="40 6 320 236" preserveAspectRatio="xMidYMid meet"></svg>
-          <div class="fl clk"><span class="mono">City clock</span><b data-clock="460">7:40 AM</b><span class="spd">▸▸ sped up</span></div>
-          <div class="chip pop">About 300 people</div>
-        </div>
-      </article>
       <article class="pc w snack-c reveal" data-p="snack-league">
         <div class="pc-head"><p class="k">Snack League</p><h3><button class="pc-open" type="button" aria-haspopup="dialog">Eleven-on-eleven football where every player is a snack</button></h3></div>
         <span class="xp" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9.5 2.5h4v4M6.5 13.5h-4v-4"/></svg></span>
@@ -673,6 +664,15 @@ footer nav{flex-wrap:wrap;gap:8px 24px;font-weight:400;font-size:14px}footer nav
             </div>
           </div>
           <div class="chip pop">Big hit, toppings off</div>
+        </div>
+      </article>
+      <article class="pc city-c reveal" data-p="dynamic-city">
+        <div class="pc-head"><p class="k">Dynamic City Renderer</p><h3><button class="pc-open" type="button" aria-haspopup="dialog">A 3D model of central Miami you can walk or fly through</button></h3></div>
+        <span class="xp" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9.5 2.5h4v4M6.5 13.5h-4v-4"/></svg></span>
+        <div class="vis v-city" aria-hidden="true"><div class="field"></div>
+          <svg class="iso" viewBox="40 6 320 236" preserveAspectRatio="xMidYMid meet"></svg>
+          <div class="fl clk"><span class="mono">City clock</span><b data-clock="460">7:40 AM</b><span class="spd">▸▸ sped up</span></div>
+          <div class="chip pop">About 300 people</div>
         </div>
       </article>
     </div>
