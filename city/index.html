@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dynamic City Renderer</title>
+  <script type="module" crossorigin src="./assets/index-ClbSYXOM.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-DjJ56fzy.css">
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div id="crosshair"></div>
+  <div id="start" class="panel">
+    <h1>Dynamic City Renderer</h1>
+    <p class="sub">Central Miami, centered on Brickell. A walkable, flyable 3D city built from OpenStreetMap data.</p>
+    <p id="loading">Loading district data…</p>
+    <button id="go" disabled>Click to walk</button>
+    <div class="qrow">Graphics <span id="quality"></span></div>
+    <table class="keys">
+      <tr><td>W A S D</td><td>Move</td></tr>
+      <tr><td>Mouse</td><td>Look</td></tr>
+      <tr><td>Shift</td><td>Sprint</td></tr>
+      <tr><td>Space</td><td>Jump</td></tr>
+      <tr><td>Space Space</td><td>Fly on / off (double-tap)</td></tr>
+      <tr><td>Space / Shift</td><td>Fly up / down</td></tr>
+      <tr><td>W W</td><td>Fly or run fast (double-tap, hold)</td></tr>
+      <tr><td>+ / − or wheel</td><td>Walking / flying speed (0.5× to 12×)</td></tr>
+      <tr><td>Click</td><td>Inspect a person (center of screen)</td></tr>
+      <tr><td>R</td><td>Return to Bayfront Park</td></tr>
+      <tr><td>M</td><td>Map: click anywhere to teleport</td></tr>
+      <tr><td>P / [ / ]</td><td>Pause clock / slower / faster</td></tr>
+      <tr><td>L</td><td>Toggle labels</td></tr>
+      <tr><td>G</td><td>Next graphics quality (reloads)</td></tr>
+      <tr><td>`</td><td>Debug overlay</td></tr>
+      <tr><td>Esc</td><td>Release mouse</td></tr>
+    </table>
+  </div>
+  <div id="clock" class="hud">
+    <span id="time">--:--</span>
+    <button id="slower" title="Slower ([)">−</button>
+    <span id="speed">60×</span>
+    <button id="faster" title="Faster (])">+</button>
+    <button id="pause" title="Pause (P)">❚❚</button>
+    <div id="crowd"></div>
+  </div>
+  <div id="debug" class="hud hidden"></div>
+  <div id="inspect" class="hud hidden"></div>
+  <div id="mode" class="hud hidden"></div>
+  <canvas id="minimap" title="Open map (M)"></canvas>
+  <div id="bigmap" class="hidden">
+    <div class="bigmap-panel">
+      <div class="bigmap-head">
+        <h2>Map</h2>
+        <span id="bigmap-hint">Click to teleport here</span>
+        <button id="bigmap-close" title="Close (M or Esc)">Close</button>
+      </div>
+      <div class="bigmap-body">
+        <canvas id="bigmap-canvas"></canvas>
+        <div class="bigmap-side">
+          <h3>Go to</h3>
+          <div id="bigmap-places"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="attrib">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> (ODbL)</div>
+</body>
+</html>
