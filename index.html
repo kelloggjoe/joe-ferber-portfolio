@@ -278,7 +278,8 @@ h2{font-weight:400;font-size:clamp(32px,3.4vw,48px);line-height:1.12;letter-spac
 .v-city .clk{left:6%;top:8%;padding:12px 14px;display:grid;gap:2px;min-width:150px}
 .v-city .clk b{font-weight:500;font-size:20px;letter-spacing:-.01em;color:var(--ink-deep);font-variant-numeric:tabular-nums}
 .v-city .clk .spd{font:500 11px var(--mono);color:var(--accent-strong)}
-.v-city .chip{right:6%;bottom:9%}
+.v-city .tw path{stroke:rgba(10,37,64,.12);stroke-width:.6;stroke-linejoin:round}
+.v-city .tw .brace{fill:none;stroke:#f1efff;stroke-width:1.1;stroke-linecap:round}
 
 /* Snack League: play art and a draft board */
 .snack-c{--g1:#fe9615;--g2:#635bff;--g3:#ffd166}
@@ -610,9 +611,8 @@ footer nav{flex-wrap:wrap;gap:8px 24px;font-weight:400;font-size:14px}footer nav
         <div class="pc-head"><p class="k">Dynamic City Renderer</p><h3><button class="pc-open" type="button" aria-haspopup="dialog">A 3D model of central Miami you can walk or fly through</button></h3></div>
         <span class="xp" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9.5 2.5h4v4M6.5 13.5h-4v-4"/></svg></span>
         <div class="vis v-city" aria-hidden="true"><div class="field"></div>
-          <svg class="iso" viewBox="40 6 320 236" preserveAspectRatio="xMidYMid meet"></svg>
+          <svg class="iso" viewBox="24 28 385 212" preserveAspectRatio="xMidYMid meet"></svg>
           <div class="fl clk"><span class="mono">City clock</span><b data-clock="460">7:40 AM</b><span class="spd">▸▸ sped up</span></div>
-          <div class="chip pop">About 300 people</div>
         </div>
       </article>
       <article class="pc mm-c reveal" data-p="modernization-mapper">
@@ -850,18 +850,50 @@ function setLive(root,host,on){
   root.querySelectorAll('[data-clock]').forEach(el=>{clearInterval(el._i);if(on&&!reduce){let m=+el.dataset.clock;el._i=setInterval(()=>{m+=4;el.textContent=clockTxt(m)},70)}else el.textContent=clockTxt(+el.dataset.clock)});
 }
 document.querySelectorAll('svg.iso').forEach(svg=>{
-  const s=17,cx=200,cy=96,P=(x,y,z=0)=>[(cx+(x-y)*s*.866).toFixed(1),(cy+(x+y)*s*.5-z).toFixed(1)].join(','),pts=a=>a.map(p=>P(...p)).join(' ');
-  const road=x=>x===3,ave=y=>y===5;
-  let o=`<polygon class="bay" points="${pts([[8,0],[9.6,0],[9.6,8],[8,8]])}"/><polygon class="gnd" points="${pts([[0,0],[8,0],[8,8],[0,8]])}"/>`;
-  o+=`<line class="road" x1="${P(3.5,.2).split(',')[0]}" y1="${P(3.5,.2).split(',')[1]}" x2="${P(3.5,7.8).split(',')[0]}" y2="${P(3.5,7.8).split(',')[1]}"/><line class="road" x1="${P(.2,5.5).split(',')[0]}" y1="${P(.2,5.5).split(',')[1]}" x2="${P(7.8,5.5).split(',')[0]}" y2="${P(7.8,5.5).split(',')[1]}"/>`;
-  const cells=[];for(let x=0;x<8;x++)for(let y=0;y<8;y++)if(!road(x)&&!ave(y))cells.push([x,y]);
+  const project=(x,y,z=0)=>[180+(x-y)*19,100+(x+y)*7-z];
+  const P=(...point)=>project(...point).map(value=>value.toFixed(1)).join(',');
+  const pts=points=>points.map(point=>P(...point)).join(' ');
+  const width=10, depth=8;
+  const polygon=(name,points)=>`<polygon class="${name}" points="${pts(points)}"/>`;
+  const line=(name,a,b)=>`<path class="${name}" d="M${P(...a)}L${P(...b)}"/>`;
+  const block=(x,y,base,height,inset=.12,far=.88)=>{
+    const X=x+inset,Y=y+inset,X2=x+far,Y2=y+far;
+    return polygon('l',[[X,Y2,base],[X2,Y2,base],[X2,Y2,height],[X,Y2,height]])+
+      polygon('r',[[X2,Y,base],[X2,Y2,base],[X2,Y2,height],[X2,Y,height]])+
+      polygon('t',[[X,Y,height],[X2,Y,height],[X2,Y2,height],[X,Y2,height]]);
+  };
+  let o=polygon('bay',[[width,0],[11.7,0],[11.7,depth],[width,depth]])+
+    polygon('gnd',[[0,0],[width,0],[width,depth],[0,depth]])+
+    line('road',[3.5,.2],[3.5,7.8])+line('road',[.2,5.5],[9.8,5.5])+
+    line('road',[8.5,.2],[8.5,7.8]);
+  const landmarks={
+    '1,2':{name:'Freedom Tower',draw:(x,y)=>
+      block(x,y,0,34)+block(x,y,34,47,.24,.76)+block(x,y,47,60,.38,.62)+
+      polygon('r',[[x+.38,y+.62,60],[x+.62,y+.62,60],[x+.5,y+.5,72]])+
+      polygon('t',[[x+.62,y+.38,60],[x+.62,y+.62,60],[x+.5,y+.5,72]])},
+    '6,1':{name:'One Thousand Museum',draw:(x,y)=>
+      block(x,y,0,105)+
+      `<path class="brace" d="M${P(x+.16,y+.88,6)}Q${P(x+.88,y+.88,43)} ${P(x+.18,y+.88,98)}M${P(x+.83,y+.88,6)}Q${P(x+.24,y+.88,43)} ${P(x+.81,y+.88,98)}"/>`},
+    '9,2':{name:'Aston Martin Residences',draw:(x,y)=>{
+      const base=[x+.12,y+.88,0], edge=[x+.88,y+.88,0], tip=[x+.88,y+.88,112];
+      return `<path class="l" d="M${P(...base)}L${P(...edge)}L${P(...tip)}Q${P(x+.03,y+.88,74)} ${P(...base)}Z"/>`+
+        polygon('r',[[x+.88,y+.12,0],edge,tip,[x+.88,y+.12,96]])+
+        `<path class="t" d="M${P(...tip)}L${P(x+.88,y+.12,96)}Q${P(x+.22,y+.12,68)} ${P(x+.12,y+.12,0)}L${P(...base)}Q${P(x+.03,y+.88,74)} ${P(...tip)}Z"/>`;
+    }}
+  };
+  const cells=[];
+  for(let x=0;x<width;x++)for(let y=0;y<depth;y++){
+    if(x!==3&&x!==8&&y!==5)cells.push([x,y]);
+  }
   cells.sort((a,b)=>a[0]+a[1]-b[0]-b[1]||a[0]-b[0]).forEach(([x,y],i)=>{
-    const tall=x>=5&&y<=3,h=8+((x*7+y*13)%5)*7+(tall?38+((x+y)%3)*16:0),a=.12,b=.88,X=x+a,Y=y+a,X2=x+b,Y2=y+b;
-    const hot=(x===6&&y===1)||(x===5&&y===3);
-    o+=`<g class="tw${hot?' hot':''}" style="--d:${i}"><polygon class="l" points="${pts([[X,Y2,0],[X2,Y2,0],[X2,Y2,h],[X,Y2,h]])}"/><polygon class="r" points="${pts([[X2,Y,0],[X2,Y2,0],[X2,Y2,h],[X2,Y,h]])}"/><polygon class="t" points="${pts([[X,Y,h],[X2,Y,h],[X2,Y2,h],[X,Y2,h]])}"/></g>`;
+    const landmark=landmarks[[x,y].join(',')];
+    const tall=x>=5&&y<=3;
+    const h=8+((x*7+y*13)%5)*7+(tall?38+((x+y)%3)*16:0);
+    const hot=landmark||(x===5&&y===3);
+    o+=`<g class="tw${hot?' hot':''}" style="--d:${Math.min(i,42)}">${landmark?'<title>'+landmark.name+'</title>'+landmark.draw(x,y):block(x,y,0,h)}</g>`;
   });
   const walk=(a,b,d,beg,c='')=>`<circle r="2.6"${c?` class="${c}"`:''}><animateMotion dur="${d}s" begin="${beg}s" repeatCount="indefinite" path="M${P(...a)}L${P(...b)}"/></circle>`;
-  o+='<g class="ppl">'+walk([3.3,.3],[3.3,7.7],9,-1)+walk([3.7,7.7],[3.7,.3],11,-5,'a')+walk([.3,5.3],[7.7,5.3],10,-3)+walk([7.7,5.7],[.3,5.7],8,-6,'a')+walk([3.3,.3],[3.3,7.7],9,-6)+'</g>';
+  o+='<g class="ppl">'+walk([3.3,.3],[3.3,7.7],9,-1)+walk([3.7,7.7],[3.7,.3],11,-5,'a')+walk([.3,5.3],[9.7,5.3],10,-3)+walk([9.7,5.7],[.3,5.7],8,-6,'a')+walk([3.3,.3],[3.3,7.7],9,-6)+'</g>';
   svg.innerHTML=o;
 });
 {const pf=document.querySelector('.portrait');
