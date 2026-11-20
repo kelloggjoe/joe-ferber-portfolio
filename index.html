@@ -452,6 +452,13 @@ footer nav{flex-wrap:wrap;gap:8px 24px;font-weight:400;font-size:14px}footer nav
 .portrait .photo{border-radius:12px;overflow:hidden;aspect-ratio:4/5;background:var(--surface-blue);box-shadow:var(--shadow-float);border:1px solid rgba(255,255,255,.7)}
 .portrait img{display:block;width:100%;height:100%;object-fit:cover;object-position:46% 30%}
 .portrait figcaption{position:absolute;left:-36px;bottom:28px;background:#fff;border:1px solid var(--rule);border-radius:10px;box-shadow:var(--shadow-medium,0 8px 24px rgba(50,50,93,.1));padding:12px 16px;font-size:13px;line-height:1.45;color:var(--ink-2);width:max-content;max-width:min(320px,calc(100vw - 48px))}
+.portrait{transform-style:preserve-3d;transform:perspective(1200px) translate3d(0,var(--pl,0px),0) rotateX(var(--prx,0deg)) rotateY(var(--pry,0deg));transition:transform .8s var(--ease-out)}
+.portrait.on{--pl:-6px;transition:transform .25s var(--ease-out)}
+.portrait .photo{position:relative;transition:box-shadow .5s var(--ease)}
+.portrait.on .photo{box-shadow:0 40px 70px -18px rgba(50,50,93,.35),0 24px 40px -24px rgba(0,0,0,.35)}
+.portrait .photo::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at var(--gx,50%) var(--gy,0%),rgba(255,255,255,.28),transparent 55%);opacity:0;transition:opacity .5s var(--ease)}
+.portrait.on .photo::after{opacity:1}
+.portrait figcaption{transform:translateZ(40px)}
 .portrait figcaption b{display:block;font-weight:500;font-size:15px;color:var(--ink-deep)}
 .portrait figcaption span{display:block}
 .experience{padding:150px 0 40px}
@@ -850,6 +857,11 @@ document.querySelectorAll('svg.iso').forEach(svg=>{
   o+='<g class="ppl">'+walk([3.3,.3],[3.3,7.7],9,-1)+walk([3.7,7.7],[3.7,.3],11,-5,'a')+walk([.3,5.3],[7.7,5.3],10,-3)+walk([7.7,5.7],[.3,5.7],8,-6,'a')+walk([3.3,.3],[3.3,7.7],9,-6)+'</g>';
   svg.innerHTML=o;
 });
+{const pf=document.querySelector('.portrait');
+if(pf&&matchMedia('(hover:hover) and (pointer:fine)').matches&&!reduce){
+  pf.addEventListener('pointermove',e=>{const r=pf.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;pf.classList.add('on');pf.style.setProperty('--pry',((x-.5)*14).toFixed(2)+'deg');pf.style.setProperty('--prx',((.5-y)*12).toFixed(2)+'deg');pf.style.setProperty('--gx',(x*100).toFixed(1)+'%');pf.style.setProperty('--gy',(y*100).toFixed(1)+'%')});
+  pf.addEventListener('pointerleave',()=>{pf.classList.remove('on');pf.style.setProperty('--prx','0deg');pf.style.setProperty('--pry','0deg')});
+}}
 const cards=[...document.querySelectorAll('.pc')];
 cards.forEach(c=>{
   const vis=c.querySelector('.vis');setLive(vis,c,false);
