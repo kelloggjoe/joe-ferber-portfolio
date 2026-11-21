@@ -4,17 +4,23 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dynamic City Renderer</title>
-  <script type="module" crossorigin src="./assets/index-LDh9Q3Lf.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-BodyetD4.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="./assets/main-Cp9HXVb6.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/modulepreload-polyfill-B5Qt9EMX.js">
+  <link rel="stylesheet" crossorigin href="./assets/main-TYU2g6SV.css">
 </head>
 <body>
   <canvas id="c"></canvas>
   <div id="crosshair"></div>
   <div id="start" class="panel">
     <h1>Dynamic City Renderer</h1>
-    <p class="sub">Central Miami, centered on Brickell. A walkable, flyable 3D city built from OpenStreetMap data.</p>
+    <p class="sub only-default">Central Miami, centered on Brickell. A walkable, flyable 3D city built from OpenStreetMap data.</p>
+    <p class="sub only-generated"><span id="area-name"></span>, built in your browser from OpenStreetMap data.</p>
     <p id="loading">Loading district data…</p>
     <button id="go" disabled>Click to walk</button>
+    <div class="links"><a href="./explore.html">Pick another area</a><button id="copy-link" class="only-generated" type="button">Copy link</button></div>
     <div class="qrow">Graphics <span id="quality"></span></div>
     <div class="qrow">Style <span id="style"></span></div>
     <table class="keys">
