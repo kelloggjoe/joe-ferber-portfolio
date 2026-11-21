@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dynamic City Renderer · Explore</title>
+  <meta name="description" content="Pick any area on the map and walk or fly through it in 3D, built in your browser from OpenStreetMap data." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="./assets/explore-BZ6dGIuY.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/modulepreload-polyfill-B5Qt9EMX.js">
+  <link rel="stylesheet" crossorigin href="./assets/explore-DhnR1Nzk.css">
+</head>
+<body>
+  <div id="map" aria-label="Map. Drag to move the square over the area you want."></div>
+  <div id="frame-label" aria-hidden="true"></div>
+
+  <aside class="card" aria-labelledby="title">
+    <p class="eyebrow">Dynamic City Renderer</p>
+    <h1 id="title">Build any city in 3D</h1>
+    <p class="lede">Search for a place and move the map so the square covers the area you want. Then walk or fly through it, with traffic and people.</p>
+
+    <div class="search">
+      <label for="q" class="sr-only">Search for a place</label>
+      <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M13 13l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input id="q" type="search" placeholder="Search a city, neighborhood or address" autocomplete="off" />
+      <ul id="results" role="listbox" hidden></ul>
+    </div>
+
+    <fieldset class="sizes">
+      <legend>Area size</legend>
+      <div class="seg" role="radiogroup">
+        <button type="button" data-km="1" role="radio">1 km</button>
+        <button type="button" data-km="2" role="radio" class="on" aria-checked="true">2 km</button>
+        <button type="button" data-km="3" role="radio">3 km</button>
+        <button type="button" data-km="4" role="radio">4 km</button>
+      </div>
+      <p class="hint" id="size-hint">2 × 2 km. A good balance of size and loading time.</p>
+    </fieldset>
+
+    <button id="build" class="primary" type="button">Build this area <svg viewBox="0 0 10 10" aria-hidden="true"><path d="M3 1l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+    <p class="where" id="where">Centered on 25.763, -80.194</p>
+
+    <div class="featured">
+      <p class="label">Try one</p>
+      <div class="chips" id="chips"></div>
+    </div>
+    <p class="demo"><a href="./">Open the Miami demo</a> <span>(prebuilt, opens instantly)</span></p>
+  </aside>
+</body>
+</html>
