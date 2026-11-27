@@ -22,15 +22,21 @@ h1{margin:118px 0 0;font-weight:400;font-size:76px;line-height:1.04;letter-spaci
 h1 span{color:#5b6f93}
 p{margin:26px 0 0;font-size:24px;line-height:1.45;color:#425466;max-width:24em}
 .url{position:absolute;left:72px;bottom:56px;font:500 20px "Source Code Pro",monospace;color:#533afd}
-.portrait{position:absolute;right:96px;top:84px;width:330px;transform:perspective(1200px) rotateY(-9deg) rotateX(3deg)}
-.photo{border-radius:14px;overflow:hidden;aspect-ratio:4/5;box-shadow:0 40px 70px -18px rgba(50,50,93,.35),0 24px 40px -24px rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.7)}
-.photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 30%}
-.cap{position:absolute;left:-44px;bottom:30px;background:#fff;border:1px solid #e6ecf2;border-radius:10px;box-shadow:0 13px 27px -5px rgba(50,50,93,.2),0 8px 16px -8px rgba(0,0,0,.15);padding:13px 18px;font-size:15px;line-height:1.45;color:#425466}
-.cap b{display:block;font-weight:500;font-size:17px;color:#061b31}
+.viz{position:absolute;right:40px;top:30px;width:520px;height:560px;perspective:2200px;display:grid;place-items:center}
+.stack{position:relative;width:300px;height:300px;transform-style:preserve-3d;transform:rotateX(58deg) rotateZ(-36deg)}
+.plate{position:absolute;inset:0;border-radius:14px;background:#fff;border:1px solid #e6ecf2;box-shadow:0 13px 27px -5px rgba(50,50,93,.22),0 8px 16px -8px rgba(0,0,0,.15)}
+.plate.on{border-color:#635bff}
+.tag{position:absolute;left:16px;top:12px;right:16px;display:flex;justify-content:space-between;font:500 12px "Source Code Pro",monospace;color:#5f6f88}
+.plate.on .tag{color:#533afd}
+.body{position:absolute;inset:42px 16px 16px}
+.cells{display:grid;grid-template-columns:repeat(8,1fr);gap:8px}.cells i{aspect-ratio:1;border-radius:3px;background:#e5edf5}.cells i.h{background:#635bff}
+.bars i{display:block;height:9px;border-radius:5px;background:#e5edf5;margin-bottom:13px}.bars i.h{background:linear-gradient(90deg,#635bff,#80caff)}
+.net{width:100%;height:100%}.net line{stroke:#c9d3df;stroke-width:1.5}.net circle{fill:#fff;stroke:#0a2540;stroke-width:1.5}.net .h{stroke:#635bff}
+.mini .r{display:flex;justify-content:space-between;padding:9px 0;border-top:1px solid #e6ecf2;font-size:14px;color:#425466}.mini .r:first-child{border-top:0;font:500 12px "Source Code Pro",monospace;color:#5f6f88}.mini .w{color:#533afd;font-weight:500}
 </style></head><body>
 <div class="ribbon"></div>
 <div class="guides"><span></span><span></span><span></span><span></span></div>
 <div class="txt"><div class="mark">Joe Ferber</div><h1>Complex systems, <span>made useful.</span></h1><p>I work on operations problems that need a business case and working software.</p></div>
 <div class="url">joeferber.com</div>
-<div class="portrait"><div class="photo"><img src="../../assets/joe-ferber-portrait.jpg"></div><div class="cap"><b>Joe Ferber</b>MBAi candidate, Kellogg and McCormick<br>Previously at Orbus and Epic</div></div>
+<div class="viz"><div class="stack"><div class="plate" style="transform:translateZ(144.0px)"><div class="tag"><span>01 readiness</span><span>workstreams</span></div><div class="body"><div class="cells"><i></i><i></i><i></i><i class="h"></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="h"></i><i class="h"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="h"></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="h"></i><i class="h"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="h"></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="h"></i><i></i><i></i><i></i><i></i><i></i></div></div></div><div class="plate on" style="transform:translateZ(48.0px)"><div class="tag"><span>02 mapper + studio</span><span>priorities</span></div><div class="body"><div class="bars"><i class="h" style="width:88%"></i><i style="width:64%"></i><i class="h" style="width:76%"></i><i style="width:48%"></i><i style="width:70%"></i></div></div></div><div class="plate" style="transform:translateZ(-48.0px)"><div class="tag"><span>03 'l' tracker</span><span>network</span></div><div class="body"><svg class="net" viewBox="0 0 260 230"><line x1="30" y1="40" x2="120" y2="110"/><line class="h" x1="120" y1="110" x2="220" y2="60"/><line x1="120" y1="110" x2="90" y2="200"/><line class="h" x1="120" y1="110" x2="210" y2="180"/><circle cx="30" cy="40" r="7"/><circle class="h" cx="120" cy="110" r="9"/><circle cx="220" cy="60" r="7"/><circle cx="90" cy="200" r="7"/><circle cx="210" cy="180" r="7"/></svg></div></div><div class="plate" style="transform:translateZ(-144.0px)"><div class="tag"><span>04 ledger leagues</span><span>matchup</span></div><div class="body"><div class="mini"><div class="r"><span>Example matchup · week 6</span><span>final</span></div><div class="r w"><span>Backseat GMs</span><span>1,450</span></div><div class="r"><span>Sunday Scaries</span><span>1,175</span></div></div></div></div></div></div>
 </body></html>
