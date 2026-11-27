@@ -39,7 +39,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--ui);font-size:14px;l
 button,input,select,textarea{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--ac);outline-offset:2px}
 
-.app{display:grid;grid-template-columns:300px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);height:100%}
+.app{display:grid;grid-template-columns:340px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);height:100%}
 .top{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;background:var(--panel);border-bottom:1px solid var(--line);
   padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .logo{font-weight:600;font-size:15px;letter-spacing:-.01em;margin-right:6px}
@@ -67,13 +67,18 @@ button,input,select,textarea{font:inherit;color:inherit}
 .grp:first-child{border-top:0;margin-top:0;padding-top:0}
 .ghead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .ghead h2{font-size:12px;font-weight:600;margin:0;color:var(--mu);letter-spacing:.04em}
-.row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4px 8px;margin-bottom:10px}
-.row label{font-size:13px;font-weight:500}
-.row .ctl{grid-column:1/2;display:flex;align-items:center;gap:8px;min-width:0}
+.row{display:grid;grid-template-columns:84px minmax(0,1fr) 28px;align-items:center;gap:6px;margin:0 -6px 4px;padding:3px 6px;border-radius:7px}
+.row.nolock{grid-template-columns:84px minmax(0,1fr)}
+.row label{font-size:12.5px;font-weight:500;line-height:1.2}
+.row .ctl{display:flex;align-items:center;gap:4px;min-width:0}
+.row.chg{animation:chg 1.6s ease-out}
+@keyframes chg{0%,25%{background:color-mix(in srgb,var(--ac) 20%,transparent)}100%{background:transparent}}
+.stp{flex:none;width:24px;height:28px;border:1px solid var(--line);background:var(--panel);border-radius:6px;cursor:pointer;color:var(--mu);font-size:15px;line-height:1;display:grid;place-items:center;padding:0}
+.stp:hover{color:var(--fg);border-color:var(--mu)}
 .row select,.row input[type=text]{width:100%;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--bg);min-width:0}
 .row input[type=range]{flex:1;min-width:0;accent-color:var(--ac)}
 .row output{font-family:var(--mono);font-size:12px;color:var(--mu);min-width:30px;text-align:right}
-.lock{grid-row:1/3;grid-column:2;align-self:end;border:1px solid transparent;background:transparent;border-radius:6px;width:30px;height:30px;display:grid;place-items:center;cursor:pointer;color:var(--mu)}
+.lock{border:1px solid transparent;background:transparent;border-radius:6px;width:28px;height:28px;display:grid;place-items:center;cursor:pointer;color:var(--mu)}
 .lock:hover{border-color:var(--line)}
 .lock[aria-pressed="true"]{background:var(--fg);color:var(--panel)}
 .lock svg{width:14px;height:14px}
@@ -85,9 +90,17 @@ button,input,select,textarea{font:inherit;color:inherit}
 .sechead p{margin:0;color:var(--mu);font-size:12px}
 .sechead .btn{margin-left:auto}
 .viewer{display:flex;flex-direction:column;gap:10px;align-items:center}
-.bigwrap{width:min(100%, calc((100vh - 230px) * 16 / 9));min-width:min(100%,520px)}
+.viewcol{width:min(100%, calc((100vh - 250px) * 16 / 9));min-width:min(100%,520px);display:flex;flex-direction:column;gap:10px}
+.viewcol.wide{width:100%;max-width:1100px}
+.bigwrap{width:100%}
+.vbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
+.swatches{display:flex;gap:4px;flex-wrap:wrap}
+.swb{width:22px;height:22px;border-radius:5px;background:var(--c);border:1px solid var(--line);cursor:pointer;padding:0}
+.swb:hover{transform:translateY(-1px)}
+.fontline{margin:0;font-size:12px;color:var(--mu);flex:1 1 160px;min-width:0}
+.fontline b{color:var(--fg);font-weight:500}
 .bigwrap .dz{box-shadow:0 1px 3px rgba(0,0,0,.14),0 8px 24px rgba(0,0,0,.06)}
-.vnav{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--mu)}
+.vnav{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mu);margin-left:auto}
 .browser{width:100%;max-width:1100px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel);box-shadow:0 8px 24px rgba(0,0,0,.06)}
 .bbar{display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--mu)}
 .bbar span{background:var(--chip);border-radius:5px;padding:2px 10px}
@@ -102,6 +115,22 @@ button,input,select,textarea{font:inherit;color:inherit}
 .vars{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
 .vars .th .meta2{display:flex;justify-content:space-between;gap:6px}
 .vars .th code{font-family:var(--mono);font-size:10px}
+.svi{display:flex;flex-direction:column;gap:4px}
+.svi .rm{align-self:flex-start;border:0;background:none;color:var(--mu);font-size:11px;cursor:pointer;padding:2px 0;text-decoration:underline}
+.svi .rm:hover{color:var(--fg)}
+.empty{grid-column:1/-1;border:1px dashed var(--line);border-radius:10px;padding:18px;text-align:center}
+#save[aria-pressed="true"]{background:var(--chip)}
+#save svg{width:13px;height:13px;margin-right:5px;vertical-align:-1px}
+#save[aria-pressed="true"] svg{fill:currentColor}
+.btn .kbd{opacity:.6}
+@media (hover:none){.kbd{display:none}}
+.pres{border:0;padding:16px;margin:0;width:100vw;height:100vh;max-width:none;max-height:none;background:#0b0c0e;color:#eceef1;box-sizing:border-box}
+.pres::backdrop{background:#0b0c0e}
+.pres[open]{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.pres-slide{width:min(calc(100vw - 32px), calc((100vh - 96px) * 16 / 9))}
+.pres-bar{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;align-items:center;font-size:13px;color:#a3a9b2}
+.pres .btn{background:#1f2328;border-color:#3a4048;color:#eceef1}
+.pres .btn:hover{border-color:#8a929c}
 .varweb{aspect-ratio:16/9;overflow:hidden;outline:1px solid var(--line);pointer-events:none}
 
 .spec{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:18px}
@@ -128,7 +157,8 @@ textarea#out{width:100%;min-height:150px;font-family:var(--mono);font-size:11.5p
   .app{grid-template-columns:minmax(0,1fr);height:auto}
   .panel{border-right:0;border-top:1px solid var(--line);order:3;overflow:visible;padding-right:max(16px,env(safe-area-inset-right,0px))}
   .stage{order:2;overflow:visible;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-  .bigwrap{min-width:0;width:100%}
+  .viewcol{min-width:0;width:100%}
+  .vnav{margin-left:0}
   .bscroll{max-height:70vh}
   .seed input{width:96px}
 }
@@ -208,7 +238,9 @@ textarea#out{width:100%;min-height:150px;font-family:var(--mono);font-size:11.5p
     </form>
     <span class="spacer"></span>
     <a class="home" href="/">joeferber.com</a>
-    <button type="button" id="back" class="btn" disabled>Previous design</button>
+    <button type="button" id="back" class="btn" disabled title="Go back to the design before this one">Undo<span class="kbd" aria-hidden="true">Z</span></button>
+    <button type="button" id="save" class="btn" aria-pressed="false" title="Keep this design in Saved designs"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M8 1.8l1.9 3.9 4.3.6-3.1 3 .7 4.3L8 11.6l-3.8 2 .7-4.3-3.1-3 4.3-.6z"/></svg><span id="save-l">Save</span><span class="kbd" aria-hidden="true">S</span></button>
+    <button type="button" id="cp-prompt2" class="btn" title="Copy a prompt that describes this style for your AI tool">Copy AI prompt<span class="kbd" aria-hidden="true">C</span></button>
     <button type="button" id="roll" class="btn primary">Roll new design<span class="kbd" aria-hidden="true">R</span></button>
   </header>
 
@@ -216,11 +248,18 @@ textarea#out{width:100%;min-height:150px;font-family:var(--mono);font-size:11.5p
 
   <main class="stage">
     <section class="viewer" aria-label="Preview">
-      <div id="big" class="bigwrap"></div>
-      <div class="vnav" id="vnav">
-        <button type="button" class="btn small" id="prev" aria-label="Previous slide">Prev</button>
-        <span id="cap">Slide 1 of 8</span>
-        <button type="button" class="btn small" id="next" aria-label="Next slide">Next</button>
+      <div class="viewcol" id="viewcol">
+        <div id="big" class="bigwrap"></div>
+        <div class="vbar">
+          <div class="swatches" id="swatches" role="group" aria-label="Palette colors, click one to copy its hex code"></div>
+          <p class="fontline" id="fontline"></p>
+          <div class="vnav" id="vnav">
+            <button type="button" class="btn small" id="prev" aria-label="Previous slide">Prev</button>
+            <span id="cap" aria-live="polite">Slide 1 of 8</span>
+            <button type="button" class="btn small" id="next" aria-label="Next slide">Next</button>
+            <button type="button" class="btn small" id="present-btn">Present<span class="kbd" aria-hidden="true">P</span></button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -235,12 +274,12 @@ textarea#out{width:100%;min-height:150px;font-family:var(--mono);font-size:11.5p
       <div id="vars" class="vars"></div>
     </section>
 
-    <section class="spec" aria-label="Design spec and export">
-      <div class="card2">
-        <h2>Palette and type</h2>
-        <div class="sw" id="sw"></div>
-        <p class="fonts" id="fonts"></p>
-      </div>
+    <section aria-labelledby="sv-h">
+      <div class="sechead"><h2 id="sv-h">Saved designs</h2><p>Kept in this browser, so they are still here next time you open the page.</p></div>
+      <div id="saved" class="vars"></div>
+    </section>
+
+    <section class="spec" aria-label="Export">
       <div class="card2">
         <h2>Take it to your AI tool</h2>
         <p class="note">Copy a prompt that describes this exact style, the CSS tokens, or a style code you can paste back here later.</p>
@@ -261,6 +300,16 @@ textarea#out{width:100%;min-height:150px;font-family:var(--mono);font-size:11.5p
     </section>
   </main>
 </div>
+<dialog class="pres" id="pres" aria-label="Presentation view">
+  <div class="pres-slide" id="pres-slide"></div>
+  <div class="pres-bar">
+    <button type="button" class="btn small" id="pres-prev" aria-label="Previous slide">Prev</button>
+    <span id="pres-cap"></span>
+    <button type="button" class="btn small" id="pres-next" aria-label="Next slide">Next</button>
+    <button type="button" class="btn small" id="pres-fs">Full screen</button>
+    <button type="button" class="btn small" id="pres-x">Close<span class="kbd" aria-hidden="true">Esc</span></button>
+  </div>
+</dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -801,22 +850,23 @@ const state={mode:'slides',seed:'',f:null,locks:{},chaos:.2,topic:0,customTitle:
 const lockSvg=`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>`;
 
 function buildPanel(){
-  let h=`<div class="grp"><div class="ghead"><h2>Generator</h2></div>
-    <div class="row"><label for="chaos">Wildness</label><div class="ctl"><input type="range" id="chaos" min="0" max="100" value="${state.chaos*100}"><output id="chaos-o"></output></div></div>
+  let h=`<div class="grp"><div class="ghead"><h2>Generator</h2><span class="hint" id="lockinfo" style="margin:0"></span><button type="button" class="btn small" id="unlock" hidden>Unlock all</button></div>
+    <div class="row nolock"><label for="chaos">Wildness</label><div class="ctl"><input type="range" id="chaos" min="0" max="100" value="${state.chaos*100}"><output id="chaos-o"></output></div></div>
     <p class="hint">Low keeps every factor inside one direction. High mixes factors freely.</p></div>
     <div class="grp"><div class="ghead"><h2>Content</h2></div>
-    <div class="row"><label for="topic">Sample content</label><div class="ctl"><select id="topic">${TOPICS.map((t,i)=>`<option value="${i}">${esc(t.label)}</option>`).join('')}</select></div></div>
-    <div class="row"><label for="ctitle">Your deck title</label><div class="ctl"><input type="text" id="ctitle" maxlength="80" placeholder="Leave blank to use the sample"></div></div></div>`;
+    <div class="row nolock"><label for="topic">Sample content</label><div class="ctl"><select id="topic">${TOPICS.map((t,i)=>`<option value="${i}">${esc(t.label)}</option>`).join('')}</select></div></div>
+    <div class="row nolock"><label for="ctitle">Deck title</label><div class="ctl"><input type="text" id="ctitle" maxlength="80" placeholder="Blank uses the sample title"></div></div></div>`;
   for(const g of GROUPS){
     h+=`<div class="grp"><div class="ghead"><h2>${g}</h2><button type="button" class="btn small" data-rg="${g}">Reroll ${g.toLowerCase()}</button></div>`;
     for(const F of FACTORS.filter(x=>x.group===g)){
-      const ctl=F.type==='select'?`<select id="f-${F.id}">${F.opts.map(o=>`<option value="${o[0]}">${esc(o[1])}</option>`).join('')}</select>`
+      const ctl=F.type==='select'?`<button type="button" class="stp" data-step="${F.id}" data-dir="-1" aria-label="Previous ${F.label} option">‹</button><select id="f-${F.id}">${F.opts.map(o=>`<option value="${o[0]}">${esc(o[1])}</option>`).join('')}</select><button type="button" class="stp" data-step="${F.id}" data-dir="1" aria-label="Next ${F.label} option">›</button>`
         :`<input type="range" id="f-${F.id}" min="${F.min}" max="${F.max}" step="1"><output id="o-${F.id}"></output>`;
-      h+=`<div class="row"><label for="f-${F.id}">${F.label}</label><button type="button" class="lock" data-lock="${F.id}" aria-pressed="false" aria-label="Lock ${F.label}" title="Lock ${F.label} so rolls keep it">${lockSvg}</button><div class="ctl">${ctl}</div></div>`;
-      if(F.hint)h+=`<p class="hint" style="margin:-6px 0 10px">${F.hint}</p>`;
+      h+=`<div class="row" id="row-${F.id}"><label for="f-${F.id}">${F.label}</label><div class="ctl">${ctl}</div><button type="button" class="lock" data-lock="${F.id}" aria-pressed="false" aria-label="Lock ${F.label}" title="Lock ${F.label} so rolls keep it">${lockSvg}</button></div>`;
+      if(F.hint)h+=`<p class="hint" style="margin:0 0 8px">${F.hint}</p>`;
     }
     h+=`</div>`;
   }
+  h+=`<div class="grp"><div class="ghead"><h2>Keyboard</h2></div><p class="hint">R roll · Z undo · S save · C copy AI prompt · P present · arrow keys change slides</p></div>`;
   $('#panel').innerHTML=h;
   $('#chaos').addEventListener('input',e=>{state.chaos=e.target.value/100;$('#chaos-o').textContent=e.target.value;state.varOffset=0;renderVars();});
   $('#chaos-o').textContent=Math.round(state.chaos*100);
@@ -825,26 +875,33 @@ function buildPanel(){
   for(const F of FACTORS){const el=$('#f-'+F.id);
     el.addEventListener(F.type==='select'?'change':'input',()=>{
       const v=F.type==='select'?el.value:+el.value;
-      if(F.id==='family'){pushHist();state.f=roll(state.seed+'~'+v,state.f,state.locks,state.chaos,v);state.f.family=v;}
-      else state.f[F.id]=v;
+      if(F.id==='family'){pushHist();state.lastEdit=null;state.f=roll(state.seed+'~'+v,state.f,state.locks,state.chaos,v);state.f.family=v;}
+      else{if(state.lastEdit!==F.id){pushHist();state.lastEdit=F.id;}state.f[F.id]=v;}
       state.edited=true;render();});}
   $('#panel').addEventListener('click',e=>{
-    const lk=e.target.closest('[data-lock]');if(lk){const id=lk.dataset.lock;state.locks[id]=!state.locks[id];lk.setAttribute('aria-pressed',String(!!state.locks[id]));state.varOffset=0;renderVars();return;}
+    const lk=e.target.closest('[data-lock]');if(lk){const id=lk.dataset.lock;state.locks[id]=!state.locks[id];syncLocks();state.varOffset=0;renderVars();return;}
+    if(e.target.closest('#unlock')){state.locks={};syncLocks();state.varOffset=0;renderVars();toast('All factors unlocked');return;}
+    const sp=e.target.closest('[data-step]');if(sp){const F=FACTORS.find(x=>x.id===sp.dataset.step);const el=$('#f-'+F.id);const n=F.opts.length;let i=F.opts.findIndex(o=>o[0]===el.value);i=(i+(+sp.dataset.dir)+n)%n;el.value=F.opts[i][0];el.dispatchEvent(new Event('change'));return;}
     const rg=e.target.closest('[data-rg]');if(rg){pushHist();state.f=roll(newSeed(),state.f,state.locks,state.chaos,state.f.family,rg.dataset.rg);state.edited=true;render();}
   });
 }
+function syncLocks(){const n=FACTORS.filter(F=>state.locks[F.id]).length;$('#lockinfo').textContent=n?`${n} locked`:'';$('#unlock').hidden=!n;
+  document.querySelectorAll('[data-lock]').forEach(b=>b.setAttribute('aria-pressed',String(!!state.locks[b.dataset.lock])));}
+function flashChanged(prev){if(!prev||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  for(const F of FACTORS){if(prev[F.id]!==state.f[F.id]){const r=$('#row-'+F.id);if(r){r.classList.remove('chg');void r.offsetWidth;r.classList.add('chg');}}}}
 function syncPanel(){for(const F of FACTORS){const el=$('#f-'+F.id);el.value=state.f[F.id];const o=$('#o-'+F.id);if(o)o.textContent=state.f[F.id];}}
-function pushHist(){if(state.f){state.hist.push({seed:state.seed,f:Object.assign({},state.f),edited:state.edited});if(state.hist.length>60)state.hist.shift();}}
+function pushHist(){state.lastEdit=null;if(state.f){state.hist.push({seed:state.seed,f:Object.assign({},state.f),edited:state.edited});if(state.hist.length>60)state.hist.shift();}}
 function goSeed(seed){pushHist();state.seed=seed;state.f=roll(seed,state.f,state.locks,state.chaos);state.edited=false;state.sel=Math.min(state.sel,KINDS.length-1);render();}
 
 let P=null;
 function render(){
   P=buildPalette(state.f);
+  const prevF=state.lastF;state.lastF=Object.assign({},state.f);
   $('#seed').value=state.seed;$('#mod').hidden=!state.edited;$('#back').disabled=!state.hist.length;
   syncPanel();
   const slides=state.mode==='slides';
   $('#m-slides').setAttribute('aria-pressed',String(slides));$('#m-web').setAttribute('aria-pressed',String(!slides));
-  $('#thumbsec').hidden=!slides;$('#vnav').hidden=!slides;
+  $('#thumbsec').hidden=!slides;$('#vnav').hidden=!slides;$('#viewcol').classList.toggle('wide',!slides);
   if(slides){
     $('#big').className='bigwrap';
     $('#big').innerHTML=renderSlide(state,P,KINDS[state.sel],state.sel);
@@ -854,8 +911,13 @@ function render(){
     $('#big').className='browser';
     $('#big').innerHTML=`<div class="bbar"><span>${esc(TOPICS[state.topic].web.domain)}</span>Sample site, scroll inside the frame</div><div class="bscroll">${renderWeb(state,P)}</div>`;
   }
-  renderSpec();renderVars();
+  renderSpec();renderVars();syncSave();flashChanged(prevF);
 }
+function showSlide(i){state.sel=(i+KINDS.length)%KINDS.length;
+  $('#big').innerHTML=renderSlide(state,P,KINDS[state.sel],state.sel);
+  document.querySelectorAll('#thumbs [data-i]').forEach(b=>b.setAttribute('aria-current',String(+b.dataset.i===state.sel)));
+  $('#cap').textContent=`Slide ${state.sel+1} of ${KINDS.length} · ${KIND_LABEL[KINDS[state.sel]]}`;
+  if($('#pres').open)renderPres();}
 function renderVars(){
   if(!state.f)return;
   let h='';
@@ -867,10 +929,30 @@ function renderVars(){
 }
 function renderSpec(){
   const sw=[['Background',P.bg],['Surface',P.surface],['Text',P.ink],['Muted text',P.muted],['Primary',P.pri],['Secondary',P.sec],['Accent',P.acc]].concat(P.rotate?P.blocks.map((b,i)=>['Block '+(i+1),b]):[]);
-  $('#sw').innerHTML=sw.map(([n,v])=>`<div><i style="background:${v}"></i>${n}<code>${v}</code></div>`).join('');
+  $('#swatches').innerHTML=sw.map(([n,v])=>`<button type="button" class="swb" data-hex="${v}" style="--c:${v}" aria-label="Copy ${n} color ${v}" title="${n} ${v}"></button>`).join('');
   const t=TYPE_BY[state.f.type];
-  $('#fonts').innerHTML=`Headings <b>${esc(t.dn)}</b> · body <b>${esc(t.bn)}</b> · ${esc(FAMILIES[state.f.family].label)} direction, ${esc(LAYOUTS.find(l=>l[0]===state.f.layout)[1].toLowerCase())} layout`;
+  $('#fontline').innerHTML=`<b>${esc(t.dn)}</b> + <b>${esc(t.bn)}</b> · ${esc(FAMILIES[state.f.family].label)}`;
 }
+/* ---------------- saved designs (this browser only) ---------------- */
+const SKEY='stylelab.saved.v1';
+function loadSaved(){try{const a=JSON.parse(localStorage.getItem(SKEY)||'[]');return Array.isArray(a)?a.filter(x=>x&&typeof x.code==='string'&&decode(x.code)):[];}catch(e){return[];}}
+function storeSaved(){try{localStorage.setItem(SKEY,JSON.stringify(saved));return true;}catch(e){toast('This browser blocked saving. Copy the style code instead.');return false;}}
+let saved=[];
+const isSaved=()=>{const c=encode();return saved.some(x=>x.code===c);};
+function syncSave(){const on=isSaved();$('#save').setAttribute('aria-pressed',String(on));$('#save-l').textContent=on?'Saved':'Save';}
+function toggleSave(){const c=encode();
+  if(isSaved()){saved=saved.filter(x=>x.code!==c);if(storeSaved())toast('Removed from saved designs');}
+  else{saved.unshift({code:c,topic:state.topic,title:state.customTitle});saved=saved.slice(0,48);if(storeSaved())toast('Saved. It is under Saved designs.');}
+  renderSaved();syncSave();}
+function renderSaved(){
+  if(!saved.length){$('#saved').innerHTML='<p class="note empty">Nothing saved yet. Press Save, or S, on a design you like and it will wait here.</p>';return;}
+  $('#saved').innerHTML=saved.map((x,i)=>{const f=decode(x.code);const seed=f._seed;delete f._seed;
+    const st=Object.assign({},state,{seed,f,topic:x.topic||0,customTitle:x.title||''});const p=buildPalette(f);
+    return`<div class="svi"><button type="button" class="th" data-load="${i}" aria-label="Load saved design ${i+1}, ${esc(FAMILIES[f.family].label)}">${renderSlide(st,p,'title',0)}<span class="meta2"><span>${esc(FAMILIES[f.family].label)}</span><code>${esc(seed)}</code></span></button><button type="button" class="rm" data-rm="${i}" aria-label="Remove saved design ${i+1}">Remove</button></div>`;}).join('');}
+/* ---------------- present view ---------------- */
+function renderPres(){$('#pres-slide').innerHTML=renderSlide(state,P,KINDS[state.sel],state.sel);$('#pres-cap').textContent=`${state.sel+1} / ${KINDS.length}`;}
+function openPres(){if(state.mode!=='slides')return;renderPres();$('#pres').showModal();$('#pres-next').focus();}
+function closePres(){if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});if($('#pres').open)$('#pres').close();}
 
 /* ---------------- exports ---------------- */
 const optLabel=(id,v)=>{const F=FACTORS.find(x=>x.id===id);const o=F.opts.find(x=>x[0]===v);return o?o[1]:v;};
@@ -896,13 +978,28 @@ function copyOut(text,what){const ta=$('#out');ta.value=text;
 
 /* ---------------- events ---------------- */
 $('#roll').addEventListener('click',()=>goSeed(newSeed()));
-$('#back').addEventListener('click',()=>{const h=state.hist.pop();if(!h)return;state.seed=h.seed;state.f=h.f;state.edited=h.edited;render();});
+function undo(){const h=state.hist.pop();if(!h)return;state.seed=h.seed;state.f=h.f;state.edited=h.edited;render();}
+$('#back').addEventListener('click',undo);
+$('#save').addEventListener('click',toggleSave);
+$('#cp-prompt2').addEventListener('click',()=>copyOut(promptText(),'AI prompt'));
+$('#swatches').addEventListener('click',e=>{const b=e.target.closest('[data-hex]');if(b)copyOut(b.dataset.hex,'Color '+b.dataset.hex);});
+$('#saved').addEventListener('click',e=>{
+  const rm=e.target.closest('[data-rm]');if(rm){saved.splice(+rm.dataset.rm,1);storeSaved();renderSaved();syncSave();return;}
+  const ld=e.target.closest('[data-load]');if(!ld)return;const x=saved[+ld.dataset.load];const f=decode(x.code);if(!f)return;
+  pushHist();state.seed=f._seed;delete f._seed;state.f=f;state.edited=false;state.topic=x.topic||0;state.customTitle=x.title||'';
+  $('#topic').value=state.topic;$('#ctitle').value=state.customTitle;render();$('.stage').scrollTo({top:0});toast('Loaded saved design');});
+$('#present-btn').addEventListener('click',openPres);
+$('#pres-prev').addEventListener('click',()=>showSlide(state.sel-1));
+$('#pres-next').addEventListener('click',()=>showSlide(state.sel+1));
+$('#pres-x').addEventListener('click',closePres);
+$('#pres').addEventListener('close',()=>{if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});$('#present-btn').focus();});
+$('#pres-fs').addEventListener('click',()=>{const d=$('#pres');if(!d.requestFullscreen){toast('Full screen is not available in this browser');return;}d.requestFullscreen().catch(()=>toast('Full screen is not available here'));});
 $('#seedform').addEventListener('submit',e=>{e.preventDefault();const v=$('#seed').value.trim();if(!v){$('#seed').value=state.seed;return;}goSeed(v);});
 $('#m-slides').addEventListener('click',()=>{state.mode='slides';render();});
 $('#m-web').addEventListener('click',()=>{state.mode='web';render();});
-$('#prev').addEventListener('click',()=>{state.sel=(state.sel+KINDS.length-1)%KINDS.length;render();});
-$('#next').addEventListener('click',()=>{state.sel=(state.sel+1)%KINDS.length;render();});
-$('#thumbs').addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(!b)return;state.sel=+b.dataset.i;render();$('#big').scrollIntoView({block:'nearest'});});
+$('#prev').addEventListener('click',()=>showSlide(state.sel-1));
+$('#next').addEventListener('click',()=>showSlide(state.sel+1));
+$('#thumbs').addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(!b)return;showSlide(+b.dataset.i);$('#big').scrollIntoView({block:'nearest'});});
 $('#vars').addEventListener('click',e=>{const b=e.target.closest('[data-seed]');if(!b)return;goSeed(b.dataset.seed);$('.stage').scrollTo({top:0});});
 $('#morevar').addEventListener('click',()=>{state.varOffset+=6;renderVars();});
 $('#cp-prompt').addEventListener('click',()=>copyOut(promptText(),'AI prompt'));
@@ -912,13 +1009,20 @@ $('#loadform').addEventListener('submit',e=>{e.preventDefault();const v=$('#code
   if(!f){err.textContent=v.trim()?'That code could not be read. Style codes start with SL1- and come from the Copy style code button.':'Paste a style code first.';err.hidden=false;return;}
   err.hidden=true;pushHist();if(f._seed)state.seed=f._seed;delete f._seed;state.f=f;state.edited=false;render();toast('Style code applied');});
 document.addEventListener('keydown',e=>{if(e.metaKey||e.ctrlKey||e.altKey)return;const tag=(e.target.tagName||'').toLowerCase();if(tag==='input'||tag==='select'||tag==='textarea')return;
-  if(e.key==='r'||e.key==='R'){e.preventDefault();goSeed(newSeed());}
-  else if(state.mode==='slides'&&e.key==='ArrowRight'){state.sel=(state.sel+1)%KINDS.length;render();}
-  else if(state.mode==='slides'&&e.key==='ArrowLeft'){state.sel=(state.sel+KINDS.length-1)%KINDS.length;render();}});
+  const k=e.key.toLowerCase(),slides=state.mode==='slides';
+  if($('#pres').open){if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();showSlide(state.sel+1);}else if(e.key==='ArrowLeft'){e.preventDefault();showSlide(state.sel-1);}return;}
+  if(k==='r'){e.preventDefault();goSeed(newSeed());}
+  else if(k==='z'){e.preventDefault();undo();}
+  else if(k==='s'){e.preventDefault();toggleSave();}
+  else if(k==='c'){e.preventDefault();copyOut(promptText(),'AI prompt');}
+  else if(k==='p'&&slides){e.preventDefault();openPres();}
+  else if(slides&&e.key==='ArrowRight'){showSlide(state.sel+1);}
+  else if(slides&&e.key==='ArrowLeft'){showSlide(state.sel-1);}});
 
 buildPanel();
+saved=loadSaved();
 state.seed='lab01';state.f=roll(state.seed,null,{},state.chaos);
-render();
+render();syncLocks();renderSaved();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{});
 })();
 </script>
