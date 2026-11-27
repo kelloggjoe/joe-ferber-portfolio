@@ -313,6 +313,29 @@ h2{font-weight:400;font-size:clamp(32px,3.4vw,48px);line-height:1.12;letter-spac
 @keyframes pop{0%{opacity:1;transform:translate(-50%,-50%)}100%{opacity:0;transform:translate(calc(-50% + var(--tx)),calc(-50% + var(--ty)))}}
 .v-sn .chip{left:6%;bottom:9%}
 
+/* Style Lab: real generated slides that swap on a new roll */
+.sx-c{--g1:#f44bcc;--g2:#635bff;--g3:#ffd166}
+.v-sx .sl{aspect-ratio:16/9;overflow:hidden;border-radius:8px;background:#fff}
+.v-sx .sl img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .45s var(--ease),transform .7s var(--ease-out)}
+.v-sx .sl .b{opacity:0;transform:scale(1.05)}
+.live .v-sx .sl .a{opacity:0;transform:scale(.97)}
+.live .v-sx .sl .b{opacity:1;transform:none}
+.v-sx .s2 img{transition-delay:.08s}.v-sx .s3 img{transition-delay:.16s}
+.v-sx .s1{left:5%;top:24%;width:60%}
+.v-sx .s2{left:34%;top:5%;width:40%}
+.v-sx .s3{right:-9%;top:16%;width:36%}
+.v-sx .fx{right:5%;bottom:7%;width:min(42%,230px);padding:12px 14px}
+.v-sx .fx .t{display:flex;justify-content:space-between;font-size:12px;font-weight:500;color:var(--ink-deep);margin-bottom:8px}
+.v-sx .fr{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;font-size:12px;padding:6px 0;border-top:1px solid var(--rule);color:var(--ink-muted)}
+.v-sx .fr b{font-weight:500;color:var(--ink-deep);text-align:right;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
+@media (min-width:701px) and (max-width:1000px){.pgrid .pc.sx-c{grid-column:1/-1}}
+@media (max-width:700px){.v-sx .fx{width:min(60%,230px)}.v-sx .s1{width:64%}}
+.v-sx .lk{width:13px;height:13px;color:#b6c2d3}
+.v-sx .fr.on .lk{color:var(--accent-strong)}
+.v-sx .roll{margin-top:8px;text-align:center;font-size:12px;font-weight:500;color:#fff;background:var(--accent-strong);border-radius:6px;padding:6px 0;transition:transform .2s var(--ease)}
+.live .v-sx .roll{transform:scale(.96)}
+.v-sx .chip{left:5%;top:8%}
+
 /* expanded project */
 html:has(.pd[open]){overflow:hidden}
 .pd{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:48px 24px;border:0;background:transparent;overflow-y:auto;overscroll-behavior:contain}
@@ -556,7 +579,7 @@ footer nav{flex-wrap:wrap;gap:8px 24px;font-weight:400;font-size:14px}footer nav
 <section class="work" id="work">
   <div class="guides" aria-hidden="true"><div class="wrap"><span></span><span></span><span></span><span></span></div></div>
   <div class="wrap" style="position:relative">
-    <div class="sec-head reveal"><h2>Selected work. <span>A live product, a train map, a football game, a 3D city, and three planning tools I built on my own time.</span></h2></div>
+    <div class="sec-head reveal"><h2>Selected work. <span>A live product, a train map, a football game, a 3D city, a design tool, and three planning tools I built on my own time.</span></h2></div>
     <div class="pgrid">
       <article class="pc w reveal" data-p="ledger-leagues">
         <div class="pc-head"><p class="k">Ledger Leagues</p><h3><button class="pc-open" type="button" aria-haspopup="dialog">Private NFL leagues built on weekly head-to-head picks</button></h3></div>
@@ -674,6 +697,21 @@ footer nav{flex-wrap:wrap;gap:8px 24px;font-weight:400;font-size:14px}footer nav
             </div>
           </div>
           <div class="chip pop">Big hit, toppings off</div>
+        </div>
+      </article>
+      <article class="pc w sx-c reveal" data-p="style-lab">
+        <div class="pc-head"><p class="k">Style Lab</p><h3><button class="pc-open" type="button" aria-haspopup="dialog">Roll a seed into a full deck or website style</button></h3></div>
+        <span class="xp" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9.5 2.5h4v4M6.5 13.5h-4v-4"/></svg></span>
+        <div class="vis v-sx" aria-hidden="true"><div class="field"></div>
+          <div class="fl sl s3"><img class="a" src="assets/style-lab/a3.jpg" alt="" loading="lazy" width="960" height="540"><img class="b" src="assets/style-lab/b3.jpg" alt="" loading="lazy" width="960" height="540"></div>
+          <div class="fl sl s2"><img class="a" src="assets/style-lab/a2.jpg" alt="" loading="lazy" width="960" height="540"><img class="b" src="assets/style-lab/b2.jpg" alt="" loading="lazy" width="960" height="540"></div>
+          <div class="fl sl s1"><img class="a" src="assets/style-lab/a1.jpg" alt="" loading="lazy" width="960" height="540"><img class="b" src="assets/style-lab/b1.jpg" alt="" loading="lazy" width="960" height="540"></div>
+          <div class="fl fx"><div class="t"><span>Factors</span><span class="mono">14 in all</span></div>
+            <div class="fr on"><span>Direction</span><b>Bold poster</b><svg class="lk" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg></div>
+            <div class="fr"><span>Layout</span><b data-alt="Diagonal cuts">Orbit circles</b><svg class="lk" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg></div>
+            <div class="roll">Roll new design</div>
+          </div>
+          <div class="chip pop">Direction locked, layout rerolled</div>
         </div>
       </article>
     </div>
@@ -830,6 +868,11 @@ const PROJECTS={
     l:['Walk the streets at ground level','Fly over the towers like in Minecraft creative mode','Open the map and teleport anywhere in the model','Speed up the clock and watch the day play out','Pick any area on a world map and build it in 3D','Opens in Photoreal, Google\'s 3D scan of the real city, with a generated look one click away'],
     cta:[['Explore the city','/city/'],['Build any area','/city/explore.html']],
     f:[['Map data','OpenStreetMap'],['Photoreal','Google Photorealistic 3D Tiles'],['Styles','Normal, Miami Vice, Noir'],['Area','Central Miami, centered on Brickell'],['Controls','Needs a keyboard and mouse']]},
+  'style-lab':{k:'Design tool',t:'Style Lab',
+    p:'I make a lot of decks and websites with AI, and I wanted a faster way to try styles first. Style Lab turns a seed into a full eight-slide deck or a landing page, and every factor that shaped it has its own control.',
+    l:['Fourteen factors cover layout, palette, type, shapes and imagery, and you can lock any of them before the next roll','Wildness keeps a roll inside one direction or lets every factor mix freely','The same seed always gives the same design','Copy a design out as an AI prompt, CSS tokens or a style code that brings it back later'],
+    cta:[['Open Style Lab','/style-lab/']],
+    f:[['Built with','HTML, CSS and JavaScript with no build step'],['Output','Eight-slide decks and landing pages'],['Type','Twenty Google Fonts pairings'],['Content','Sample decks, with charts marked as sample data']]},
   'snack-league':{k:'Game',t:'Snack League',
     p:'An 11-on-11 football game in three.js where every player is a snack. Draft your eleven, call plays from a full playbook, and knock the toppings off the other team.',
     l:['Draft from 25 snacks in four groups: balance, technique, speed and power','Your eleven play both ways, so every pick also has a defensive job','Physics-driven tackles send toppings flying on big hits','The CPU drafts its team from the snacks you leave'],
