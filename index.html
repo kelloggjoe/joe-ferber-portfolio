@@ -264,24 +264,35 @@ h2{font-weight:400;font-size:clamp(32px,3.4vw,48px);line-height:1.12;letter-spac
 .v-l .arr .r i{width:8px;height:8px;border-radius:2px}
 .v-l .arr .r span:last-child{font:500 11px var(--mono);color:var(--ink-deep);font-variant-numeric:tabular-nums}
 
-/* Dynamic City: isometric blocks on the field, with a clock card */
+/* Dynamic City: a picked area on a flat map that builds up into 3D blocks */
 .pc.city-c{grid-column:1/-1;--g1:#80caff;--g2:#f44bcc;--g3:#ffd7a8}
 .v-city .iso{position:absolute;inset:0;width:100%;height:100%;z-index:1}
 .v-city .gnd{fill:#fff;stroke:#d6deea}
 .v-city .road{stroke:#e8ecf7;stroke-width:9;stroke-linecap:round}
-.v-city .bay{fill:#d7ecff}
+.v-city .sel{fill:rgba(99,91,255,.06);stroke:#635bff;stroke-width:1.4;stroke-dasharray:5 4;stroke-linejoin:round;transition:fill .6s var(--ease)}
+.live .v-city .sel{fill:rgba(99,91,255,0);animation:march 1.2s linear infinite}
+@keyframes march{to{stroke-dashoffset:-18}}
 .v-city .tw polygon{stroke:rgba(10,37,64,.12);stroke-width:.6;stroke-linejoin:round}
 .v-city .tw .t{fill:#fff}.v-city .tw .l{fill:#e6e8ff}.v-city .tw .r{fill:#c3c5fb}
 .v-city .tw.hot .t{fill:#f1efff}.v-city .tw.hot .l{fill:#8f88ff}.v-city .tw.hot .r{fill:#5b52f0}
-.v-city .tw{transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(.8);transition:transform .9s var(--ease-out);transition-delay:calc(var(--d)*18ms)}
-.live .v-city .tw{transform:none}
+.v-city .fp{fill:#eceefb;stroke:#d9dcf3;stroke-width:.6}
+.v-city .fp.hot{fill:#c9c6ff}
+.v-city .tw{transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(.2);opacity:0;transition:transform .9s var(--ease-out),opacity .35s var(--ease);transition-delay:calc(var(--d)*16ms)}
+.live .v-city .tw{transform:none;opacity:1}
+.v-city .ppl{opacity:0;transition:opacity .5s var(--ease) .7s}
+.live .v-city .ppl{opacity:1}
 .v-city .ppl circle{fill:var(--ink-deep)}
 .v-city .ppl circle.a{fill:#f44bcc}
-.v-city .clk{left:6%;top:8%;padding:12px 14px;display:grid;gap:2px;min-width:150px}
-.v-city .clk b{font-weight:500;font-size:20px;letter-spacing:-.01em;color:var(--ink-deep);font-variant-numeric:tabular-nums}
-.v-city .clk .spd{font:500 11px var(--mono);color:var(--accent-strong)}
-.v-city .tw path{stroke:rgba(10,37,64,.12);stroke-width:.6;stroke-linejoin:round}
-.v-city .tw .brace{fill:none;stroke:#f1efff;stroke-width:1.1;stroke-linecap:round}
+.v-city .pick{left:5%;top:9%;width:214px;padding:13px 14px;display:grid;gap:9px}
+.v-city .pick .q{display:flex;align-items:center;gap:7px;height:30px;padding:0 10px;border:1px solid var(--rule);border-radius:7px;font-size:12px;color:var(--ink-muted)}
+.v-city .pick .q svg{width:11px;height:11px;flex:none}
+.v-city .pick .km{display:flex;gap:4px}
+.v-city .pick .km span{flex:1;text-align:center;padding:4px 0;border-radius:6px;font:500 11px var(--mono);color:var(--ink-2);background:var(--ground-muted)}
+.v-city .pick .km span.on{background:var(--ink);color:#fff}
+.v-city .pick .go{height:30px;border-radius:999px;background:var(--accent-strong);color:#fff;font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;transition:transform .2s var(--ease)}
+.live .v-city .pick .go{transform:scale(.96)}
+.v-city .chip{right:6%;bottom:9%}
+@media (max-width:700px){.v-city .pick{width:158px;padding:10px 11px;gap:7px;top:4%;left:4%}.v-city .pick .km{display:none}.v-city .pick .q{height:26px;font-size:11px}.v-city .pick .go{height:26px;font-size:11px}}
 
 /* Snack League: play art and a draft board */
 .snack-c{--g1:#fe9615;--g2:#635bff;--g3:#ffd166}
@@ -633,11 +644,12 @@ footer nav{flex-wrap:wrap;gap:8px 24px;font-weight:400;font-size:14px}footer nav
         </div>
       </article>
       <article class="pc city-c reveal" data-p="dynamic-city">
-        <div class="pc-head"><p class="k">Dynamic City Renderer</p><h3><button class="pc-open" type="button" aria-haspopup="dialog">A 3D model of central Miami you can walk or fly through</button></h3></div>
+        <div class="pc-head"><p class="k">Dynamic City Renderer</p><h3><button class="pc-open" type="button" aria-haspopup="dialog">Pick any place on a map and walk or fly through it in 3D</button></h3></div>
         <span class="xp" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9.5 2.5h4v4M6.5 13.5h-4v-4"/></svg></span>
         <div class="vis v-city" aria-hidden="true"><div class="field"></div>
           <svg class="iso" viewBox="24 28 385 212" preserveAspectRatio="xMidYMid meet"></svg>
-          <div class="fl clk"><span class="mono">City clock</span><b data-clock="460">7:40 AM</b><span class="spd">▸▸ sped up</span></div>
+          <div class="fl pick"><span class="mono">Pick an area</span><span class="q"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="5" cy="5" r="3.6"/><path d="M7.8 7.8l2.7 2.7"/></svg>Search for a place</span><span class="km"><span>1 km</span><span class="on">2 km</span><span>3 km</span><span>4 km</span></span><span class="go">Build this area</span></div>
+          <div class="chip pop">Built from OpenStreetMap</div>
         </div>
       </article>
       <article class="pc mm-c reveal" data-p="modernization-mapper">
@@ -865,10 +877,10 @@ const PROJECTS={
     cta:[['Open Prioritization Studio','https://kelloggjoe.github.io/prioritization-studio/',1],['View the code','https://github.com/kelloggjoe/prioritization-studio',1]],
     f:[['Built with','HTML, CSS and JavaScript with no build step'],['Data','Saved in the browser with localStorage'],['Sample data','Illustrative, and you can reset it']]},
   'dynamic-city':{k:'3D experiment',t:'Dynamic City Renderer',
-    p:'A 3D model of central Miami built from OpenStreetMap data and centered on Brickell, with about 1,500 people and 600 cars moving around you. You can also pick any area on a world map and build it in your browser.',
-    l:['Walk the streets at ground level','Fly over the towers like in Minecraft creative mode','Open the map and teleport anywhere in the model','Speed up the clock and watch the day play out','Pick any area on a world map and build it in 3D','Opens in Photoreal, Google\'s 3D scan of the real city, with a generated look one click away'],
-    cta:[['Explore the city','/city/'],['Build any area','/city/explore.html']],
-    f:[['Map data','OpenStreetMap'],['Photoreal','Google Photorealistic 3D Tiles'],['Styles','Normal, Miami Vice, Noir'],['Area','Central Miami, centered on Brickell'],['Controls','Needs a keyboard and mouse']]},
+    p:'Search for any place, move the square over the area you want, and the renderer builds it in 3D in your browser from OpenStreetMap data. Then you can walk or fly through it, with traffic and people. There is also a prebuilt demo of central Miami, centered on Brickell, with about 1,500 people and 600 cars.',
+    l:['Pick any area on a world map and build it in 3D','Choose a square from 1 to 4 km across','Walk the streets at ground level, or fly over the towers like in Minecraft creative mode','Traffic and people fill in the streets','The Miami demo opens instantly in Photoreal, Google\'s 3D scan of the real city','In the Miami demo you can teleport around the map, speed up the clock, and switch to a Miami Vice or Noir look'],
+    cta:[['Build any area','/city/explore.html'],['Open the Miami demo','/city/']],
+    f:[['Map data','OpenStreetMap'],['Area','Any 1 to 4 km square you pick'],['Demo','Central Miami, with Google Photorealistic 3D Tiles'],['Controls','Needs a keyboard and mouse']]},
   'style-lab':{k:'Design tool',t:'Style Lab',
     p:'I make a lot of decks and websites with AI, and I wanted a faster way to try styles first. Style Lab turns a seed into a full eight-slide deck or a landing page, and every factor that shaped it has its own control.',
     l:['Fourteen factors cover layout, palette, type, shapes and imagery, and you can lock any of them before the next roll','Wildness keeps a roll inside one direction or lets every factor mix freely','The same seed always gives the same design','Copy a design out as an AI prompt, CSS tokens or a style code that brings it back later'],
@@ -907,36 +919,21 @@ document.querySelectorAll('svg.iso').forEach(svg=>{
       polygon('r',[[X2,Y,base],[X2,Y2,base],[X2,Y2,height],[X2,Y,height]])+
       polygon('t',[[X,Y,height],[X2,Y,height],[X2,Y2,height],[X,Y2,height]]);
   };
-  let o=polygon('bay',[[width,0],[11.7,0],[11.7,depth],[width,depth]])+
-    polygon('gnd',[[0,0],[width,0],[width,depth],[0,depth]])+
+  let o=polygon('gnd',[[0,0],[width,0],[width,depth],[0,depth]])+
     line('road',[3.5,.2],[3.5,7.8])+line('road',[.2,5.5],[9.8,5.5])+
     line('road',[8.5,.2],[8.5,7.8]);
-  const landmarks={
-    '1,2':{name:'Freedom Tower',draw:(x,y)=>
-      block(x,y,0,34)+block(x,y,34,47,.24,.76)+block(x,y,47,60,.38,.62)+
-      polygon('r',[[x+.38,y+.62,60],[x+.62,y+.62,60],[x+.5,y+.5,72]])+
-      polygon('t',[[x+.62,y+.38,60],[x+.62,y+.62,60],[x+.5,y+.5,72]])},
-    '6,1':{name:'One Thousand Museum',draw:(x,y)=>
-      block(x,y,0,105)+
-      `<path class="brace" d="M${P(x+.16,y+.88,6)}Q${P(x+.88,y+.88,43)} ${P(x+.18,y+.88,98)}M${P(x+.83,y+.88,6)}Q${P(x+.24,y+.88,43)} ${P(x+.81,y+.88,98)}"/>`},
-    '9,2':{name:'Aston Martin Residences',draw:(x,y)=>{
-      const base=[x+.12,y+.88,0], edge=[x+.88,y+.88,0], tip=[x+.88,y+.88,112];
-      return `<path class="l" d="M${P(...base)}L${P(...edge)}L${P(...tip)}Q${P(x+.03,y+.88,74)} ${P(...base)}Z"/>`+
-        polygon('r',[[x+.88,y+.12,0],edge,tip,[x+.88,y+.12,96]])+
-        `<path class="t" d="M${P(...tip)}L${P(x+.88,y+.12,96)}Q${P(x+.22,y+.12,68)} ${P(x+.12,y+.12,0)}L${P(...base)}Q${P(x+.03,y+.88,74)} ${P(...tip)}Z"/>`;
-    }}
-  };
-  const cells=[];
+  const cells=[];let fp='',tw='';
   for(let x=0;x<width;x++)for(let y=0;y<depth;y++){
     if(x!==3&&x!==8&&y!==5)cells.push([x,y]);
   }
   cells.sort((a,b)=>a[0]+a[1]-b[0]-b[1]||a[0]-b[0]).forEach(([x,y],i)=>{
-    const landmark=landmarks[[x,y].join(',')];
-    const tall=x>=5&&y<=3;
-    const h=8+((x*7+y*13)%5)*7+(tall?38+((x+y)%3)*16:0);
-    const hot=landmark||(x===5&&y===3);
-    o+=`<g class="tw${hot?' hot':''}" style="--d:${Math.min(i,42)}">${landmark?'<title>'+landmark.name+'</title>'+landmark.draw(x,y):block(x,y,0,h)}</g>`;
+    const core=Math.max(0,3.2-Math.hypot(x-5.5,y-2.5));
+    const h=8+((x*7+y*13)%5)*6+core*((x*5+y*3)%4+3)*7;
+    const hot=(x===6&&y===2)||(x===2&&y===1)||(x===9&&y===6);
+    fp+=`<polygon class="fp${hot?' hot':''}" points="${pts([[x+.12,y+.12,0],[x+.88,y+.12,0],[x+.88,y+.88,0],[x+.12,y+.88,0]])}"/>`;
+    tw+=`<g class="tw${hot?' hot':''}" style="--d:${Math.min(i,42)}">${block(x,y,0,h)}</g>`;
   });
+  o+=fp+polygon('sel',[[.9,.5],[9.4,.5],[9.4,7.6],[.9,7.6]])+tw;
   const walk=(a,b,d,beg,c='')=>`<circle r="2.6"${c?` class="${c}"`:''}><animateMotion dur="${d}s" begin="${beg}s" repeatCount="indefinite" path="M${P(...a)}L${P(...b)}"/></circle>`;
   o+='<g class="ppl">'+walk([3.3,.3],[3.3,7.7],9,-1)+walk([3.7,7.7],[3.7,.3],11,-5,'a')+walk([.3,5.3],[9.7,5.3],10,-3)+walk([9.7,5.7],[.3,5.7],8,-6,'a')+walk([3.3,.3],[3.3,7.7],9,-6)+'</g>';
   svg.innerHTML=o;
