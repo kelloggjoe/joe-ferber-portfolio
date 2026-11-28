@@ -364,6 +364,7 @@ const TYPE=[
  {id:'bricolage',label:'Bricolage Grotesque',d:"'Bricolage Grotesque', system-ui, sans-serif",dn:'Bricolage Grotesque',dw:800,b:"'Bricolage Grotesque', system-ui, sans-serif",bn:'Bricolage Grotesque',wf:.56,lh:1.0,tr:-.03},
  {id:'baskerville',label:'Libre Baskerville / Libre Franklin',d:"'Libre Baskerville', Baskerville, serif",dn:'Libre Baskerville',dw:700,b:"'Libre Franklin', system-ui, sans-serif",bn:'Libre Franklin',wf:.6,lh:1.15,tr:-.01},
  {id:'sora',label:'Sora Light / Sora',d:"'Sora', system-ui, sans-serif",dn:'Sora',dw:300,b:"'Sora', system-ui, sans-serif",bn:'Sora',wf:.6,lh:1.1,tr:-.02},
+ {id:'inter',label:'Inter Regular / Inter (joeferber.com)',d:"'Inter', system-ui, sans-serif",dn:'Inter',dw:400,b:"'Inter', system-ui, sans-serif",bn:'Inter',wf:.54,lh:1.04,tr:-.035},
 ];
 const TYPE_BY=Object.fromEntries(TYPE.map(t=>[t.id,t]));
 
@@ -390,6 +391,7 @@ const PAL={
  nordic:{label:'Nordic',h:[0,180,20],L:[.5,.93,.68],C:[.04,.02,.11]},
  citrus:{label:'Citrus (rotating)',h:[0,40,80],L:[.8,.72,.85],C:[.17,.16,.16],rotate:true,rh:[0,40,80,-30,120],rl:[.82,.72,.88,.66,.76],rc:.17},
  inkpaper:{label:'Ink and paper',h:[0,60,0],L:[.24,.95,.6],C:[.08,.03,.18]},
+ site:{label:'Navy + violet (joeferber.com)',h:[0,0,27],L:[.27,.95,.56],C:[.075,.014,.23]},
 };
 const LAYOUTS=[['split','Split color blocks'],['overlay','Overlay card'],['editorial','Editorial'],['orbit','Orbit circles'],['swiss','Swiss grid'],['bands','Stacked bands'],['diagonal','Diagonal cuts'],['poster','Poster type'],['frame','Thick frame'],['mosaic','Image mosaic'],['cover','Magazine cover'],['arch','Arch windows'],['columns','Vertical columns'],['corner','Corner block'],['stack','Stacked cards'],['capsule','Capsules'],['wave','Wave edges'],['spotlight','Centered spotlight']];
 const LAYOUT_DESC={
@@ -412,8 +414,8 @@ const LAYOUT_DESC={
  wave:'Wavy edges where color meets image, and a wave band along the bottom of content slides.',
  spotlight:'Centered, symmetrical composition: centered headlines, a wide letterbox image, and round image crops.',
 };
-const MOTIFS=[['none','None'],['circles','Circles'],['rings','Rings'],['stripes','Stripes'],['dots','Dot grid'],['arcs','Quarter arcs'],['blobs','Organic blobs'],['diagonal','Diagonal bars'],['squares','Offset squares'],['triangles','Triangles'],['crosses','Crosses'],['waves','Wavy lines'],['hexagons','Hexagons'],['zigzag','Zigzags'],['halfmoons','Half moons'],['confetti','Confetti'],['brackets','Corner brackets'],['checker','Checkerboard'],['pills','Pills']];
-const IMAGERY=[['scene','Landscape scene'],['city','City skyline'],['bauhaus','Bauhaus shapes'],['topo','Topographic lines'],['grain','Grainy gradient'],['halftone','Halftone dots'],['blobs','Soft blobs'],['stripes','Bold stripes'],['blocks','Plain color blocks'],['ocean','Ocean waves'],['dunes','Desert dunes'],['space','Planets and stars'],['botanical','Botanical leaves'],['memphis','Memphis squiggles'],['isometric','Isometric blocks'],['papercut','Paper cutout layers'],['flowlines','Flowing lines'],['pixel','Pixel art'],['sunburst','Sunburst rays']];
+const MOTIFS=[['none','None'],['circles','Circles'],['rings','Rings'],['stripes','Stripes'],['dots','Dot grid'],['arcs','Quarter arcs'],['blobs','Organic blobs'],['diagonal','Diagonal bars'],['squares','Offset squares'],['triangles','Triangles'],['crosses','Crosses'],['waves','Wavy lines'],['hexagons','Hexagons'],['zigzag','Zigzags'],['halfmoons','Half moons'],['confetti','Confetti'],['brackets','Corner brackets'],['checker','Checkerboard'],['pills','Pills'],['guides','Grid guides']];
+const IMAGERY=[['scene','Landscape scene'],['city','City skyline'],['bauhaus','Bauhaus shapes'],['topo','Topographic lines'],['grain','Grainy gradient'],['halftone','Halftone dots'],['blobs','Soft blobs'],['stripes','Bold stripes'],['blocks','Plain color blocks'],['ocean','Ocean waves'],['dunes','Desert dunes'],['space','Planets and stars'],['botanical','Botanical leaves'],['memphis','Memphis squiggles'],['isometric','Isometric blocks'],['papercut','Paper cutout layers'],['flowlines','Flowing lines'],['pixel','Pixel art'],['sunburst','Sunburst rays'],['mesh','Gradient mesh + panels']];
 const GROUNDS=[['white','White'],['light','Soft light'],['tinted','Tinted'],['dark','Dark'],['color','Full color']];
 const CASES=[['as','As written'],['upper','UPPERCASE'],['lower','lowercase']];
 
@@ -436,6 +438,7 @@ const FAMILIES={
  midnight:{label:'Midnight',layout:['spotlight','cover','columns','wave'],palette:['jewel','inkpaper','neon','mono'],ground:['dark'],type:['playfair','space','cormorant','unbounded'],case:['as','upper'],motif:['none','rings','crosses'],imagery:['space','flowlines','grain','ocean'],radius:[0,40],deco:[0,2],sat:[50,90],density:[50,85],scale:[55,90]},
  friendly:{label:'Bright and friendly',layout:['capsule','corner','mosaic','split'],palette:['citrus','candy','pop'],ground:['white','color'],type:['caveat','pacifico','bricolage','unbounded'],case:['as','lower'],motif:['confetti','waves','circles','triangles'],imagery:['memphis','pixel','blobs','sunburst'],radius:[55,100],deco:[2,3],sat:[85,100],density:[25,55],scale:[55,90]},
  academic:{label:'Academic report',layout:['columns','editorial','swiss','frame','stack'],palette:['tonal','nordic','neutral','inkpaper'],ground:['white','light'],type:['baskerville','playfair','dmserif','josefin'],case:['as'],motif:['none','brackets','squares'],imagery:['topo','flowlines','blocks','isometric'],radius:[0,15],deco:[0,1],sat:[20,55],density:[55,90],scale:[35,60]},
+ site:{label:'joeferber.com',layout:['stack','overlay','spotlight','swiss','editorial'],palette:['site'],ground:['white','white','light'],type:['inter'],case:['as'],motif:['guides','guides','none','dots'],imagery:['mesh'],radius:[18,40],deco:[1,2],sat:[72,88],density:[55,80],scale:[60,88],hue:[247,253]}
 };
 
 const FACTORS=[
@@ -699,6 +702,22 @@ function art(c){
     for(let x=0;x<16;x++)for(let y=0;y<10;y++){const v=Math.sin(x*.55+fx)+Math.cos(y*.7+fy)+r.range(-.5,.5);const idx=clamp(Math.floor((v+2.5)/5*pal.length),0,pal.length-1);
       s+=`<rect x="${x*10}" y="${y*10}" width="10.2" height="10.2" fill="${pal[idx]}"/>`;}
     break;}
+  case'mesh':{
+    const H0=P.H,sc=Math.min(1.25,P.roles.acc.C/.23||1);const hue=o=>((H0+o)%360+360)%360;
+    const spots=[[.76,.17,170],[.66,.24,95],[.74,.14,122],[.56,.23,27],[.81,.1,-10],[.92,.04,30]].map(([l,cc,o])=>toHex(l,cc*sc,hue(o)));
+    s+=`<defs><filter id="${u}b" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="9"/></filter><filter id="${u}s" x="-30%" y="-30%" width="160%" height="180%"><feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="${toHex(.27,.07,hue(0))}" flood-opacity=".22"/></filter>`;
+    s+=`<pattern id="${u}g" width="11" height="11" patternUnits="userSpaceOnUse"><path d="M11 0H0V11" fill="none" stroke="${toHex(.27,.07,hue(0))}" stroke-opacity=".08" stroke-width=".4"/></pattern></defs>`;
+    s+=`<rect width="160" height="100" fill="${toHex(.985,.006,hue(0))}"/><rect width="160" height="100" fill="url(#${u}g)"/><g filter="url(#${u}b)">`;
+    const cx=r.range(70,120),cy=r.range(40,70);
+    spots.forEach((col,k)=>{s+=`<ellipse cx="${R(cx+r.range(-48,48))}" cy="${R(cy+r.range(-26,30))}" rx="${R(r.range(22,38))}" ry="${R(r.range(16,28))}" fill="${col}" opacity="${R(r.range(.82,1))}"/>`;});
+    s+=`</g>`;
+    const n=r.int(1,2);
+    for(let k=0;k<n;k++){const w=r.range(46,62),h=r.range(26,34),x=k?r.range(84,104):r.range(16,40),y=k?r.range(52,62):r.range(14,30);
+      s+=`<g filter="url(#${u}s)"><rect x="${R(x)}" y="${R(y)}" width="${R(w)}" height="${R(h)}" rx="3" fill="#fff"/></g>`;
+      s+=`<rect x="${R(x+5)}" y="${R(y+5)}" width="${R(w*.35)}" height="2.4" rx="1.2" fill="${toHex(.27,.07,hue(0))}" opacity=".8"/>`;
+      for(let b=0;b<3;b++){const bw=r.range(.3,.8)*(w-10);s+=`<rect x="${R(x+5)}" y="${R(y+11+b*5)}" width="${R(bw)}" height="2.4" rx="1.2" fill="${b===0?spots[3]:toHex(.9,.02,hue(0))}"/>`;}
+      s+=`<rect x="${R(x+w-17)}" y="${R(y+h-8)}" width="12" height="4" rx="2" fill="${spots[3]}"/>`;}
+    break;}
   case'sunburst':{
     const cx=r.range(50,110),cy=r.range(55,90),n=22;s+=`<rect width="160" height="100" fill="${P.tone('sec',.1,.6)}"/>`;
     for(let k=0;k<n;k+=2){const a1=k/n*Math.PI*2,a2=(k+1)/n*Math.PI*2;s+=`<polygon points="${R(cx)},${R(cy)} ${R(cx+Math.cos(a1)*200)},${R(cy+Math.sin(a1)*200)} ${R(cx+Math.cos(a2)*200)},${R(cy+Math.sin(a2)*200)}" fill="${P.tone('acc',.1,.8)}"/>`;}
@@ -744,6 +763,8 @@ function deco(c,corner,surf){
         s+=A(x,y,t===2?z*2.2:z,z,`background:${cl[k%cl.length]};${t===0?'border-radius:50%':''};transform:rotate(${R(c.r.range(0,180))}deg)`);}return s;}
     case'brackets':{const w=sz*.55,x=L?c.m*.45:100-c.m*.45-w,y=T?c.m*.45:H-c.m*.45-w;return A(x,y,w,w,`border-${T?'top':'bottom'}:.4cqw solid ${col};border-${L?'left':'right'}:.4cqw solid ${col}`);}
     case'checker':return A(ix,iy,sz*.8,sz*.48,`background-image:conic-gradient(${col} 25%,transparent 0 50%,${col} 0 75%,transparent 0);background-size:${R(sz*.16)}cqw ${R(sz*.16)}cqw`);
+    case'guides':{const w=sz*1.3,h=sz*.9,x=L?0:100-w,y=T?0:H-h,g=R(sz*.26);const ln=mix(col,surf,.35);
+      return A(x,y,w,h,`background-image:linear-gradient(${ln} .12cqw,transparent .12cqw),linear-gradient(90deg,${ln} .12cqw,transparent .12cqw);background-size:${g}cqw ${g}cqw;-webkit-mask-image:radial-gradient(circle at ${L?0:100}% ${T?0:100}%,#000 30%,transparent 72%);mask-image:radial-gradient(circle at ${L?0:100}% ${T?0:100}%,#000 30%,transparent 72%)`);}
     case'pills':return A(ix,iy,sz,sz*.22,`background:${col};border-radius:99cqw`)+A(ix+sz*.3,iy+sz*.32,sz*.7,sz*.22,`border:.25cqw solid ${col};border-radius:99cqw`);
   }return'';}
 function decos(c,surf,corners){if(!c.f.deco)return'';return corners.slice(0,c.f.deco).map(k=>deco(c,k,surf)).join('');}
@@ -756,6 +777,7 @@ function marker(c,size){const d=size==='lg'?2.4:1.1;let st=`width:${d}cqw;height
     case'diagonal':st+='transform:skewX(-20deg)';break;
     case'stripes':st=`width:${R(d*1.7)}cqw;height:${R(d*.34)}cqw;background:var(--ac)`;break;
     case'squares':break;
+    case'guides':st+=`border-radius:${R(d*.28)}cqw`;break;
     case'triangles':st+='clip-path:polygon(50% 0,100% 100%,0 100%)';break;
     case'crosses':st+='clip-path:polygon(35% 0,65% 0,65% 35%,100% 35%,100% 65%,65% 65%,65% 100%,35% 100%,35% 65%,0 65%,0 35%,35% 35%)';break;
     case'waves':case'pills':st=`width:${R(d*1.7)}cqw;height:${R(d*.55)}cqw;background:var(--ac);border-radius:99cqw`;break;
