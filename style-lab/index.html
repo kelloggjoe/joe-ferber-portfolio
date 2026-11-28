@@ -415,7 +415,7 @@ const LAYOUT_DESC={
  spotlight:'Centered, symmetrical composition: centered headlines, a wide letterbox image, and round image crops.',
 };
 const MOTIFS=[['none','None'],['circles','Circles'],['rings','Rings'],['stripes','Stripes'],['dots','Dot grid'],['arcs','Quarter arcs'],['blobs','Organic blobs'],['diagonal','Diagonal bars'],['squares','Offset squares'],['triangles','Triangles'],['crosses','Crosses'],['waves','Wavy lines'],['hexagons','Hexagons'],['zigzag','Zigzags'],['halfmoons','Half moons'],['confetti','Confetti'],['brackets','Corner brackets'],['checker','Checkerboard'],['pills','Pills'],['guides','Grid guides']];
-const IMAGERY=[['scene','Landscape scene'],['city','City skyline'],['bauhaus','Bauhaus shapes'],['topo','Topographic lines'],['grain','Grainy gradient'],['halftone','Halftone dots'],['blobs','Soft blobs'],['stripes','Bold stripes'],['blocks','Plain color blocks'],['ocean','Ocean waves'],['dunes','Desert dunes'],['space','Planets and stars'],['botanical','Botanical leaves'],['memphis','Memphis squiggles'],['isometric','Isometric blocks'],['papercut','Paper cutout layers'],['flowlines','Flowing lines'],['pixel','Pixel art'],['sunburst','Sunburst rays'],['mesh','Gradient mesh + panels']];
+const IMAGERY=[['scene','Landscape scene'],['city','City skyline'],['bauhaus','Bauhaus shapes'],['topo','Topographic lines'],['grain','Grainy gradient'],['halftone','Halftone dots'],['blobs','Soft blobs'],['stripes','Bold stripes'],['blocks','Plain color blocks'],['ocean','Ocean waves'],['dunes','Desert dunes'],['space','Planets and stars'],['botanical','Botanical leaves'],['memphis','Memphis squiggles'],['isometric','Isometric blocks'],['papercut','Paper cutout layers'],['flowlines','Flowing lines'],['pixel','Pixel art'],['sunburst','Sunburst rays'],['mesh','Gradient mesh']];
 const GROUNDS=[['white','White'],['light','Soft light'],['tinted','Tinted'],['dark','Dark'],['color','Full color']];
 const CASES=[['as','As written'],['upper','UPPERCASE'],['lower','lowercase']];
 
@@ -688,7 +688,7 @@ function art(c){
     cells.sort((a,b)=>a[0]+a[1]-b[0]-b[1]).forEach(([gx,gy])=>{const z=12,x=20+(gx-gy)*z+40,y=20+(gx+gy)*z*.5+10;s+=cube(x,y,z,r.range(6,26));});
     break;}
   case'papercut':{
-    s+=`<defs><filter id="${u}s" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="1.6" stdDeviation="1.4" flood-opacity=".28"/></filter></defs><rect width="160" height="100" fill="${P.tone('sec',.14,.5)}"/>`;
+    s+=`<defs></defs><rect width="160" height="100" fill="${P.tone('sec',.14,.5)}"/>`;
     for(let k=0;k<5;k++){const y=18+k*17;let d=`M0 ${R(y)}`;let yy=y;for(let x=0;x<=160;x+=32){const ny=y+r.range(-8,8);d+=` C${x+10} ${R(yy)} ${x+22} ${R(ny)} ${x+32} ${R(ny)}`;yy=ny;}
       s+=`<path d="${d} L160 100 L0 100Z" fill="${P.tone(k%2?'pri':'sec',.16-.09*k)}" filter="url(#${u}s)"/>`;}
     break;}
@@ -705,18 +705,12 @@ function art(c){
   case'mesh':{
     const H0=P.H,sc=Math.min(1.25,P.roles.acc.C/.23||1);const hue=o=>((H0+o)%360+360)%360;
     const spots=[[.76,.17,170],[.66,.24,95],[.74,.14,122],[.56,.23,27],[.81,.1,-10],[.92,.04,30]].map(([l,cc,o])=>toHex(l,cc*sc,hue(o)));
-    s+=`<defs><filter id="${u}b" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="9"/></filter><filter id="${u}s" x="-30%" y="-30%" width="160%" height="180%"><feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="${toHex(.27,.07,hue(0))}" flood-opacity=".22"/></filter>`;
+    s+=`<defs><filter id="${u}b" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="9"/></filter>`;
     s+=`<pattern id="${u}g" width="11" height="11" patternUnits="userSpaceOnUse"><path d="M11 0H0V11" fill="none" stroke="${toHex(.27,.07,hue(0))}" stroke-opacity=".08" stroke-width=".4"/></pattern></defs>`;
     s+=`<rect width="160" height="100" fill="${toHex(.985,.006,hue(0))}"/><rect width="160" height="100" fill="url(#${u}g)"/><g filter="url(#${u}b)">`;
     const cx=r.range(70,120),cy=r.range(40,70);
     spots.forEach((col,k)=>{s+=`<ellipse cx="${R(cx+r.range(-48,48))}" cy="${R(cy+r.range(-26,30))}" rx="${R(r.range(22,38))}" ry="${R(r.range(16,28))}" fill="${col}" opacity="${R(r.range(.82,1))}"/>`;});
     s+=`</g>`;
-    const n=r.int(1,2);
-    for(let k=0;k<n;k++){const w=r.range(46,62),h=r.range(26,34),x=k?r.range(84,104):r.range(16,40),y=k?r.range(52,62):r.range(14,30);
-      s+=`<g filter="url(#${u}s)"><rect x="${R(x)}" y="${R(y)}" width="${R(w)}" height="${R(h)}" rx="3" fill="#fff"/></g>`;
-      s+=`<rect x="${R(x+5)}" y="${R(y+5)}" width="${R(w*.35)}" height="2.4" rx="1.2" fill="${toHex(.27,.07,hue(0))}" opacity=".8"/>`;
-      for(let b=0;b<3;b++){const bw=r.range(.3,.8)*(w-10);s+=`<rect x="${R(x+5)}" y="${R(y+11+b*5)}" width="${R(bw)}" height="2.4" rx="1.2" fill="${b===0?spots[3]:toHex(.9,.02,hue(0))}"/>`;}
-      s+=`<rect x="${R(x+w-17)}" y="${R(y+h-8)}" width="12" height="4" rx="2" fill="${spots[3]}"/>`;}
     break;}
   case'sunburst':{
     const cx=r.range(50,110),cy=r.range(55,90),n=22;s+=`<rect width="160" height="100" fill="${P.tone('sec',.1,.6)}"/>`;
